@@ -33,13 +33,13 @@
 </style>
 
 <svelte:head>
-	<title>Sapper project template</title>
+	<title>smartmail - Home</title>
 </svelte:head>
 
-<h1>Great success!</h1>
+<h1>Welcome to smartmail!</h1>
 
 <figure>
-	<img alt='Borat' src='great-success.png'>
+	<img alt='Borat' src='smartmail v2 square - 500-min.png'>
 	<figcaption>HIGH FIVE!</figcaption>
 </figure>
 
