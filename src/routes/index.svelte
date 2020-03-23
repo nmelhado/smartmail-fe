@@ -1,5 +1,5 @@
 <style>
-	h1, figure, p {
+	h1, p {
 		text-align: center;
 		margin: 0 auto;
 	}
@@ -11,14 +11,17 @@
 		margin: 0 0 0.5em 0;
 	}
 
-	figure {
+	/* figure {
 		margin: 0 0 1em 0;
-	}
-
-	img {
+	} */
+  
+  img {
 		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
+		max-width: 750px;
+    top: 2px;
+    left: 0;
+    right: 0;
+    margin: 2px auto;
 	}
 
 	p {
@@ -30,17 +33,24 @@
 			font-size: 4em;
 		}
 	}
+
+  #home-banner {
+    text-align: center;
+  }
+
 </style>
 
 <svelte:head>
 	<title>smartmail - Home</title>
 </svelte:head>
 
+<div id='home-banner'>
+  <img alt='logo' src='smartmail v2 long - 1000-min.png'>
+</div>
 <h1>Welcome to smartmail!</h1>
 
-<figure>
-	<img alt='Borat' src='smartmail v2 square - 500-min.png'>
+<!-- <figure>
 	<figcaption>HIGH FIVE!</figcaption>
-</figure>
+</figure> -->
 
 <p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
