@@ -1,7 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import ListErrors from '../_components/ListErrors.svelte';
-	import { post } from 'utils.js';
+	import ListErrors from '../../components/ListErrors.svelte';
+  import { post } from 'utils.js';
 
 	const { session } = stores();
 
@@ -58,6 +58,11 @@
 					<a href="/login">Have an account?</a>
 				</p>
 
+        <!-- {#if lightsOn}
+          <p>I can see clearly now!</p>
+        {:else}
+          <p>It's too dark in here! 🌑</p>
+        {/if} -->
 				<ListErrors {errors}/>
 
 				<form on:submit|preventDefault={submit}>

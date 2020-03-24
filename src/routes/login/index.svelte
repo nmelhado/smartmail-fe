@@ -1,6 +1,6 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import ListErrors from '../_components/ListErrors.svelte';
+	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from 'utils.js';
 
 	const { session } = stores();
@@ -10,7 +10,7 @@
 	let errors = null;
 
 	async function submit(event) {
-		const response = await post(`auth/login`, { email, password });
+		const response = await post(`http://localhost:8080/login`, { email, password });
 
 		// TODO handle network errors
 		errors = response.errors;
