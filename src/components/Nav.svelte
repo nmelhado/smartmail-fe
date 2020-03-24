@@ -7,6 +7,7 @@
 		border-bottom: 1px solid rgba(27,231,255,0.2);
 		font-weight: 300;
 		padding: 0 1.5em;
+    background-color: var(--veryLightGray);
 	}
 
 	ul {
@@ -37,7 +38,7 @@
 		content: '';
 		width: calc(100% - 1em);
 		height: 2px;
-		background-color: #55D6A4;
+		background-color: var(--primary);
 		display: block;
 		bottom: -1px;
 	}
@@ -46,7 +47,7 @@
 		text-decoration: none;
 		padding: 1em 0.5em;
 		display: block;
-    color: #1AC8ED;
+    color: var(--primaryAccent);
     font-weight: bold;
 	}
 
@@ -67,13 +68,13 @@
 <nav>
 	<ul>
     <li><a id='logo-link' href='.'><img id='home-logo' alt='small logo' src='smartmail v2 square - 100-min.png'></a></li>
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' style='{segment === undefined ? "color: #55D6A4;" : undefined}' href='.'>home</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' style='{segment === "about" ? "color: #55D6A4;" : undefined}' href='about'>about</a></li>
-		<li><a aria-current='{segment === "contact" ? "page" : undefined}' style='{segment === "contact" ? "color: #55D6A4;" : undefined}' href='contact'>contact us</a></li>
+		<li><a aria-current='{segment === undefined ? "page" : undefined}' style='{segment === undefined ? "color: var(--primary);" : undefined}' href='.'>home</a></li>
+		<li><a aria-current='{segment === "about" ? "page" : undefined}' style='{segment === "about" ? "color: var(--primary);" : undefined}' href='about'>about</a></li>
+		<li><a aria-current='{segment === "contact" ? "page" : undefined}' style='{segment === "contact" ? "color: var(--primary);" : undefined}' href='contact'>contact us</a></li>
 
 		<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
 		     the blog data when we hover over the link or tap it on a touchscreen -->
-		<li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' style='{segment === "account" ? "color: #55D6A4;" : undefined}' href='account'>my account</a></li>
-		<li id='sign-up'><a rel=prefetch aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' style='{segment === "sign-up" || segment === "login" ? "color: #55D6A4;" : undefined}' href='sign-up'>sign up/login</a></li>
+		<li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' style='{segment === "account" ? "color: var(--primary);" : undefined}' href='account'>my account</a></li>
+		<li id='sign-up'><a rel=prefetch aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' style='{segment === "sign-up" || segment === "login" ? "color: var(--primary);" : undefined}' href='sign-up'>sign up/login</a></li>
 	</ul>
 </nav>
