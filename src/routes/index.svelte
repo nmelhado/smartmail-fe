@@ -47,10 +47,10 @@
 <div id='home-banner'>
   <img alt='logo' src='smartmail v2 long - 1000-min.png'>
 </div>
-<h1>Welcome to smartmail!</h1>
+<h2>Welcome to smartmail!</h2>
 
 <!-- <figure>
 	<figcaption>HIGH FIVE!</figcaption>
 </figure> -->
 
-<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
+<p><strong>Text to come!</strong></p>
