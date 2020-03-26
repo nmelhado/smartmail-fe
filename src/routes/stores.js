@@ -3,6 +3,7 @@ import * as yup from 'yup';
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
+// store values for Step One (user step)
 export const stepOneComplete = writable(false);
 
 export const validUser = writable(yup.object().shape({
@@ -45,3 +46,36 @@ export const smartIDOptions = readable([
   smartID2,
   smartID3
 ]);
+
+
+// Store values for Step Two (address step)
+export const address = writable({
+  nickname: '', // optional
+  line_one: '',
+  line_two: '', // optional
+  unit_number: '', // optional
+  business_name: '', // optional
+  attention_to: '', // optional
+  city: '',
+  state: '',
+  zip_code: '',
+  country: 'United States',
+  phone: '', // optional
+});
+
+export const validAddress = writable(yup.object().shape({
+  nickname: yup.string(),
+  line_one: yup.string().required("Address line 1 required"),
+  line_two: yup.string(),
+  unit_number: yup.string(),
+  business_name: yup.string(),
+  attention_to: yup.string(),
+  city: yup.string().required("City is required"),
+  state: yup.string().required("State is required"),
+  zip_code: yup.string()
+    .required("Zip code is required")
+    .min(5, "Zip code must be at least 5 characters"),
+  country: yup.string().required("Country is required"),
+  // phone: yup.string().matches(phoneRegExp, "Phone number is not valid")
+  phone: yup.string()
+}));

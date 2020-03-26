@@ -12,9 +12,8 @@ const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
 polka() // You can also use Express
-	.use(
-    bodyParser.json(),
-    session({
+	.use(bodyParser.json())
+  .use(session({
       secret: 'yoursessionsecretkey',
       resave: false,
       saveUninitialized: true,
@@ -24,12 +23,16 @@ polka() // You can also use Express
       store: new FileStore({
         path: '.sessions'
       })
-    }),
-		compression({ threshold: 0 }),
+  }))
+  .use(
+    compression({ threshold: 0 }),
 		sirv('static', { dev }),
 		sapper.middleware({
       session: req => ({
-        user: req.session && req.session.user
+        user: req.session && req.session.user,
+        addresses: req.session && req.session.addresses,
+        token: req.session && req.session.token,
+        expires: req.session && req.session.expires
       })
     })
 	)

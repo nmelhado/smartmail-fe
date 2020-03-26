@@ -1,11 +1,19 @@
+<script>
+	import { goto, stores } from '@sapper/app';
+
+	const { session } = stores();
+
+  console.log($session.user)
+  console.log($session.addresses)
+</script>
+
 <style>
-	h1, p {
+	p {
 		text-align: center;
 		margin: 0 auto;
 	}
 
-	h1 {
-		font-size: 2.8em;
+	h2 {
 		text-transform: uppercase;
 		font-weight: 700;
 		margin: 0 0 0.5em 0;
@@ -29,7 +37,7 @@
 	}
 
 	@media (min-width: 480px) {
-		h1 {
+		h2 {
 			font-size: 4em;
 		}
 	}

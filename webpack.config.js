@@ -2,7 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 const config = require('sapper/config/webpack.js');
 const pkg = require('./package.json');
-
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
 
@@ -27,7 +28,26 @@ module.exports = {
 							hotReload: false // pending https://github.com/sveltejs/svelte/issues/2377
 						}
 					}
-				}
+				},
+        {
+          test: /\.(sa|sc|c)ss$/,
+          use: [
+            'style-loader',
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: {
+                  includePaths: [
+                    './theme',
+                    './node_modules'
+                  ]
+                }
+              }
+            }
+          ]
+        }
 			]
 		},
 		mode,
@@ -37,7 +57,19 @@ module.exports = {
 			new webpack.DefinePlugin({
 				'process.browser': true,
 				'process.env.NODE_ENV': JSON.stringify(mode)
-			}),
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[name].[id].css'
+      }),
+      new OptimizeCssAssetsPlugin({
+        assetNameRegExp: /\.css$/g,
+        cssProcessor: require('cssnano'),
+        cssProcessorPluginOptions: {
+          preset: ['default', { discardComments: { removeAll: true } }]
+        },
+        canPrint: true
+      })
 		].filter(Boolean),
 		devtool: dev && 'inline-source-map'
 	},
@@ -60,10 +92,43 @@ module.exports = {
 							dev
 						}
 					}
-				}
+				},
+        {
+          test: /\.(sa|sc|c)ss$/,
+          use: [
+            'style-loader',
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                sassOptions: {
+                  includePaths: [
+                    './theme',
+                    './node_modules'
+                  ]
+                }
+              }
+            }
+          ]
+        }
 			]
 		},
 		mode: process.env.NODE_ENV,
+		plugins: [
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[name].[id].css'
+      }),
+      new OptimizeCssAssetsPlugin({
+        assetNameRegExp: /\.css$/g,
+        cssProcessor: require('cssnano'),
+        cssProcessorPluginOptions: {
+          preset: ['default', { discardComments: { removeAll: true } }]
+        },
+        canPrint: true
+      })
+		],
 		performance: {
 			hints: false // it doesn't matter if server.js is large
 		}

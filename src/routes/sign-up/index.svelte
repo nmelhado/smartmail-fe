@@ -1,12 +1,10 @@
 <script>
-	import { goto, stores } from '@sapper/app';
 	import SignUpOne from '../../components/SignUpOne.svelte';
-  import { post } from '../utils.js';
+	import SignUpTwo from '../../components/SignUpTwo.svelte';
   import { stepOneComplete } from '../stores.js';
 
   $stepOneComplete = false;
 
-	const { session } = stores();
   let address ={
     nickname: '',
     line_one: '',
@@ -23,20 +21,6 @@
   let status = '';
   let start_date = '';
 	let errors = null;
-
-	async function submit(event) {
-		const response = await post(`http://localhost:8080/signup`, { user, address, status, start_date });
-
-		// TODO handle network errors
-		errors = response.errors;
-
-		if (response.user) {
-			$session.user = response.user;
-			$session.token = response.token;
-			$session.expires = response.expires;
-			goto('/');
-		}
-	}
 </script>
 
 <style>
@@ -47,7 +31,7 @@
 </style>
 
 <svelte:head>
-	<title>Sign up • Conduit</title>
+	<title>smartmail - Sign up</title>
 </svelte:head>
 
 <div class="auth-page">
@@ -62,7 +46,7 @@
         {#if !$stepOneComplete}
           <SignUpOne/>
         {:else}
-          <p>Step 2!</p>
+          <SignUpTwo/>
         {/if}
 			</div>
 		</div>

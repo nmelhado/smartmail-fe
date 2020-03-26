@@ -1,4 +1,10 @@
 <script>
+  import { post } from '../routes/utils.js';
+	import { goto, stores } from '@sapper/app';
+  const { session } = stores();
+  
+  const user = $session.user
+  
 	export let segment;
 </script>
 
@@ -63,18 +69,25 @@
     float: right;
   }
 
+  .primary {
+    color: var(--primary);
+  }
+
 </style>
 
 <nav>
 	<ul>
     <li><a id='logo-link' href='.'><img id='home-logo' alt='small logo' src='smartmail v2 square - 100-min.png'></a></li>
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' style='{segment === undefined ? "color: var(--primary);" : undefined}' href='.'>home</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' style='{segment === "about" ? "color: var(--primary);" : undefined}' href='about'>about</a></li>
-		<li><a aria-current='{segment === "contact" ? "page" : undefined}' style='{segment === "contact" ? "color: var(--primary);" : undefined}' href='contact'>contact us</a></li>
+		<li><a aria-current='{segment === undefined ? "page" : undefined}' class='{segment === undefined ? "primary" : ''}' href='.'>home</a></li>
+		<li><a aria-current='{segment === "about" ? "page" : undefined}' class='{segment === "about" ? "primary" : ''}' href='about'>about</a></li>
+		<li><a aria-current='{segment === "contact" ? "page" : undefined}' class='{segment === "contact" ? "primary" : ''}' href='contact'>contact us</a></li>
 
-		<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen -->
-		<li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' style='{segment === "account" ? "color: var(--primary);" : undefined}' href='account'>my account</a></li>
-		<li id='sign-up'><a rel=prefetch aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' style='{segment === "sign-up" || segment === "login" ? "color: var(--primary);" : undefined}' href='sign-up'>sign up/login</a></li>
+    {#if $session.user && $session.user.first_name}
+		  <li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='account'>my account</a></li>
+      <li id='sign-up'><a rel=prefetch href='account'>Hello {$session.user.first_name}!</a></li>
+    {:else}
+      <li><a aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='login'>my account</a></li>
+      <li id='sign-up'><a aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' class='{segment === "sign-up" || segment === "login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
+    {/if}
 	</ul>
 </nav>
