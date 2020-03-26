@@ -46,11 +46,24 @@
     text-align: center;
   }
 
+  #bg {
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    
+    /* Preserve aspet ratio */
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+}
+
 </style>
 
 <svelte:head>
 	<title>smartmail - Home</title>
 </svelte:head>
+
+<img src="mailBackground.jpg" id="bg" alt="">
 
 <div id='home-banner'>
   <img alt='logo' src='smartmail v2 long - 1000-min.png'>
