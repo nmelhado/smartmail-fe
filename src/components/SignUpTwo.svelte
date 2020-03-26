@@ -90,7 +90,7 @@
   ]
 
 	async function submit() {
-		const response = await post(`http://localhost:8080/signup`, { user, address, status, start_date });
+		const response = await post(`auth/sign-up`, { user, address, status, start_date });
 
 		// TODO handle network errors
 		errors = response.errors;
@@ -98,7 +98,7 @@
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
-			goto('/');
+			goto('account');
 		}
 	}
   
@@ -141,6 +141,7 @@
     width: 100%;
     max-width: 900px;
     text-align: center;
+    margin: 0 auto;
   }
 </style>
 

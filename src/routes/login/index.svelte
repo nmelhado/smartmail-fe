@@ -59,7 +59,7 @@
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
-			goto('/');
+			goto('account');
 		}
 	}
 </script>
@@ -67,7 +67,8 @@
   form {
     width: 100%;
     max-width: 900px;
-    text-align: center
+    text-align: center;
+    margin: 0 auto;
   }
 
   #signUpLink {

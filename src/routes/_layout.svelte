@@ -12,7 +12,7 @@
 
 	main {
 		position: relative;
-		max-width: 56em;
+		max-width: 1100px;
 		background-color: white;
 		padding: 2em 2em 4em;
 		margin: 0 auto;

@@ -48,6 +48,7 @@
     width: 100%;
     max-width: 900px;
     text-align: center;
+    margin: 0 auto;
   }
 
   label {

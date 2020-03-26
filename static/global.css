@@ -42,7 +42,7 @@ h2 {
 }
 
 a {
-	color: inherit;
+	color: var(--primaryAccent);
 }
 
 code {
