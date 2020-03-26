@@ -28,6 +28,10 @@
     text-align: center;
     color: var(--secondaryAccent)
   }
+
+  .auth-page {
+    text-align: center;
+  }
 </style>
 
 <svelte:head>

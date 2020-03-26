@@ -6,6 +6,7 @@
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
   import Button, {Label} from '@smui/button';
+  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 
 	const { session } = stores();
   let errors = [];
@@ -89,18 +90,23 @@
     "Wyoming"
   ]
 
+  let submitErrors;
 	async function submit() {
 		const response = await post(`auth/sign-up`, { user, address, status, start_date });
 
 		// TODO handle network errors
-		errors = response.errors;
+		submitErrors = response.error;
 
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
 			goto('account');
 		}
-	}
+    if (submitErrors != null) {
+      errorsPresent.open()
+    }
+  }
+  let errorsPresent;
   
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
@@ -134,6 +140,11 @@
       errors = tempErrors;
     });
   }
+
+
+  function previousStep(e) {
+    $stepOneComplete = false;
+  }
 </script>
 
 <style>
@@ -144,6 +155,15 @@
     margin: 0 auto;
   }
 </style>
+
+<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
+  <Title id="event-title">{submitErrors}</Title>
+  <Actions>
+    <Button action="all" default use={[InitialFocus]}>
+      <Label>Ok</Label>
+    </Button>
+  </Actions>
+</Dialog>
 
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
@@ -161,7 +181,8 @@
   
   <Textfield class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
   <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
-  <Textfield  class="fullWidth" variant="outlined" label="Phone" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
+  <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
   <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
   <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Submit</Label></Button>
 </form>
+<Button color="gray" class="submitButton" variant="unelevated"  on:click={previousStep} ><Label class="submitButtonLabel">Previous Step</Label></Button>

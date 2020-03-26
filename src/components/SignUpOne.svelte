@@ -16,6 +16,7 @@
   }
   
 	function verify(event) {
+    $user.phone = $user.phone.replace(/[()\- /]/gi, '')
     $validUser.validate($user, {abortEarly: false})
     .then(function() {
       $stepOneComplete = true;

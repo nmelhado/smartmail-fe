@@ -75,7 +75,7 @@
     min-width: 300px;
     border: 1px solid var(--lightGray);
     border-right: 0;
-    height: 398px;
+    height: 400px;
   }
 
   #rightPanel {
@@ -86,8 +86,9 @@
 
   #map {
     flex-grow: 1;
-    height: 400px;  /* The height is 400 pixels */
-    min-width: 300px;  /* The width is the width of the web page */
+    height: 400px;
+    min-width: 300px;
+    border: 1px solid var(--lightGray);
   }
 </style>
 

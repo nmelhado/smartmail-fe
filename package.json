@@ -24,6 +24,7 @@
   "devDependencies": {
     "@smui/button": "^1.0.0-beta.20",
     "@smui/common": "^1.0.0-beta.20",
+    "@smui/dialog": "^1.0.0-beta.20",
     "@smui/select": "^1.0.0-beta.20",
     "@smui/textfield": "^1.0.0-beta.20",
     "css-loader": "^3.4.2",

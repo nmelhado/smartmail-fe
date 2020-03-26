@@ -6,6 +6,7 @@
   import Textfield from '@smui/textfield'
   import Icon from '@smui/textfield/icon/index';  
   import Button, {Label} from '@smui/button';
+  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 
 	const { session } = stores();
 
@@ -13,6 +14,8 @@
     email: '',
     password: ''
   }
+
+  let submitErrors;
   
   const validUser = yup.object().shape({
     email: yup.string().required("Email is required").email("Email is not valid"),
@@ -54,14 +57,19 @@
 		const response = await post(`auth/login`, { email: user.email, password: user.password });
 
 		// TODO handle network errors
-		errors = response.errors;
+    submitErrors = response.error;
+    console.log(submitErrors)
 
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
 			goto('account');
 		}
-	}
+    if (submitErrors != null) {
+      errorsPresent.open()
+    }
+  }
+  let errorsPresent;
 </script>
 <style>
   form {
@@ -80,6 +88,15 @@
 <svelte:head>
 	<title>smartmail - Sign in</title>
 </svelte:head>
+
+<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+  <Title id="event-title">{submitErrors}</Title>
+  <Actions>
+    <Button action="all" default use={[InitialFocus]}>
+      <Label>Ok</Label>
+    </Button>
+  </Actions>
+</Dialog>
 
 <div class="auth-page">
 	<div class="container page">
