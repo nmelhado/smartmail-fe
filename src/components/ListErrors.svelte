@@ -4,8 +4,9 @@
 
 <style>
 	ul {
-		margin: 0;
-		padding: 0;
+		margin: 0 auto;
+    padding: 0;
+    max-width: 900px;
   }
   
   li {

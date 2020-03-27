@@ -150,7 +150,7 @@
 <style>
   form {
     width: 100%;
-    max-width: 900px;
+    max-width: 600px;
     text-align: center;
     margin: 0 auto;
   }

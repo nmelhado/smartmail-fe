@@ -1,6 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
 	import { post } from '../utils.js';
+	import Calendar from '../../components/Calendar.svelte';
 	// import ListErrors from '../../components/ListErrors.svelte';
   // import * as yup from 'yup';
   // import Textfield from '@smui/textfield'
@@ -31,7 +32,52 @@
     }
     return null
   }
+  const todaysAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date());
+  let today = todaysAddresses[0];
+  if (todaysAddresses.length > 1) {
+    today = todaysAddresses.filter( address => address.address_type == "temporary")[0];
+  }
   const phone = formatPhoneNumber($session.addresses[0].phone)
+
+	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	let now = new Date();
+  let year = now.getFullYear();
+  let month = now.getMonth();
+  let currentMonthAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date(year, month + 1, 0) && (typeof address.end_date == "undefined" || address.end_date == "" || Date.parse(address.end_date) > new Date(year, month, 1) ));
+  let items = currentMonthAddresses.map( address => {
+    let endDate = ""
+    if (typeof address.end_date != "undefined" && address.end_date != "") {
+      endDate = address.end_date.split('T')[0]
+    }
+    return {startDate: address.start_date.split('T')[0], endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+  })
+	function processNewMonth() {
+    currentMonthAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date(year, month + 1, 0) && (typeof address.end_date == "undefined" || address.end_date == "" || Date.parse(address.end_date) > new Date(year, month, 1) ));
+    items = currentMonthAddresses.map( address => {
+      let endDate = ""
+      if (typeof address.end_date != "undefined" && address.end_date != "") {
+        endDate = address.end_date.split('T')[0]
+      }
+      return {startDate: address.start_date.split('T')[0], endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+    })
+	}
+	function next() {
+		month++;
+		if (month == 12) {
+			year++;
+			month=0;
+    }
+    processNewMonth();
+	}
+	function prev() {
+		if (month==0) {
+			month=11;
+			year--;
+		} else {
+			month--;
+    }
+    processNewMonth();
+	}
 </script>
 
 <style>
@@ -40,26 +86,32 @@
   }
 
   h2 {
+    color: var(--primaryAccent);
+    margin: 0;
+    font-size: 1.8em;
+  }
+
+  h3 {
     font-size: 1.8em;
     text-align: center;
     color: var(--darkGray);
   }
 
-  h3 {
+  h4 {
     font-size: 1.6em;
     text-align: center;
     color: var(--gray);
     margin: 0.5em 0 1em;
   }
 
-  h4 {
+  h5 {
     font-size: 1.3em;
     color: var(--primary);
     font-weight: 700;
   }
   
   #logOut {
-    margin: 0 0 70px;
+    margin: 0 0 40px;
     text-align: center;
     color: var(--secondaryAccent)
   }
@@ -67,6 +119,9 @@
   #addressBox {
     text-align: center;
     display: flex;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px 0 var(--lightGray);
   }
 
   #currentAddress {
@@ -78,7 +133,7 @@
     height: 400px;
   }
 
-  #rightPanel {
+  #leftPanel {
     display: table-cell;
     vertical-align: middle;
     margin: 0 auto;
@@ -400,14 +455,14 @@
   <p id="logOut"class="text-xs-center">
     <a href="/"  on:click|preventDefault={logout}>Log out</a>
   </p>
-  <h2>HERE IS YOUR ACCOUNT INFORMATION</h2>
-
-  <h3>Your current mailing address:</h3>
+  <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
+  <h2>your smartID is: <strong>{$session.user.smart_id}</strong></h2>
+  <h4>Your mail and packages are currently going to:</h4>
   <div id="addressBox">
     <div id="currentAddress">
-      <div id="rightPanel">
+      <div id="leftPanel">
         {#if $session.addresses[0].nickname}
-          <h4>{$session.addresses[0].nickname}</h4>
+          <h5>{$session.addresses[0].nickname}</h5>
         {/if}
         <p>
           {#if $session.addresses[0].attention_to}
@@ -436,4 +491,16 @@
 
     <div id="map"></div>
   </div>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <h1>
+        <button on:click={()=>year--}>&Lt;</button>
+        <button on:click={()=>prev()}>&lt;</button>
+        {monthNames[month]} {year}
+        <button on:click={()=>next()}>&gt;</button>
+        <button on:click={()=>year++}>&Gt;</button>
+      </h1>
+    </div>
+    <Calendar items={items} year={year} month={month} />
+    </div>
 {/if}

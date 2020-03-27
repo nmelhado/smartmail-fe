@@ -1,4 +1,7 @@
 <script>
+	import { stores } from '@sapper/app';
+  const { session } = stores();
+
   let yearText = '';
   const year = new Date().getFullYear()
   if (year > 2020) {
@@ -54,11 +57,12 @@
       <li><a href='about'>about</a></li>
       <li><a href='contact'>contact us</a></li>
 
-      <!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-          the blog data when we hover over the link or tap it on a touchscreen -->
-      <li><a rel=prefetch href='account'>my account</a></li>
-      <li><a  href='sign-up'>sign up</a></li>
-      <li><a  href='login'>login</a></li>
+      {#if $session.user}
+        <li><a rel=prefetch href='account'>my account</a></li>
+      {:else}
+        <li><a  href='sign-up'>sign up</a></li>
+        <li><a  href='login'>login</a></li>
+      {/if}
     </ul>
     <p>&copy; {yearText} PinPoint LLC</p>
     <p>All rights reserved.</p>

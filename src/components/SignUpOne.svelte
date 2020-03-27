@@ -12,15 +12,23 @@
     email: false,
     phone: false,
     password: false,
+    confirm_password: false,
     smart_id: false,
   }
+
+  let confirmPassword = '';
   
 	function verify(event) {
     $user.phone = $user.phone.replace(/[()\- /]/gi, '')
     $validUser.validate($user, {abortEarly: false})
     .then(function() {
-      $stepOneComplete = true;
-      console.log("Finished Step One");
+      if ($user.password == confirmPassword) {
+        $stepOneComplete = true;
+        console.log("Finished Step One");
+      } else {
+        invalid['confirm_password'] = true;
+        errors = ['Passwords must match']
+      }
     })
     .catch(function(err) {
       const tempErrors = [];
@@ -30,6 +38,7 @@
         email: false,
         phone: false,
         password: false,
+        confirm_password: false,
         smart_id: false,
       };
       for (const error of err.inner) {
@@ -37,6 +46,10 @@
           tempInvalid[error.path] = true;
           tempErrors.push(error.message);
         }
+      }
+      if ($user.password != confirmPassword) {
+        tempInvalid['confirm_password'] = true;
+        tempErrors.push('Passwords must match');
       }
       invalid = tempInvalid;
       errors = tempErrors;
@@ -47,7 +60,7 @@
 <style>
   form {
     width: 100%;
-    max-width: 900px;
+    max-width: 600px;
     text-align: center;
     margin: 0 auto;
   }
@@ -109,6 +122,7 @@
      <Icon class="material-icons">email</Icon>
   </Textfield>
   <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={$user.password}/>
+  <Textfield variant="outlined" label="Confirm password" invalid="{invalid["confirm_password"]}" class="fullWidth" type="password" bind:value={confirmPassword}/>
   <div id="smartIDSection">
     <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID:</label>
     <br>
