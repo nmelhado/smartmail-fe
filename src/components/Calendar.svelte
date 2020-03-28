@@ -147,15 +147,12 @@
 			let rc = findRowCol(i.startDate, i.endDate);
 			if (rc == null) {
 				console.log('didn`t find date for ',i);
-				console.log(i.date);
-				console.log(days);
         i.startCol = 1;
         i.startRow = 2;
 			} else {
 				i.startCol = rc.col;
 				i.startRow = rc.row;
         i.len = rc.days;
-        console.log(i)
 			}
 		}
 	}
@@ -175,7 +172,6 @@
 		let nextMonthAbbrev = monthNames[(month+1)%12].slice(0,3);
 		//	find the last Monday of the previous month
 		var firstDay = new Date(year, month, 1).getDay();
-		//console.log('fd='+firstDay+' '+dayNames[firstDay]);
 		var daysInThisMonth = new Date(year, month+1, 0).getDate();
 		var daysInLastMonth = new Date(year, month, 0).getDate();
 		var prevMonth = month==0 ? 11 : month-1;
@@ -190,7 +186,6 @@
       let d = new Date(year,month,i+1);
 			if (i==0) days.push({name:monthAbbrev+' '+(i+1),enabled:true,date:d,});
 			else days.push({name:''+(i+1),enabled:true,date:d,});
-			//console.log('i='+i+'  dt is '+d+' date() is '+d.getDate());
 		}
 		//	show any days to fill up the last row (disabled) - always less than 7
 		for (let i=0;days.length%7;i++) {
@@ -218,24 +213,19 @@
     if (startDate < new Date(year, month, 1)) {
       startDate = new Date(year, month, 1)
     }
-    let endDate = new Date(year, month + 1, 0)
+    let endDate = new Date(year, month + 1, 0);
     if (end && end != "") {
       const tempEndDate = new Date(end);
       if (tempEndDate < new Date(year, month + 1, 0)) {
         endDate = tempEndDate;
       }
     }
-    console.log(endDate)
-    const numberOfDays = daysBetween(startDate, endDate)
-    console.log(numberOfDays)
-    console.log(startDate)
+    const numberOfDays = daysBetween(startDate, endDate);
 		for (let i=0;i<days.length;i++) {
 			let d = days[i].date;
 			if (d.getYear() === startDate.getYear()
 				&& d.getMonth() === startDate.getMonth()
 				&& d.getDate() === startDate.getDate()) {
-          console.log(d)
-          console.log(i)
 				  return {days: numberOfDays,row:Math.floor(i/7)+2,col:i%7+1};
         }
     }
@@ -272,7 +262,6 @@
 <style>
 .calendar {
   display: grid;
-  max-width: 600px;
   width: 100%;
   grid-template-columns: repeat(7, minmax(14%, 1fr));
   grid-template-rows: 50px;

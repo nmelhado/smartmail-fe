@@ -1,11 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
 	import { post } from '../utils.js';
-	import Calendar from '../../components/Calendar.svelte';
-	// import ListErrors from '../../components/ListErrors.svelte';
-  // import * as yup from 'yup';
-  // import Textfield from '@smui/textfield'
-  // import Icon from '@smui/textfield/icon/index';  
+	import Calendar from '../../components/Calendar.svelte'; 
 
   const { session } = stores();
 
@@ -144,6 +140,17 @@
     height: 400px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
+  }
+  
+  .calendar-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 15px auto;
+    text-align: center;
+  }
+  
+  .calendar-header {
+    width: 100%;
   }
 </style>
 
