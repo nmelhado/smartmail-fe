@@ -5,6 +5,9 @@ const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2
 
 // store values for Step One (user step)
 export const stepOneComplete = writable(false);
+export const addressChangeActive = writable(false);
+export const addressStepOneComplete = writable(false);
+export const addressType = writable("");
 
 export const validUser = writable(yup.object().shape({
   smart_id: yup.string().required("Please select your smartID"),
