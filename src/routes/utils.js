@@ -18,3 +18,7 @@ export function get(endpoint) {
 		}
 	}).then(r => r.json());
 }
+
+export function standardizeDates(date) {
+  return new Date(new Date(date).toDateString())
+}

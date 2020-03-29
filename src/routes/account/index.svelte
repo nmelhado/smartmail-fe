@@ -1,22 +1,22 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post } from '../utils.js';
+	import { post, standardizeDates } from '../utils.js';
 	import Calendar from '../../components/Calendar.svelte'; 
+  import IconButton, {Icon} from '@smui/icon-button';
 
   const { session } = stores();
-
-  const pinTitle = $session.addresses[0].nickname ? $session.addresses[0].nickname : $session.addresses[0].line_one;
-
-  if (!$session.user || !$session.user.first_name || $session.user.first_name == "") {
-    goto('login');
-  }
 
 	async function logout(event) {
 		await post(`auth/logout`);
     $session.user = null;
     $session.addresses = null;
     goto('/');
-	}
+  }
+
+  if (!$session.user || !$session.user.first_name || $session.user.first_name == "") {
+    logout();
+  }
+  
   console.log($session.user)
   console.log($session.addresses)
   function formatPhoneNumber(phoneNumberString) {
@@ -28,51 +28,101 @@
     }
     return null
   }
-  const todaysAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date());
-  let today = todaysAddresses[0];
+  $session.currentDate = standardizeDates(new Date())
+  const todaysAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= $session.currentDate);
+  let todaysAddress = todaysAddresses[0];
   if (todaysAddresses.length > 1) {
-    today = todaysAddresses.filter( address => address.address_type == "temporary")[0];
+    todaysAddress = todaysAddresses.filter( address => address.address_type == "temporary")[0];
   }
-  const phone = formatPhoneNumber($session.addresses[0].phone)
+
+  function processTodaysAddresses() {
+    const todaysAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= $session.currentDate);
+    if (todaysAddresses.length < 1) {
+      todaysAddress = null;
+    } else {
+      todaysAddress = todaysAddresses[0];
+      if (todaysAddresses.length > 1) {
+        todaysAddress = todaysAddresses.filter( address => address.address_type == "temporary")[0];
+      }
+    }
+  }
+
+  const pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
+  const phone = formatPhoneNumber(todaysAddress.phone)
 
 	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	let now = new Date();
+	let now = standardizeDates(new Date());
   let year = now.getFullYear();
   let month = now.getMonth();
-  let currentMonthAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date(year, month + 1, 0) && (typeof address.end_date == "undefined" || address.end_date == "" || Date.parse(address.end_date) > new Date(year, month, 1) ));
+
+  let headerStatement = 'Your mail and packages are currently going to:';
+
+  function processHeaderStatement() {
+    if ($session.currentDate.getDate() != now.getDate()
+        || $session.currentDate.getMonth() != now.getMonth()
+        || $session.currentDate.getFullYear() != now.getFullYear()) {
+        if ($session.currentDate < now) {
+          headerStatement = `On ${monthNames[$session.currentDate.getMonth()]} ${$session.currentDate.getDate()}, ${$session.currentDate.getFullYear()} your mail and packages were going to:`;
+        } else {
+          headerStatement = `On ${monthNames[$session.currentDate.getMonth()]} ${$session.currentDate.getDate()}, ${$session.currentDate.getFullYear()} your mail and packages will go to:`;
+        }
+    } else {
+      headerStatement = 'Your mail and packages are currently going to:';
+    }
+  }
+
+  let currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
   let items = currentMonthAddresses.map( address => {
     let endDate = ""
     if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = address.end_date.split('T')[0]
+      endDate = standardizeDates(address.end_date)
     }
-    return {startDate: address.start_date.split('T')[0], endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
   })
 	function processNewMonth() {
-    currentMonthAddresses = $session.addresses.filter( address => Date.parse(address.start_date) < new Date(year, month + 1, 0) && (typeof address.end_date == "undefined" || address.end_date == "" || Date.parse(address.end_date) > new Date(year, month, 1) ));
+    currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
     items = currentMonthAddresses.map( address => {
       let endDate = ""
       if (typeof address.end_date != "undefined" && address.end_date != "") {
-        endDate = address.end_date.split('T')[0]
+        endDate = standardizeDates(address.end_date)
       }
-      return {startDate: address.start_date.split('T')[0], endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
     })
 	}
-	function next() {
-		month++;
-		if (month == 12) {
-			year++;
-			month=0;
+	function next(period="month") {
+    if (period === "year") {
+      year++;
+    } else {
+      month++;
+      if (month == 12) {
+        year++;
+        month=0;
+      }
     }
     processNewMonth();
+    processTodaysAddresses();
 	}
-	function prev() {
-		if (month==0) {
-			month=11;
-			year--;
-		} else {
-			month--;
+	function prev(period="month") {
+    if (period === "year") {
+      year--;
+    } else {
+      if (month==0) {
+        month=11;
+        year--;
+      } else {
+        month--;
+      }
     }
     processNewMonth();
+    processTodaysAddresses();
+	}
+	function itemClick(e) {
+    console.log(e)
+	}
+	function dayClick(e) {
+    $session.currentDate = e.date;
+    processHeaderStatement();
+    processTodaysAddresses();
 	}
 </script>
 
@@ -115,18 +165,20 @@
   #addressBox {
     text-align: center;
     display: flex;
-    max-width: 800px;
+    width: 94%;
     margin: 0 auto;
     box-shadow: 0 0 20px 0 var(--lightGray);
   }
 
   #currentAddress {
-    flex-grow: 1;
+    flex-grow: 2;
     display: table;
     min-width: 300px;
     border: 1px solid var(--lightGray);
+    background-color: var(--veryLightGray);
     border-right: 0;
-    height: 400px;
+    border-left: 0;
+    height: 450px;
   }
 
   #leftPanel {
@@ -136,36 +188,43 @@
   }
 
   #map {
-    flex-grow: 1;
-    height: 400px;
+    flex-grow: 3;
+    height: 450px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
   }
   
   .calendar-container {
-    max-width: 600px;
-    width: 100%;
-    margin: 15px auto;
+    min-width: 300px;
+    max-width: 500px;
+    flex-grow: 3;
     text-align: center;
+    border: 1px solid var(--lightGray);
   }
   
   .calendar-header {
     width: 100%;
+    height: 50px;
+  }
+  
+  .calendar-header-h2 {
+    font-size: 28px;
   }
 </style>
 
 <svelte:head>
   {#if $session.user}
 	  <title>smartmail - {$session.user.first_name}'s Account</title>
-    {@html `<script>
-      // Initialize and add the map
-      var marker;
-      function initMap() {
+    {#if todaysAddress != null}
+      {@html `<script>
+        // Initialize and add the map
+        var marker;
+        function initMap() {
           // The map, centered at Uluru
           var map = new google.maps.Map(
               document.getElementById('map'), {
                 zoom: 15,
-                center: {lat:${$session.addresses[0].latitude}, lng:${$session.addresses[0].longitude}},
+                center: {lat:${todaysAddress.latitude}, lng:${todaysAddress.longitude}},
                 mapTypeControl: false,
                 streetViewControl: false,
                 rotateControl: false,
@@ -413,46 +472,47 @@
               }
             );
 
-          // The marker
-          var image = {
-            url: 'smartmail_v2-pin.png',
-            // This marker is 20 pixels wide by 32 pixels high.
-            size: new google.maps.Size(41, 38),
-            // The origin for this image is (0, 0).
-            origin: new google.maps.Point(0, 0),
-            // The anchor for this image is the base of the flagpole at (0, 32).
-            anchor: new google.maps.Point(35, 38)
-          };
-          marker = new google.maps.Marker({
-            position: {lat:${$session.addresses[0].latitude}, lng:${$session.addresses[0].longitude}},
-            map: map,
-            animation: google.maps.Animation.DROP,
-            title:"${pinTitle}",
-            icon: image
-          });
-          marker.addListener('click', toggleBounce);
-        }
+            // The marker
+            var image = {
+              url: 'smartmail_v2-pin.png',
+              // This marker is 20 pixels wide by 32 pixels high.
+              size: new google.maps.Size(41, 38),
+              // The origin for this image is (0, 0).
+              origin: new google.maps.Point(0, 0),
+              // The anchor for this image is the base of the flagpole at (0, 32).
+              anchor: new google.maps.Point(35, 38)
+            };
+            marker = new google.maps.Marker({
+              position: {lat:${todaysAddress.latitude}, lng:${todaysAddress.longitude}},
+              map: map,
+              animation: google.maps.Animation.DROP,
+              title:"${pinTitle}",
+              icon: image
+            });
+            marker.addListener('click', toggleBounce);
+          }
 
-        function toggleBounce() {
-          if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
+          function toggleBounce() {
+            if (marker.getAnimation() !== null) {
+              marker.setAnimation(null);
+            } else {
+              marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+          };
+      </script>`}
+      <script>
+        function checkMap() {
+          if (typeof initMap === 'function') {
+            initMap()
           } else {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 200);
           }
         };
-    </script>`}
-    <script>
-      function checkMap() {
-        if (typeof initMap === 'function') {
-          initMap()
-        } else {
-          setTimeout(() => {
-              window.location.reload(true);
-          }, 200);
-        }
-      };
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARoO29--UJnqVy2U5KcOp9qyrtzNl097c&callback=checkMap"></script>
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARoO29--UJnqVy2U5KcOp9qyrtzNl097c&callback=checkMap"></script>
+    {/if}
   {/if}
 </svelte:head>
 
@@ -463,51 +523,60 @@
     <a href="/"  on:click|preventDefault={logout}>Log out</a>
   </p>
   <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
-  <h2>your smartID is: <strong>{$session.user.smart_id}</strong></h2>
-  <h4>Your mail and packages are currently going to:</h4>
+  <h2>your smartID is: <strong>{$session.user.smart_id.substring(0, 4)}  {$session.user.smart_id.substring(4)}</strong></h2>
+  <h4>{headerStatement}</h4>
   <div id="addressBox">
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <h2 class="calendar-header-h2">
+          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+          {monthNames[month]} {year}
+          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+        </h2>
+      </div>
+      <Calendar items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} on:itemClick={(e)=>itemClick(e.detail)} />
+    </div>
     <div id="currentAddress">
       <div id="leftPanel">
-        {#if $session.addresses[0].nickname}
-          <h5>{$session.addresses[0].nickname}</h5>
+        {#if todaysAddress != null}
+          {#if todaysAddress.nickname}
+            <h5>{todaysAddress.nickname}</h5>
+          {/if}
+          <p>
+            {#if todaysAddress.attention_to}
+              Attention to: {todaysAddress.attention_to}<br>
+            {/if}
+            {$session.user.first_name} {$session.user.last_name}<br>
+            {#if todaysAddress.attention_to}
+              Attention to: {todaysAddress.attention_to}<br>
+            {/if}
+            {#if todaysAddress.business_name}
+              {todaysAddress.business_name}<br>
+            {/if}
+            {todaysAddress.line_one}<br>
+            {#if todaysAddress.line_two}
+              {todaysAddress.line_two}<br>
+            {/if}
+            {#if todaysAddress.unit_number}
+              {todaysAddress.unit_number}<br>
+            {/if}
+            {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
+            {todaysAddress.country}<br>
+            <a href="tel:{phone}">{phone}</a><br>
+          </p>
+        {:else}
+          <h5>This date was prior to when you signed up for Sartmail</h5>
+          <p>
+            Who knows where your mail was going during that wild uncivalized time...
+          </p>
         {/if}
-        <p>
-          {#if $session.addresses[0].attention_to}
-            Attention to: {$session.addresses[0].attention_to}<br>
-          {/if}
-          {$session.user.first_name} {$session.user.last_name}<br>
-          {#if $session.addresses[0].attention_to}
-            Attention to: {$session.addresses[0].attention_to}<br>
-          {/if}
-          {#if $session.addresses[0].business_name}
-            {$session.addresses[0].business_name}<br>
-          {/if}
-          {$session.addresses[0].line_one}<br>
-          {#if $session.addresses[0].line_two}
-            {$session.addresses[0].line_two}<br>
-          {/if}
-          {#if $session.addresses[0].unit_number}
-            {$session.addresses[0].unit_number}<br>
-          {/if}
-          {$session.addresses[0].city}, {$session.addresses[0].state}, {$session.addresses[0].zip_code}<br>
-          {$session.addresses[0].country}<br>
-          <a href="tel:{phone}">{phone}</a><br>
-        </p>
       </div>
     </div>
 
-    <div id="map"></div>
+    {#if todaysAddress != null}
+      <div id="map"></div>
+    {/if}
   </div>
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <h1>
-        <button on:click={()=>year--}>&Lt;</button>
-        <button on:click={()=>prev()}>&lt;</button>
-        {monthNames[month]} {year}
-        <button on:click={()=>next()}>&gt;</button>
-        <button on:click={()=>year++}>&Gt;</button>
-      </h1>
-    </div>
-    <Calendar items={items} year={year} month={month} />
-    </div>
 {/if}

@@ -1,13 +1,19 @@
 <div class="calendar">
 	{#each headers as header}
-	<span class="day-name" on:click={()=>dispatch('headerClick',header)}>{header}</span>
+	<span class="day-name">{header}</span>
 	{/each}
 
 	{#each days as day}
 		{#if day.enabled}
-			<span class="day" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+      {#if day.date.toDateString() == now.toDateString()}
+        <span class="day day-today" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+		  {:else if day.date == $session.currentDate}
+        <span class="day day-selected" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+      {:else}
+        <span class="day" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+      {/if}
 		{:else}
-			<span class="day day-disabled" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+			<span class="day day-disabled">{day.name}</span>
 		{/if}
 	{/each}
 		
@@ -116,7 +122,11 @@
 </div>
 
 <script>
+	import { goto, stores } from '@sapper/app';
 	import {createEventDispatcher } from 'svelte';
+	import { standardizeDates } from '../routes/utils.js';
+
+  const { session } = stores();
 
   export let items = [];
 
@@ -124,7 +134,7 @@
 	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   let rowCount = 0;
 	let headers = [];
-	let now = new Date();
+  let now = standardizeDates(new Date());
 	export let year = now.getFullYear();		//	this is the month & year displayed
 	export let month = now.getMonth();
 	let eventText="Click an item or date";
@@ -183,9 +193,8 @@
 		}
 		//	show the days in this month (enabled) - always 28 - 31
 		for (let i=0;i<daysInThisMonth;i++) {
-      let d = new Date(year,month,i+1);
-			if (i==0) days.push({name:monthAbbrev+' '+(i+1),enabled:true,date:d,});
-			else days.push({name:''+(i+1),enabled:true,date:d,});
+      let d = standardizeDates(new Date(year,month,i+1));
+			days.push({name:''+(i+1),enabled:true,date:d,});
 		}
 		//	show any days to fill up the last row (disabled) - always less than 7
 		for (let i=0;days.length%7;i++) {
@@ -207,23 +216,22 @@
       return Math.ceil((treatAsUTC(endDate) - treatAsUTC(startDate)) / millisecondsPerDay);
   }
 
-
 	function findRowCol(start, end) {
-    let startDate = new Date(start);
-    if (startDate < new Date(year, month, 1)) {
-      startDate = new Date(year, month, 1)
+    let startDate = start;
+    if (startDate < standardizeDates(new Date(year, month, 1))) {
+      startDate = standardizeDates(new Date(year, month, 1))
     }
-    let endDate = new Date(year, month + 1, 0);
+    let endDate = standardizeDates(new Date(year, month + 1, 0));
     if (end && end != "") {
-      const tempEndDate = new Date(end);
-      if (tempEndDate < new Date(year, month + 1, 0)) {
+      const tempEndDate = end;
+      if (tempEndDate < standardizeDates(new Date(year, month + 1, 0))) {
         endDate = tempEndDate;
       }
     }
     const numberOfDays = daysBetween(startDate, endDate);
 		for (let i=0;i<days.length;i++) {
 			let d = days[i].date;
-			if (d.getYear() === startDate.getYear()
+			if (d.getFullYear() === startDate.getFullYear()
 				&& d.getMonth() === startDate.getMonth()
 				&& d.getDate() === startDate.getDate()) {
 				  return {days: numberOfDays,row:Math.floor(i/7)+2,col:i%7+1};
@@ -232,15 +240,6 @@
 		return null;	
 	}
 
-	function itemClick(e) {
-		eventText='itemClick '+JSON.stringify(e) + ' localtime='+e.date.toString();
-	}
-	function dayClick(e) {
-		eventText='onDayClick '+JSON.stringify(e) + ' localtime='+e.date.toString();
-	}
-	function headerClick(e) {
-		eventText='onHheaderClick '+JSON.stringify(e);
-	}
 	function next() {
 		month++;
 		if (month == 12) {
@@ -263,9 +262,10 @@
 .calendar {
   display: grid;
   width: 100%;
+  height: 400px;
   grid-template-columns: repeat(7, minmax(14%, 1fr));
-  grid-template-rows: 50px;
-  grid-auto-rows: 90px;
+  grid-template-rows: 30px;
+  grid-auto-rows: 1fr;
   overflow: auto;
 }
 .day {
@@ -279,6 +279,12 @@
   color: #98a0a6;
   position: relative;
   z-index: 1;
+}
+.day-today {
+  background-color: var(--primaryFade);
+}
+.day-selected {
+  background-color: var(--primaryAccentFade);
 }
 .day:nth-of-type(7n + 7) {
   border-right: 0;
@@ -343,6 +349,7 @@
 .task {
   border-left-width: 3px;
   padding: 0;
+  height: 6px;
   margin: 10px;
   border-left-style: solid;
   font-size: 14px;

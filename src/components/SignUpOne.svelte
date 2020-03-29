@@ -127,7 +127,7 @@
     <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID:</label>
     <br>
     {#each $smartIDOptions as smartIDOption}
-      <label class="radioLabel"><input type="radio" value={smartIDOption} bind:group={$user.smart_id}>  {smartIDOption}</label>
+      <label class="radioLabel"><input type="radio" value={smartIDOption} bind:group={$user.smart_id}>  {smartIDOption.substring(0, 4)}  {smartIDOption.substring(4)}</label>
       <br>
     {/each}
   </div>

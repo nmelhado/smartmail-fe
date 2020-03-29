@@ -1,9 +1,10 @@
 
 :root {
   --primary: #55D6A4;
+  --primaryFade: rgb(217, 235, 228);
   --secondary: #1BE7FF;
   --primaryAccent: #1AC8ED;
-  --primaryAccentFade: rgb(126, 192, 207);
+  --primaryAccentFade: rgb(208, 234, 240);
   --secondaryAccent: #48BEFF;
   --tertiaryAccent: #3DFAFF;
   --veryLightGray: #f8f8fa;
