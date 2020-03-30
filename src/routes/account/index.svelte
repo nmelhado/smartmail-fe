@@ -2,7 +2,7 @@
 	import { goto, stores } from '@sapper/app';
 	import { post, standardizeDates } from '../utils.js';
 	import Calendar from '../../components/Calendar.svelte'; 
-	import AddressChangeOne from '../../components/AddressChangeOne.svelte'; 
+	import AddressChange from '../../components/AddressChange.svelte'; 
 	import Map from '../../components/Map.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label} from '@smui/button';
@@ -233,10 +233,7 @@
     <a href="/"  on:click|preventDefault={logout}>Log out</a>
   </p>
   {#if $addressChangeActive}
-    {#if !$addressStepOneComplete}
-      <AddressChangeOne />
-    {:else}
-    {/if}
+    <AddressChange />
   {/if}
   <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
   <h2>your smartID is: <strong>{$session.user.smart_id.substring(0, 4)}  {$session.user.smart_id.substring(4)}</strong></h2>
