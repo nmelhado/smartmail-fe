@@ -1,14 +1,60 @@
 <script>
-  import { addressStepOneComplete } from '../routes/stores.js';
+  import { 
+    addressChangeActive, 
+    addressStepOneComplete, 
+    addressStepTwoComplete, 
+    addressStepThreeComplete, 
+    address,
+    address_type,
+    start_date,
+    end_date } from '../routes/stores.js';
   import AddressChangeOne from './AddressChangeOne';
+  import AddressChangeTwo from './AddressChangeTwo';
+  import AddressChangeThree from './AddressChangeThree';
   import Paper from '@smui/paper';
   
+  $address = {
+    nickname: '', // optional
+    line_one: '',
+    line_two: '', // optional
+    unit_number: '', // optional
+    business_name: '', // optional
+    attention_to: '', // optional
+    city: '',
+    state: '',
+    zip_code: '',
+    country: 'United States',
+    phone: '', // optional
+  };
+
+  function cancel() {
+    $address_type = "";
+    $start_date = null;
+    $end_date = null;
+    $address = {
+      nickname: '', // optional
+      line_one: '',
+      line_two: '', // optional
+      unit_number: '', // optional
+      business_name: '', // optional
+      attention_to: '', // optional
+      city: '',
+      state: '',
+      zip_code: '',
+      country: 'United States',
+      phone: '' // optional
+    };
+    $addressStepOneComplete = false;
+    $addressStepTwoComplete = false;
+    $addressStepThreeComplete = false;
+    $addressChangeActive = false;
+  }
 </script>
 
 <style>
   #paper-back {
     position: fixed;
-    background-color: rgba(80, 80, 80, 0.3);
+    background-color: rgba(80, 80, 80, 0.4);
     height: 100%;
     width: 100%;
     top: 0;
@@ -20,17 +66,22 @@
     position: fixed;
     left: 50%;
     top: 50%;
+    max-height: 85%;
+    overflow-y: auto;
     transform: translate(-50%, -50%);
     z-index: 96;
   }
 </style>
 
-<div id="paper-back">
-  <div id="paper-holder">
+<div id="paper-back"  on:click|stopPropagation={cancel}>
+  <div id="paper-holder" on:click|stopPropagation={()=>{}}>
     <Paper>
       {#if !$addressStepOneComplete}
-        <AddressChangeOne />
-      {:else}
+        <AddressChangeOne cancel={cancel} />
+      {:else if !$addressStepTwoComplete}
+        <AddressChangeTwo cancel={cancel} />
+      {:else if !$addressStepThreeComplete}
+        <AddressChangeThree cancel={cancel} />
       {/if}
     </Paper>
   </div>

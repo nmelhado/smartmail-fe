@@ -5,10 +5,12 @@
 
 	{#each days as day}
 		{#if day.enabled}
-      {#if day.date.toDateString() == now.toDateString()}
-        <span class="day day-today" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
-		  {:else if day.date == $session.currentDate}
-        <span class="day day-selected" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+      {#if startLimit != null && standardizeDates(day.date) < standardizeDates(startLimit)}
+        <span class="day day-invalid" style="pointer-events: none; cursor: not-allowed;">{day.name}</span>
+      {:else if (start != null && day.date.toDateString() == start.toDateString()) || (end != null && day.date.toDateString() == end.toDateString())}
+        <span class="day day-select" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
+		  {:else if start != null && end != null && standardizeDates(start) < standardizeDates(day.date) && standardizeDates(day.date) < standardizeDates(end)}
+        <span class="day day-between" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
       {:else}
         <span class="day" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
       {/if}
@@ -16,6 +18,8 @@
 			<span class="day day-disabled">{day.name}</span>
 		{/if}
 	{/each}
+
+
 		
 	{#each items as item}
 		<section
@@ -113,16 +117,15 @@
       </section>
     {/if}
 	{/each}
+
 </div>
 
 <script>
-	import { goto, stores } from '@sapper/app';
+	import { stores } from '@sapper/app';
 	import {createEventDispatcher } from 'svelte';
 	import { standardizeDates } from '../routes/utils.js';
 
   const { session } = stores();
-
-  export let items = [];
 
 	var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -131,6 +134,7 @@
   let now = standardizeDates(new Date());
 	export let year = now.getFullYear();		//	this is the month & year displayed
 	export let month = now.getMonth();
+	export let start, end, items, startLimit;
 	let eventText="Click an item or date";
 
 	var days = [];	//	The days to display in each box
@@ -166,8 +170,8 @@
 	// choose what date/day gets displayed in each date box.
 	function initContent() {
 		headers = dayNames;
-		initMonth();
-		initMonthItems();
+    initMonth();
+    initMonthItems();
 	}
 
 	function initMonth() {
@@ -236,119 +240,123 @@
 </script>
 
 <style>
-.calendar {
-  display: grid;
-  width: 100%;
-  height: 400px;
-  grid-template-columns: repeat(7, minmax(14%, 1fr));
-  grid-template-rows: 30px;
-  grid-auto-rows: 1fr;
-  overflow: auto;
-}
-.day {
-  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
-  border-right: 1px solid rgba(166, 168, 179, 0.12);
-  text-align: right;
-  padding: 14px 20px;
-  letter-spacing: 1px;
-  font-size: 14px;
-  box-sizing: border-box;
-  color: #98a0a6;
-  position: relative;
-  z-index: 1;
-  cursor: pointer;
-}
-.day-today {
-  background-color: var(--primaryFade);
-}
-.day-selected {
-  background-color: var(--primaryAccentFade);
-}
-.day:nth-of-type(7n + 7) {
-  border-right: 0;
-}
-.day:nth-of-type(n + 1):nth-of-type(-n + 7) {
-  grid-row: 1;
-}
-.day:nth-of-type(n + 8):nth-of-type(-n + 14) {
-  grid-row: 2;
-}
-.day:nth-of-type(n + 15):nth-of-type(-n + 21) {
-  grid-row: 3;
-}
-.day:nth-of-type(n + 22):nth-of-type(-n + 28) {
-  grid-row: 4;
-}
-.day:nth-of-type(n + 29):nth-of-type(-n + 35) {
-  grid-row: 5;
-}
-.day:nth-of-type(n + 36):nth-of-type(-n + 42) {
-  grid-row: 6;
-}
-.day:nth-of-type(n + 43):nth-of-type(-n + 49) {
-  grid-row: 7;
-}
-.day:nth-of-type(7n + 1) {
-  grid-column: 1/1;
-}
-.day:nth-of-type(7n + 2) {
-  grid-column: 2/2;
-}
-.day:nth-of-type(7n + 3) {
-  grid-column: 3/3;
-}
-.day:nth-of-type(7n + 4) {
-  grid-column: 4/4;
-}
-.day:nth-of-type(7n + 5) {
-  grid-column: 5/5;
-}
-.day:nth-of-type(7n + 6) {
-  grid-column: 6/6;
-}
-.day:nth-of-type(7n + 7) {
-  grid-column: 7/7;
-}
-.day-name {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--lightGray);
-  text-align: center;
-  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
-  line-height: 50px;
-  font-weight: 500;
-}
-.day-disabled {
-  color: rgba(152, 160, 166, 0.5);
-  background-color: var(--veryLightGray);
-  cursor: not-allowed;
-}
+  .calendar {
+    display: grid;
+    width: 100%;
+    height: 300px;
+    grid-template-columns: repeat(7, minmax(14%, 1fr));
+    grid-template-rows: 30px;
+    grid-auto-rows: 1fr;
+    overflow: auto;
+  }
+  .day {
+    border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+    border-right: 1px solid rgba(166, 168, 179, 0.12);
+    text-align: right;
+    padding: 14px 20px;
+    letter-spacing: 1px;
+    font-size: 14px;
+    box-sizing: border-box;
+    color: #98a0a6;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+  }
+  .day-select {
+    background-color: var(--primaryFade);
+  }
+  .day-between {
+    background-color: var(--primaryAccentFade);
+  }
+  .day-invalid {
+    background-color: var(--invalidRed);
+  }
+  .day:nth-of-type(7n + 7) {
+    border-right: 0;
+  }
+  .day:nth-of-type(n + 1):nth-of-type(-n + 7) {
+    grid-row: 1;
+  }
+  .day:nth-of-type(n + 8):nth-of-type(-n + 14) {
+    grid-row: 2;
+  }
+  .day:nth-of-type(n + 15):nth-of-type(-n + 21) {
+    grid-row: 3;
+  }
+  .day:nth-of-type(n + 22):nth-of-type(-n + 28) {
+    grid-row: 4;
+  }
+  .day:nth-of-type(n + 29):nth-of-type(-n + 35) {
+    grid-row: 5;
+  }
+  .day:nth-of-type(n + 36):nth-of-type(-n + 42) {
+    grid-row: 6;
+  }
+  .day:nth-of-type(n + 43):nth-of-type(-n + 49) {
+    grid-row: 7;
+  }
+  .day:nth-of-type(7n + 1) {
+    grid-column: 1/1;
+  }
+  .day:nth-of-type(7n + 2) {
+    grid-column: 2/2;
+  }
+  .day:nth-of-type(7n + 3) {
+    grid-column: 3/3;
+  }
+  .day:nth-of-type(7n + 4) {
+    grid-column: 4/4;
+  }
+  .day:nth-of-type(7n + 5) {
+    grid-column: 5/5;
+  }
+  .day:nth-of-type(7n + 6) {
+    grid-column: 6/6;
+  }
+  .day:nth-of-type(7n + 7) {
+    grid-column: 7/7;
+  }
+  .day-name {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--lightGray);
+    text-align: center;
+    border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+    line-height: 50px;
+    font-weight: 500;
+  }
+  .day-disabled {
+    color: rgba(152, 160, 166, 0.5);
+    background-color: var(--veryLightGray);
+    cursor: not-allowed;
+  }
 
-.task {
-  border-left-width: 3px;
-  padding: 0;
-  height: 6px;
-  margin: 10px;
-  border-left-style: solid;
-  font-size: 14px;
-  position: relative;
-  align-self: center;
-	z-index:2;
-  border-radius: 15px;
-  pointer-events: none;
-}
-.task--secondary {
-  background: var(--primary);
-  border: 0;
-  border-radius: 14px;
-  box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
-}
-.task--primary {
-  background: var(--primaryAccent);
-  border: 0;
-  border-radius: 14px;
-  box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
-}
+  .task {
+    border-left-width: 3px;
+    padding: 0;
+    height: 6px;
+    margin: 10px;
+    border-left-style: solid;
+    font-size: 14px;
+    position: relative;
+    align-self: center;
+    z-index:2;
+    border-radius: 15px;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  .task--secondary {
+    background: var(--primary);
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
+  }
+  .task--primary {
+    background: var(--primaryAccent);
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
+  }
 
 </style>
 
