@@ -12,7 +12,12 @@
   import AddressChangeTwo from './AddressChangeTwo';
   import AddressChangeThree from './AddressChangeThree';
   import Paper from '@smui/paper';
+  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  import Button, {Label} from '@smui/button';
   
+  let errorsPresent;
+  let submitErrors;
+
   $address = {
     nickname: '', // optional
     line_one: '',
@@ -49,6 +54,10 @@
     $addressStepThreeComplete = false;
     $addressChangeActive = false;
   }
+
+  function goBack(e) {
+    $addressStepTwoComplete = false;
+  }
 </script>
 
 <style>
@@ -74,6 +83,16 @@
 </style>
 
 <div id="paper-back"  on:click|stopPropagation={cancel}>
+  <div on:click|stopPropagation={()=>{}}>
+    <Dialog style="z-index: 97;" bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={goBack}>
+      <Title id="event-title">{submitErrors}</Title>
+      <Actions>
+        <Button action="all" default use={[InitialFocus]}>
+          <Label>Ok</Label>
+        </Button>
+      </Actions>
+    </Dialog>
+  </div>
   <div id="paper-holder" on:click|stopPropagation={()=>{}}>
     <Paper>
       {#if !$addressStepOneComplete}
@@ -81,7 +100,7 @@
       {:else if !$addressStepTwoComplete}
         <AddressChangeTwo cancel={cancel} />
       {:else if !$addressStepThreeComplete}
-        <AddressChangeThree cancel={cancel} />
+        <AddressChangeThree cancel={cancel} errorsPresent={errorsPresent} bind:submitErrors={submitErrors} />
       {/if}
     </Paper>
   </div>

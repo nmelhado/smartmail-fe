@@ -137,6 +137,16 @@
   .calendar-container {
     width: 80%;
     margin: 0 auto;
+    border: solid 1px var(--lightGray);
+  }
+
+  .calendar-footer-h2 {
+    color: var(--primaryAccent);
+  }
+
+  .calendar-footer {
+    display: flex;
+    justify-content: space-evenly;
   }
 
   .alignRight {
@@ -148,17 +158,17 @@
   <Title>Create an Address Change</Title>
   <Content>
     <p class="{error ? "error" : ""}">(Step 2 of 3) Please select the start date {$address_type == "long_term" ? "" : "and end date "} for your address change:</p>
+    <h2 class="calendar-footer-h2">
+      {monthNames[month]} {year}
+    </h2>
     <div class="calendar-container">
-      <div class="calendar-header">
-        <h2 class="calendar-header-h2">
-          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
-          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
-          {monthNames[month]} {year}
-          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
-          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
-        </h2>
-      </div>
       <CalendarDatePicker startLimit={startLimit} items={items} start={$start_date} end={$end_date} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
+      <div class="calendar-footer">
+        <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+        <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+        <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+        <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+      </div>
     </div>
     {#if ($address_type == "long_term" && $start_date != null) || ($address_type != "long_term" && $start_date != null && $end_date != null)}
       <h3 class="date-informer">Selected date{$address_type == "long_term" ? "" : "s"} {$start_date.toDateString()}{$address_type != "long_term" ? " - " + $end_date.toDateString() : ""}</h3>

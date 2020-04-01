@@ -6,7 +6,6 @@
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
   import Button, {Label} from '@smui/button';
-  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
   import {Title as PaperTitle, Subtitle, Content} from '@smui/paper';
 
   const { session } = stores();
@@ -91,7 +90,7 @@
     "Wyoming"
   ]
 
-  let submitErrors;
+  export let submitErrors, errorsPresent;
 	async function submit() {
 		const response = await post(`manage/change_address`, { address, status: $address_type, start_date: $start_date, end_date: $end_date });
 
@@ -113,10 +112,10 @@
       cancel()
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      console.log(submitErrors);
+      errorsPresent.open();
     }
   }
-  let errorsPresent;
   
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
@@ -166,16 +165,6 @@
   <PaperTitle>Create an Address Change</PaperTitle>
   <Content>
     <p>(Step 3 of 3) Please provide the new address information:</p>
-
-    <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
-      <Title id="event-title">{submitErrors}</Title>
-      <Actions>
-        <Button action="all" default use={[InitialFocus]}>
-          <Label>Ok</Label>
-        </Button>
-      </Actions>
-    </Dialog>
-
     <ListErrors {errors}/>
     <form on:submit|preventDefault={verify}>
       <Textfield  class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>

@@ -1,15 +1,22 @@
 <script>
 	import { goto, stores } from '@sapper/app';
+  import { get } from '../utils.js';
 	import Account from '../../components/Account.svelte'; 
 
   const { session } = stores();
-
-  if (!$session.user || !$session.user.first_name || $session.user.first_name == "") {
-    goto('login');
+  
+  async function checkConnection() {
+    const response = await get(`auth/check-credentials`);
+    if (!response.ok) {
+      delete($session.user);
+      delete($session.addresses);
+      goto('login');
+    }
   }
+  checkConnection();
 </script>
 
 
 {#if $session.user}
-  <Account />
+  <Account checkConnection={checkConnection}/>
 {/if}

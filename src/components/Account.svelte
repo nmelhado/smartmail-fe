@@ -1,6 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
 	import { post, standardizeDates } from '../routes/utils.js';
+	import AddressCard from './AddressCard.svelte'; 
 	import Calendar from './Calendar.svelte'; 
 	import AddressChange from './AddressChange.svelte'; 
 	import Map from './Map.svelte'; 
@@ -9,6 +10,8 @@
   import { addressChangeActive, addressStepOneComplete } from '../routes/stores.js';
 
   const { session } = stores();
+
+  export let checkConnection;
 
 	async function logout(event) {
 		await post(`auth/logout`);
@@ -139,11 +142,9 @@
     processTodaysAddresses();
   }
   function launchAddressChange() {
+    checkConnection();
     $addressChangeActive = true;
-    console.log('BOOM!!')
   }
-
-  let addressChangeDialog;
 
 </script>
 
@@ -170,12 +171,6 @@
     color: var(--gray);
     margin: 0.5em 0 1em;
   }
-
-  h5 {
-    font-size: 1.3em;
-    color: var(--primary);
-    font-weight: 700;
-  }
   
   #logOut {
     margin: 0 0 40px;
@@ -189,23 +184,6 @@
     width: 94%;
     margin: 0 auto;
     box-shadow: 0 0 20px 0 var(--lightGray);
-  }
-
-  #currentAddress {
-    flex-grow: 2;
-    display: table;
-    min-width: 300px;
-    border: 1px solid var(--lightGray);
-    background-color: var(--veryLightGray);
-    border-right: 0;
-    border-left: 0;
-    height: 450px;
-  }
-
-  #leftPanel {
-    display: table-cell;
-    vertical-align: middle;
-    margin: 0 auto;
   }
   
   .calendar-container {
@@ -234,14 +212,6 @@
     height: 450px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
-  }
-
-  .primary {
-    color: var(--primaryAccent);
-  }
-
-  .secondary {
-    color: var(--primary);
   }
 </style>
 
@@ -272,41 +242,7 @@
     </div>
     <Calendar items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
   </div>
-  <div id="currentAddress">
-    <div id="leftPanel">
-      {#if todaysAddress != null}
-        <h5 class="{todaysAddress.address_type == "long_term" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "long_term" ? "Long-term Address" : "Temporary Address"}</h5>
-        <p>
-          {#if todaysAddress.attention_to}
-            Attention to: {todaysAddress.attention_to}<br>
-          {/if}
-          {$session.user.first_name} {$session.user.last_name}<br>
-          {#if todaysAddress.attention_to}
-            Attention to: {todaysAddress.attention_to}<br>
-          {/if}
-          {#if todaysAddress.business_name}
-            {todaysAddress.business_name}<br>
-          {/if}
-          {todaysAddress.line_one}<br>
-          {#if todaysAddress.line_two}
-            {todaysAddress.line_two}<br>
-          {/if}
-          {#if todaysAddress.unit_number}
-            {todaysAddress.unit_number}<br>
-          {/if}
-          {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
-          {todaysAddress.country}<br>
-          <a href="tel:{phone}">{phone}</a><br>
-        </p>
-      {:else}
-        <h5>This date was prior to when you signed up for Sartmail</h5>
-        <p>
-          Who knows where your mail was going during that wild uncivalized time...
-        </p>
-      {/if}
-    </div>
-  </div>
-
+  <AddressCard todaysAddress={todaysAddress} phone={phone} />
   {#if todaysAddress != null}
     <Map todaysAddress={todaysAddress} pinTitle={pinTitle} />
   {:else if tempHolder}

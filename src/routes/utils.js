@@ -19,6 +19,17 @@ export function get(endpoint) {
 	}).then(r => r.json());
 }
 
+export function del(endpoint, data) {
+	return fetch(endpoint, {
+		method: 'DELETE',
+    credentials: 'include',
+    body: JSON.stringify(data),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}).then(r => r.json());
+}
+
 export function standardizeDates(date) {
   return new Date(new Date(date).toDateString())
 }

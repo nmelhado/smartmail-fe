@@ -242,7 +242,7 @@
   height: 400px;
   grid-template-columns: repeat(7, minmax(14%, 1fr));
   grid-template-rows: 30px;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: minmax(61px, 1fr);
   overflow: auto;
 }
 .day {
@@ -341,13 +341,13 @@
   background: var(--primary);
   border: 0;
   border-radius: 14px;
-  box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
+  box-shadow: 0 10px 14px rgba(55, 179, 81, 0.301);
 }
 .task--primary {
   background: var(--primaryAccent);
   border: 0;
   border-radius: 14px;
-  box-shadow: 0 10px 14px rgba(71, 187, 255, 0.301);
+  box-shadow: 0 10px 14px rgba(56, 151, 206, 0.301);
 }
 
 </style>

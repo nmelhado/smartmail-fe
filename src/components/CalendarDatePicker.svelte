@@ -5,7 +5,7 @@
 
 	{#each days as day}
 		{#if day.enabled}
-      {#if startLimit != null && standardizeDates(day.date) < standardizeDates(startLimit)}
+      {#if (startLimit != null && standardizeDates(day.date) < standardizeDates(startLimit)) || standardizeDates(day.date) <= standardizeDates(new Date())}
         <span class="day day-invalid" style="pointer-events: none; cursor: not-allowed;">{day.name}</span>
       {:else if (start != null && day.date.toDateString() == start.toDateString()) || (end != null && day.date.toDateString() == end.toDateString())}
         <span class="day day-select" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
@@ -246,7 +246,7 @@
     height: 300px;
     grid-template-columns: repeat(7, minmax(14%, 1fr));
     grid-template-rows: 30px;
-    grid-auto-rows: 1fr;
+    grid-auto-rows: minmax(45px, 1fr);
     overflow: auto;
   }
   .day {
