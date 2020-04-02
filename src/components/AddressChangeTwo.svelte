@@ -122,7 +122,7 @@
 <style>
   .date-informer {
     text-align: center;
-    margin: 45px 0 0;
+    margin: 25px 0 0;
     color: var(--primary);
   }
 
@@ -143,6 +143,7 @@
 
   .calendar-footer-h2 {
     color: var(--primaryAccent);
+    margin: 0 0 5px;
   }
 
   .calendar-footer {
@@ -176,11 +177,11 @@
     {/if}
     <form on:submit|preventDefault={verify}>
       <div class="alignRight">
-        <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel" on:click={verify}>Next Step</Label></Button>
+        <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
       </div>
     </form>
     <div class="alignRight">
-      <Button color="gray" class="submitButton" variant="unelevated"  on:click={previousStep} ><Label class="submitButtonLabel">Previous Step</Label></Button>
+      <Button color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
     </div>
   </Content>
 </div>

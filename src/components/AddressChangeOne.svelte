@@ -34,7 +34,17 @@
   }
 
   .alignRight {
-    text-align: right;
+    text-align: center;
+  }
+
+  .radioLabel {
+    font-size: 1.3em;
+    padding: 10px 10px 10px 0;
+  }
+
+  #options {
+    display: flex;
+    justify-content: space-around;
   }
 </style>
 
@@ -43,14 +53,16 @@
   <Content>
     <p class="{error ? "error" : ""}">(Step 1 of 3) Please select the address change type:</p>
     <form on:submit|preventDefault={verify}>
-      <FormField>
-        <Radio bind:group={$address_type} value="long_term" />
-        <span slot="label">{longTerm}</span>
-      </FormField>
-      <FormField>
-        <Radio bind:group={$address_type} value="temporary" />
-        <span slot="label">{temporary}</span>
-      </FormField>
+      <div id="options">
+        <FormField>
+          <Radio class="radioButton" bind:group={$address_type} value="long_term" />
+          <span slot="label" class="radioLabel">{longTerm}</span>
+        </FormField>
+        <FormField>
+          <Radio class="radioButton" bind:group={$address_type} value="temporary" />
+          <span slot="label" class="radioLabel">{temporary}</span>
+        </FormField>
+      </div>
       <div class="alignRight">
         <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel" on:click={verify} diabled={$address_type == null || $address_type == "" ? true : false}>Next Step</Label></Button>
       </div>

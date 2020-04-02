@@ -111,12 +111,19 @@
   label.invalid {
     color: darkred;
   }
+
+  .centerBlock {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>
 
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
-  <Textfield variant="outlined" label="First name" invalid="{invalid["first_name"]}" class="halfWidth" bind:value={$user.first_name}/>
-  <Textfield variant="outlined" label="Last name" invalid="{invalid["last_name"]}" class="halfWidth" bind:value={$user.last_name}/>
+  <div class="centerBlock">
+    <Textfield variant="outlined" label="First name" invalid="{invalid["first_name"]}" class="halfWidth" bind:value={$user.first_name}/>
+    <Textfield variant="outlined" label="Last name" invalid="{invalid["last_name"]}" class="halfWidth" bind:value={$user.last_name}/>
+  </div>
   <Textfield variant="outlined" label="Phone" invalid="{invalid["phone"]}" class="fullWidth" bind:value={$user.phone}/>
   <Textfield variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={$user.email}>
      <Icon class="material-icons">email</Icon>

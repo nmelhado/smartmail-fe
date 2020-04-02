@@ -154,6 +154,11 @@
     text-align: center;
     margin: 0 auto;
   }
+
+  .centerBlock {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>
 
 <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
@@ -172,14 +177,15 @@
   <Textfield  class="fullWidth" variant="outlined" label="Unit number (optional)" invalid="{invalid["unit_number"]}" bind:value={$origAddress.unit_number}/>
   <Textfield  class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
   <Textfield  class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
-  <Textfield class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
-  <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
-    {#each states as state}
-      <Option value={state} selected={$origAddress.state === state}>{state}</Option>
-    {/each}
-  </Select>
-  
-  <Textfield class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
+  <div class="centerBlock">
+    <Textfield class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
+    <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
+      {#each states as state}
+        <Option value={state} selected={$origAddress.state === state}>{state}</Option>
+      {/each}
+    </Select>
+    <Textfield class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
+  </div>
   <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
   <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
   <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>

@@ -69,13 +69,11 @@ code {
 
 .halfWidth {
   width: 49%;
-  width: calc(50% - 2px);
   margin: 10px 0;
 }
 
 .thirdWidth {
   width: 32%;
-  width: calc(33.33% - 3px);
   margin: 10px 0;
 }
 
@@ -90,7 +88,21 @@ code {
   font-size: 1.4em;
 }
 
+.tightButton {
+  min-height: 40px;
+  margin-top: 10px;
+  width: 250px;
+}
+
+.tightButtonLabel {
+  font-size: 1.5em;
+}
+
 .homeButton {
   min-height: 40px;
   flex-grow: 12;
+}
+
+.radioButton {
+  padding: 10px 10px 10px 0;
 }

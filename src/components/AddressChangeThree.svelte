@@ -167,6 +167,16 @@
   .alignRight {
     text-align: right;
   }
+
+  #tight {
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .centerBlock {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>
 
 <div id="paper-inner">
@@ -175,28 +185,31 @@
     <p>(Step 3 of 3) Please provide the new address information:</p>
     <ListErrors {errors}/>
     <form on:submit|preventDefault={verify}>
-      <Textfield  class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Unit number (optional)" invalid="{invalid["unit_number"]}" bind:value={$origAddress.unit_number}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
-      <Textfield class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
-      <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
-        {#each states as state}
-          <Option value={state} selected={$origAddress.state === state}>{state}</Option>
-        {/each}
-      </Select>
-      
-      <Textfield class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
-      <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
+      <div id="tight">
+        <Textfield  class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Unit number (optional)" invalid="{invalid["unit_number"]}" bind:value={$origAddress.unit_number}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
+        <div class="centerBlock">
+          <Textfield class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
+          <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
+            {#each states as state}
+              <Option value={state} selected={$origAddress.state === state}>{state}</Option>
+            {/each}
+          </Select>
+          <Textfield class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
+        </div>
+        <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
+      </div>
       <div class="alignRight">
-        <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Submit</Label></Button>
+        <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel">Submit</Label></Button>
       </div>
     </form>
     <div class="alignRight">
-      <Button color="gray" class="submitButton" variant="unelevated"  on:click={previousStep} ><Label class="submitButtonLabel">Previous Step</Label></Button>
+      <Button color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
     </div>
   </Content>
 </div>
