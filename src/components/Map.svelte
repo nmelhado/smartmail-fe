@@ -284,7 +284,7 @@
       position,
       map: map,
       animation: google.maps.Animation.DROP,
-      title:"${pinTitle}",
+      title:pinTitle,
       icon: image
     });
     marker.addListener('click', toggleBounce);

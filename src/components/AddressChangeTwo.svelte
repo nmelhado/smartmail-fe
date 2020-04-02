@@ -26,7 +26,8 @@
   let items = currentMonthAddresses.map( address => {
     let endDate = ""
     if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = standardizeDates(address.end_date)
+      endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
+      console.log(`address ID:    ${address.id},\address.end_date:    ${address.end_date.substring(0,10).replace(/-/g, '\/')},\nendDate:    ${endDate}`)
     }
     return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
   })
@@ -35,7 +36,7 @@
     items = currentMonthAddresses.map( address => {
       let endDate = ""
       if (typeof address.end_date != "undefined" && address.end_date != "") {
-        endDate = standardizeDates(address.end_date)
+        endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       }
       return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
     })

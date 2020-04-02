@@ -11,7 +11,7 @@ export function post(req, res) {
           if (address.address_type == "long_term" && !address.end_date) {
             let newEndDate = new Date(response.address.start_date.split("T")[0])
             newEndDate.setDate(newEndDate.getDate() - 1);
-            address.end_date = newEndDate
+            address.end_date = newEndDate.toISOString()
           }
           return address;
         })

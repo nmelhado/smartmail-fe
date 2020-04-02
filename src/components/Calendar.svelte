@@ -7,7 +7,7 @@
 		{#if day.enabled}
       {#if day.date.toDateString() == now.toDateString()}
         <span class="day day-today" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
-		  {:else if day.date == $session.currentDate}
+		  {:else if day.date == currentDate}
         <span class="day day-selected" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
       {:else}
         <span class="day" on:click={()=>dispatch('dayClick',day)}>{day.name}</span>
@@ -20,7 +20,7 @@
 	{#each items as item}
 		<section
 			class="task {item.className}"
-      style="grid-column: {item.startCol} / span {item.len};      
+      style="grid-column: {item.startCol} / span {item.len + 1 + item.startCol < 8 ? item.len + 1 : 8 - item.startCol};      
       grid-row: {item.startRow};  
       align-self: {item.isBottom?'end':'center'};"
 			>
@@ -35,7 +35,7 @@
     {#if item.startCol + item.len > 6 && item.startRow + 1 < rowCount}
       <section
         class="task {item.className}"
-        style="grid-column: 1 / span {item.len - (7 - item.startCol)};      
+        style="grid-column: 1 / span {item.len - 7 < 8 ? item.len - (7 - item.startCol) : 7};      
         grid-row: {item.startRow + 1};  
         align-self: {item.isBottom?'end':'center'};"
         >
@@ -51,7 +51,7 @@
     {#if item.startCol + item.len > 14 && item.startRow + 2 < rowCount}
       <section
         class="task {item.className}"
-        style="grid-column: 1 / span {item.len - (14 - item.startCol)};      
+        style="grid-column: 1 / span {item.len - 14 < 8 ? item.len - (14 - item.startCol) : 7};      
         grid-row: {item.startRow + 2};  
         align-self: {item.isBottom?'end':'center'};"
         >
@@ -67,7 +67,7 @@
     {#if item.startCol + item.len > 21 && item.startRow + 3 < rowCount}
       <section
         class="task {item.className}"
-        style="grid-column: 1 / span {item.len - (21 - item.startCol)};      
+        style="grid-column: 1 / span {item.len - 21 < 8 ? item.len - (21 - item.startCol) : 7};      
         grid-row: {item.startRow + 3};  
         align-self: {item.isBottom?'end':'center'};"
         >
@@ -83,7 +83,7 @@
     {#if item.startCol + item.len > 28 && item.startRow + 4 < rowCount}
       <section
         class="task {item.className}"
-        style="grid-column: 1 / span {item.len - (28 - item.startCol)};      
+        style="grid-column: 1 / span {item.len - 28 < 8 ? item.len - (28 - item.startCol) : 7};      
         grid-row: {item.startRow + 4};  
         align-self: {item.isBottom?'end':'center'};"
         >
@@ -99,7 +99,7 @@
     {#if item.startCol + item.len > 35 && item.startRow + 5 < rowCount}
       <section
         class="task {item.className}"
-        style="grid-column: 1 / span {item.len - (35 - item.startCol)};      
+        style="grid-column: 1 / span {item.len - 35 < 8 ? item.len - (35 - item.startCol) : 7};      
         grid-row: {item.startRow + 5};  
         align-self: {item.isBottom?'end':'center'};"
         >
@@ -116,14 +116,14 @@
 </div>
 
 <script>
-	import { goto, stores } from '@sapper/app';
 	import {createEventDispatcher } from 'svelte';
 	import { standardizeDates } from '../routes/utils.js';
 
-  const { session } = stores();
 
   export let items = [];
-
+  export let currentDate;
+  console.log(`items:\n`)
+  console.log(items)
 	var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   let rowCount = 0;
@@ -240,10 +240,11 @@
   display: grid;
   width: 100%;
   height: 400px;
-  grid-template-columns: repeat(7, minmax(14%, 1fr));
+  grid-template-columns: repeat(7, minmax(14.28%, 1fr));
   grid-template-rows: 30px;
   grid-auto-rows: minmax(61px, 1fr);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .day {
   border-bottom: 1px solid rgba(166, 168, 179, 0.12);

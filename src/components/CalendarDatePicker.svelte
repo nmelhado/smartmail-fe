@@ -24,7 +24,7 @@
 	{#each items as item}
 		<section
 			class="task {item.className}"
-      style="grid-column: {item.startCol} / span {item.len};      
+      style="grid-column: {item.startCol} / span {item.len + 1};      
       grid-row: {item.startRow};  
       align-self: {item.isBottom?'end':'center'};"
 			>

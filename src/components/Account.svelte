@@ -31,10 +31,11 @@
     }
     return null
   }
-  $session.currentDate = standardizeDates(new Date())
+  let currentDate = standardizeDates(new Date())
   let tempHolder = true;
+  let resetCalendarCheck = true;
 
-  const todaysAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= $session.currentDate && (!address.end_date || standardizeDates(address.end_date) >= $session.currentDate));
+  const todaysAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= currentDate && (!address.end_date || standardizeDates(address.end_date) >= currentDate));
   let todaysAddress = null;
   if (todaysAddresses.length < 1) {
     tempHolder = false;
@@ -47,7 +48,7 @@
   }
 
   function processTodaysAddresses() {
-    const todaysAddresses = $session.addresses.filter( address => { console.log(`${standardizeDates(address.start_date)} <= ${$session.currentDate}`); return standardizeDates(address.start_date) <= $session.currentDate && (!address.end_date || standardizeDates(address.end_date) >= $session.currentDate)});
+    const todaysAddresses = $session.addresses.filter( address => { return standardizeDates(address.start_date) <= currentDate && (!address.end_date || standardizeDates(address.end_date) >= currentDate)});
     if (todaysAddresses.length < 1) {
       tempHolder = false;
       todaysAddress = null;
@@ -78,13 +79,13 @@
   let headerStatement = 'Your mail and packages are currently going to:';
 
   function processHeaderStatement() {
-    if ($session.currentDate.getDate() != now.getDate()
-        || $session.currentDate.getMonth() != now.getMonth()
-        || $session.currentDate.getFullYear() != now.getFullYear()) {
-        if ($session.currentDate < now) {
-          headerStatement = `On ${$session.currentDate.toDateString()} your mail and packages were going to:`;
+    if (currentDate.getDate() != now.getDate()
+        || currentDate.getMonth() != now.getMonth()
+        || currentDate.getFullYear() != now.getFullYear()) {
+        if (currentDate < now) {
+          headerStatement = `On ${currentDate.toDateString()} your mail and packages were going to:`;
         } else {
-          headerStatement = `On ${$session.currentDate.toDateString()} your mail and packages will go to:`;
+          headerStatement = `On ${currentDate.toDateString()} your mail and packages will go to:`;
         }
     } else {
       headerStatement = 'Your mail and packages are currently going to:';
@@ -95,7 +96,7 @@
   let items = currentMonthAddresses.map( address => {
     let endDate = ""
     if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = standardizeDates(address.end_date)
+      endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
     }
     return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
   })
@@ -104,10 +105,11 @@
     items = currentMonthAddresses.map( address => {
       let endDate = ""
       if (typeof address.end_date != "undefined" && address.end_date != "") {
-        endDate = standardizeDates(address.end_date)
+        endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       }
       return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
-    })
+    });
+    items = items;
 	}
 	function next(period="month") {
     if (period === "year") {
@@ -137,13 +139,17 @@
     processTodaysAddresses();
 	}
 	function dayClick(e) {
-    $session.currentDate = e.date;
+    currentDate = e.date;
     processHeaderStatement();
     processTodaysAddresses();
   }
   function launchAddressChange() {
     checkConnection();
     $addressChangeActive = true;
+  }
+
+  function resetCalendar() {
+    resetCalendarCheck = resetCalendarCheck != true;
   }
 
 </script>
@@ -224,25 +230,40 @@
   <a href="/"  on:click|preventDefault={logout}>Log out</a>
 </p>
 {#if $addressChangeActive}
-  <AddressChange />
+  <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
 <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
 <h2>your smartID is: <strong>{$session.user.smart_id.substring(0, 4)}  {$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 <div id="addressBox">
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <h2 class="calendar-header-h2">
-        <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
-        <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
-        {monthNames[month]} {year}
-        <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
-        <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
-      </h2>
+  {#if !resetCalendarCheck }
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <h2 class="calendar-header-h2">
+          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+          {monthNames[month]} {year}
+          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+        </h2>
+      </div>
+      <Calendar currentDate={currentDate} items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
     </div>
-    <Calendar items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
-  </div>
-  <AddressCard todaysAddress={todaysAddress} phone={phone} />
+  {:else}
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <h2 class="calendar-header-h2">
+          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+          {monthNames[month]} {year}
+          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+        </h2>
+      </div>
+      <Calendar currentDate={currentDate} items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
+    </div>
+  {/if}
+  <AddressCard todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
   {#if todaysAddress != null}
     <Map todaysAddress={todaysAddress} pinTitle={pinTitle} />
   {:else if tempHolder}

@@ -7,8 +7,15 @@
   import Select, {Option} from '@smui/select';
   import Button, {Label} from '@smui/button';
   import {Title as PaperTitle, Subtitle, Content} from '@smui/paper';
+  import { createEventDispatcher } from 'svelte';
 
   const { session } = stores();
+
+  const dispatch = createEventDispatcher();
+
+  function processNewMonth() {
+      dispatch('processNewMonth');
+  }
   
   export let cancel;
 
@@ -103,13 +110,14 @@
           if (address.address_type == "long_term" && !address.end_date) {
             let newEndDate = new Date(response.address.start_date.split("T")[0])
             newEndDate.setDate(newEndDate.getDate() - 1);
-            address.end_date = newEndDate
+            address.end_date = newEndDate.toISOString()
           }
           return address;
         })
       }
       $session.addresses.push(response.address)
-      cancel()
+      processNewMonth();
+      cancel();
 		}
     if (submitErrors != null) {
       console.log(submitErrors);

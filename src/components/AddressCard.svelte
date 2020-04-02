@@ -4,8 +4,16 @@
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 	import { standardizeDates, del } from '../routes/utils.js';
   import Button, {Label} from '@smui/button';
+  import { createEventDispatcher } from 'svelte';
 
   const { session } = stores();
+
+  const dispatch = createEventDispatcher();
+
+  function processNewMonth() {
+      dispatch('processNewMonth');
+      dispatch('resetCalendar');
+  }
 
   export let todaysAddress, phone;
 
@@ -19,7 +27,8 @@
 		submitErrors = response.error;
 
 		if (response.addresses) {
-			$session.addresses = response.addresses;
+      $session.addresses = response.addresses;
+      processNewMonth();
 		}
     if (submitErrors != null) {
       errorsPresent.open()

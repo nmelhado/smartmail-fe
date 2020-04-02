@@ -14,6 +14,15 @@
   import Paper from '@smui/paper';
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  function processNewMonth() {
+      console.log('made it to Address Change');
+      dispatch('processNewMonth');
+      dispatch('resetCalendar');
+  }
   
   let errorsPresent;
   let submitErrors;
@@ -100,7 +109,7 @@
       {:else if !$addressStepTwoComplete}
         <AddressChangeTwo cancel={cancel} />
       {:else if !$addressStepThreeComplete}
-        <AddressChangeThree cancel={cancel} errorsPresent={errorsPresent} bind:submitErrors={submitErrors} />
+        <AddressChangeThree cancel={cancel} errorsPresent={errorsPresent} bind:submitErrors={submitErrors} on:processNewMonth={processNewMonth} />
       {/if}
     </Paper>
   </div>
