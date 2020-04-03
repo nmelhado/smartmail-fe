@@ -1,12 +1,19 @@
 import * as api from '../api.js';
 
 export function put(req, res) {
-	const { address, status, start_date, end_date } = req.body;
+  const submittedAddress = req.body.address;
+  const address = {
+    nickname: submittedAddress.nickname
+  }
+  const start_date = submittedAddress.start_date ? new Date(submittedAddress.start_date).toISOString() : null;
+  const end_date = submittedAddress.end_date ? new Date(submittedAddress.end_date).toISOString() : null;
+  console.log(`start_date: ${start_date}\n\nend_date: ${end_date}`)
+  const id = submittedAddress.id;
 
-  api.put('address', { user: req.session.user, user_id: req.session.user.id, address, status, start_date, end_date }, req.session.token)
+  api.put(`address/${id}`, { address, start_date, end_date }, req.session.token)
   .then(response => {
-    if (response.address) {
-      req.session.addresses = response.addresses
+    if (response.addresses) {
+      req.session.addresses = response.addresses;
     } else {
       console.log(response)
     }

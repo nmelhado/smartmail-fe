@@ -97,7 +97,7 @@
 
 	function dayClick(e) {
     if ($address_type == "long_term" ) {
-      $start_date = e.date; 1;
+      $start_date = e.date;
     } else {
       if (step === 1) {
         $start_date = e.date;

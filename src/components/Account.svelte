@@ -12,6 +12,7 @@
   const { session } = stores();
 
   export let checkConnection;
+  let update = false;
 
 	async function logout(event) {
 		await post(`auth/logout`);
@@ -123,6 +124,7 @@
     }
     processNewMonth();
     processTodaysAddresses();
+    update = false;
 	}
 	function prev(period="month") {
     if (period === "year") {
@@ -137,13 +139,16 @@
     }
     processNewMonth();
     processTodaysAddresses();
+    update = false;
 	}
 	function dayClick(e) {
     currentDate = e.date;
     processHeaderStatement();
     processTodaysAddresses();
+    update = false;
   }
   function launchAddressChange() {
+    update = false;
     checkConnection();
     $addressChangeActive = true;
   }
@@ -263,7 +268,7 @@
       <Calendar currentDate={currentDate} items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
     </div>
   {/if}
-  <AddressCard todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
+  <AddressCard bind:update={update} todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
   {#if todaysAddress != null}
     <Map todaysAddress={todaysAddress} pinTitle={pinTitle} />
   {:else if tempHolder}

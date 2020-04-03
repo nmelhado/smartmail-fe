@@ -5,6 +5,7 @@
 	import { standardizeDates, del } from '../routes/utils.js';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
+  import Update from './Update';
 
   const { session } = stores();
 
@@ -15,7 +16,7 @@
       dispatch('resetCalendar');
   }
 
-  export let todaysAddress, phone;
+  export let todaysAddress, phone, update;
 
   const today = standardizeDates(new Date());
   let submitErrors, errorsPresent;
@@ -33,6 +34,10 @@
     if (submitErrors != null) {
       errorsPresent.open()
     }
+  }
+
+  function toggleUpdate() {
+    update = update == false;
   }
 </script>
 
@@ -88,36 +93,37 @@
         </Actions>
       </Dialog>
       {#if todaysAddress != null}
-        <h5 class="{todaysAddress.address_type == "long_term" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "long_term" ? "Long-term Address" : "Temporary Address"}</h5>
-        <p>
-          {#if todaysAddress.attention_to}
-            Attention to: {todaysAddress.attention_to}<br>
-          {/if}
-          {$session.user.first_name} {$session.user.last_name}<br>
-          {#if todaysAddress.attention_to}
-            Attention to: {todaysAddress.attention_to}<br>
-          {/if}
-          {#if todaysAddress.business_name}
-            {todaysAddress.business_name}<br>
-          {/if}
-          {todaysAddress.line_one}<br>
-          {#if todaysAddress.line_two}
-            {todaysAddress.line_two}<br>
-          {/if}
-          {#if todaysAddress.unit_number}
-            {todaysAddress.unit_number}<br>
-          {/if}
-          {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
-          {todaysAddress.country}<br>
-          <a href="tel:{phone}">{phone}</a><br>
-        </p>
-        {#if !todaysAddress.end_date || standardizeDates(todaysAddress.end_date) > today}
-          <div id="buttons">
-            <Fab color="secondary" on:click={()=>{}} mini><Icon class="material-icons">edit</Icon></Fab>
-            {#if standardizeDates(todaysAddress.start_date) > today}
-              <Fab color="primary" on:click={deleteAddress} mini><Icon class="material-icons">delete_outline</Icon></Fab>
+        {#if !update}
+          <h5 class="{todaysAddress.address_type == "long_term" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "long_term" ? "Long-term Address" : "Temporary Address"}</h5>
+          <p>
+            {$session.user.first_name} {$session.user.last_name}<br>
+            {#if todaysAddress.attention_to}
+              Attention to: {todaysAddress.attention_to}<br>
             {/if}
-          </div>
+            {#if todaysAddress.business_name}
+              {todaysAddress.business_name}<br>
+            {/if}
+            {todaysAddress.line_one}<br>
+            {#if todaysAddress.line_two}
+              {todaysAddress.line_two}<br>
+            {/if}
+            {#if todaysAddress.unit_number}
+              {todaysAddress.unit_number}<br>
+            {/if}
+            {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
+            {todaysAddress.country}<br>
+            <a href="tel:{phone}">{phone}</a><br>
+          </p>
+          {#if !todaysAddress.end_date || standardizeDates(todaysAddress.end_date) > today}
+            <div id="buttons">
+              <Fab color="secondary" on:click={toggleUpdate} mini><Icon class="material-icons">edit</Icon></Fab>
+              {#if standardizeDates(todaysAddress.start_date) > today}
+                <Fab color="primary" on:click={deleteAddress} mini><Icon class="material-icons">delete_outline</Icon></Fab>
+              {/if}
+            </div>
+          {/if}
+        {:else}
+          <Update on:processNewMonth={processNewMonth} bind:todaysAddress={todaysAddress} {phone} bind:update={update} />
         {/if}
       {:else}
         <h5>This date was prior to when you signed up for Sartmail</h5>
