@@ -16,7 +16,7 @@
 
   let startLimit = null;
 
-  export let address_type, addresses, date, open, calendar_type;
+  export let addresses, date, open, calendar_type;
   let pickDate = standardizeDates(date);
 
   let currentMonthAddresses = addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
@@ -26,7 +26,7 @@
       endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       console.log(`address ID:    ${address.id},\address.end_date:    ${address.end_date.substring(0,10).replace(/-/g, '\/')},\nendDate:    ${endDate}`)
     }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
   })
 	function processNewMonth() {
     currentMonthAddresses = addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
@@ -35,7 +35,7 @@
       if (typeof address.end_date != "undefined" && address.end_date != "") {
         endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       }
-      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
     })
   }
   

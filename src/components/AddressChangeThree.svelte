@@ -16,6 +16,10 @@
   function processNewMonth() {
       dispatch('processNewMonth');
   }
+
+  if (!$origAddress.delivery_instructions) {
+    $origAddress.delivery_instructions = '';
+  }
   
   export let cancel;
 
@@ -32,6 +36,7 @@
     country: false,
     phone: false,
     nickname: false,
+    delivery_instructions: false,
   }
   let address;
 
@@ -105,9 +110,9 @@
 		submitErrors = response.error;
 
 		if (response.address) {
-      if (response.address.address_type == "long_term") {
+      if (response.address.address_type == "permanent") {
         $session.addresses = $session.addresses.map( address => {
-          if (address.address_type == "long_term" && !address.end_date) {
+          if (address.address_type == "permanent" && !address.end_date) {
             let newEndDate = new Date(response.address.start_date.split("T")[0])
             newEndDate.setDate(newEndDate.getDate() - 1);
             address.end_date = newEndDate.toISOString()
@@ -145,6 +150,7 @@
         country: false,
         phone: false,
         nickname: false,
+        delivery_instructions: false,
       };
       const tempErrors = [];
       for (const error of err.inner) {
@@ -161,6 +167,8 @@
   function previousStep(e) {
     $addressStepTwoComplete = false;
   }
+
+  console.log($origAddress)
 </script>
 
 <style>
@@ -202,6 +210,7 @@
         </div>
         <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
         <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
+        <Textfield  class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" invalid="{invalid["delivery_instructions"]}" bind:value={$origAddress.delivery_instructions}/>
         <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
       </div>
       <div class="alignRight">

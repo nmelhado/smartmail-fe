@@ -3,9 +3,10 @@ import * as api from '../api.js';
 export function put(req, res) {
   const submittedAddress = req.body.address;
   const address = {
-    nickname: submittedAddress.nickname
+    nickname: submittedAddress.nickname,
+    delivery_instructions: submittedAddress.delivery_instructions
   }
-  const start_date = submittedAddress.start_date ? new Date(submittedAddress.start_date).toISOString() : null;
+  const start_date = submittedAddress.start_date;
   const end_date = submittedAddress.end_date ? new Date(submittedAddress.end_date).toISOString() : null;
   console.log(`start_date: ${start_date}\n\nend_date: ${end_date}`)
   const id = submittedAddress.id;

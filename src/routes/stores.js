@@ -33,7 +33,7 @@ export const user = writable({
   first_name: '',
   last_name: '',
   phone: '',
-  password: '',
+  password: ''
 });
 
 // Create 3 options for smartIDs
@@ -68,6 +68,7 @@ export const address = writable({
   zip_code: '',
   country: 'United States',
   phone: '', // optional
+  delivery_instructions: '', // optional
 });
 
 export const validAddress = writable(yup.object().shape({
@@ -84,5 +85,6 @@ export const validAddress = writable(yup.object().shape({
     .min(5, "Zip code must be at least 5 characters"),
   country: yup.string().required("Country is required"),
   // phone: yup.string().matches(phoneRegExp, "Phone number is not valid")
-  phone: yup.string()
+  phone: yup.string(),
+  delivery_instructions: yup.string()
 }));

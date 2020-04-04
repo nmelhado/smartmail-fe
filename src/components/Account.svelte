@@ -99,7 +99,7 @@
     if (typeof address.end_date != "undefined" && address.end_date != "") {
       endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
     }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
   })
 	function processNewMonth() {
     currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
@@ -108,7 +108,7 @@
       if (typeof address.end_date != "undefined" && address.end_date != "") {
         endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       }
-      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
     });
     items = items;
 	}

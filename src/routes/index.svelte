@@ -100,7 +100,7 @@
   <div id='home-banner'>
     <img id="logo" alt='logo' src='smartmail v2 long - 1000-min.png'>
   </div>
-  <h2>Send mail and packages to recipients, not places​</h2>
+  <h2>Send mail and packages to people, not places​</h2>
   <div id="buttons">
     <Button color="secondary" class="homeButton" variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
     <div id="spacer"/>

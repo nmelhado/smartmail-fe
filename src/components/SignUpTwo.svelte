@@ -1,7 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
   import { post } from '../routes/utils.js';
-  import { user as origUser, address as origAddress, validAddress, stepOneComplete } from '../routes/stores.js';
+  import { user as origUser, address as origAddress, validAddress, stepOneComplete, smartIDOptions } from '../routes/stores.js';
 	import ListErrors from './ListErrors.svelte';
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
@@ -22,8 +22,9 @@
     country: false,
     phone: false,
     nickname: false,
+    delivery_instructions: false,
   }
-  let status = "long_term";
+  let status = "permanent";
   let start_date = (new Date()).toJSON();
   let address;
   const user = $origUser;
@@ -99,7 +100,43 @@
 
 		if (response.user) {
 			$session.user = response.user;
-			$session.addresses = response.addresses;
+      $session.addresses = response.addresses;
+
+
+      // Create 3 new options for smartIDs
+      const letters = 'ABCDEFGHJKLMNPQRTUVWXY1234567890';  // selection of A-Z & 0-9 (No I, S, Z, or O)
+      let smartID1='';  // declare empty string
+      let smartID2='';  // declare empty string
+      let smartID3='';  // declare empty string
+
+      for(var i = 0; i < 8; i++) {  // loop 8 times
+          smartID1 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+          smartID2 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+          smartID3 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+      }
+      $smartIDOptions = [smartID1, smartID2, smartID3]
+      $origUser = {
+        smart_id: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+        phone: '',
+        password: '',
+      };
+      $origAddress = {
+        nickname: '', // optional
+        line_one: '',
+        line_two: '', // optional
+        unit_number: '', // optional
+        business_name: '', // optional
+        attention_to: '', // optional
+        city: '',
+        state: '',
+        zip_code: '',
+        country: 'United States',
+        phone: '', // optional
+        delivery_instructions: '', // optional
+      };
 			goto('account');
 		}
     if (submitErrors != null) {
@@ -128,6 +165,7 @@
         country: false,
         phone: false,
         nickname: false,
+        delivery_instructions: false,
       };
       const tempErrors = [];
       for (const error of err.inner) {
@@ -188,6 +226,7 @@
   </div>
   <Textfield  class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
   <Textfield  class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
+  <Textfield  class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" invalid="{invalid["delivery_instructions"]}" bind:value={$origAddress.delivery_instructions}/>
   <Textfield  class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
   <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Submit</Label></Button>
 </form>

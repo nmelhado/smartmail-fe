@@ -6,7 +6,7 @@
   import FormField from '@smui/form-field';
   
   let error = false;
-  const longTerm = "Long-term";
+  const longTerm = "Permanent";
   const temporary = "Temporary"
 
 	function verify(event) {
@@ -55,7 +55,7 @@
     <form on:submit|preventDefault={verify}>
       <div id="options">
         <FormField>
-          <Radio class="radioButton" bind:group={$address_type} value="long_term" />
+          <Radio class="radioButton" bind:group={$address_type} value="permanent" />
           <span slot="label" class="radioLabel">{longTerm}</span>
         </FormField>
         <FormField>

@@ -18,6 +18,13 @@
 
   export let todaysAddress, phone, update;
 
+  if (!todaysAddress.delivery_instructions) {
+    todaysAddress.delivery_instructions = "";
+  }
+  if (!todaysAddress.nickname) {
+    todaysAddress.nickname = "";
+  }
+
   const today = standardizeDates(new Date());
   let submitErrors, errorsPresent;
 
@@ -84,7 +91,7 @@
   {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
   {todaysAddress.country}<br>
   <a href="tel:{phone}">{phone}</a><br>
-
+  <Textfield  class="fullWidth" variant="outlined" label="Delivery instructions (optional)" bind:value={todaysAddress.delivery_instructions}/><br><br>
 </p>
 {#if standardizeDates(todaysAddress.start_date) > standardizeDates(new Date())}
   <Button color="secondary" on:click={toggleStartDate} class="dateButtons" variant="outlined"><Label>Start date: {standardizeDates(todaysAddress.start_date).toDateString()}</Label></Button>

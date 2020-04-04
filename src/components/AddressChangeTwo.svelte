@@ -18,8 +18,8 @@
 
   let startLimit = null;
 
-  if ($address_type == "long_term") {
-    startLimit = $session.addresses.filter( address => address.address_type == "long_term" && !address.end_date)[0].start_date
+  if ($address_type == "permanent") {
+    startLimit = $session.addresses.filter( address => address.address_type == "permanent" && !address.end_date)[0].start_date
   }
 
   let currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
@@ -29,7 +29,7 @@
       endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       console.log(`address ID:    ${address.id},\address.end_date:    ${address.end_date.substring(0,10).replace(/-/g, '\/')},\nendDate:    ${endDate}`)
     }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
   })
 	function processNewMonth() {
     currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
@@ -38,7 +38,7 @@
       if (typeof address.end_date != "undefined" && address.end_date != "") {
         endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
       }
-      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "long_term" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "long_term")}
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
     })
 	}
 
@@ -49,7 +49,7 @@
   }
 
 	function verify(event) {
-    if ($address_type == "long_term" ) {
+    if ($address_type == "permanent" ) {
       if ($start_date == null) {
         error = true;
       } else {
@@ -96,7 +96,7 @@
 	}
 
 	function dayClick(e) {
-    if ($address_type == "long_term" ) {
+    if ($address_type == "permanent" ) {
       $start_date = e.date;
     } else {
       if (step === 1) {
@@ -159,7 +159,7 @@
 <div id="paper-inner">
   <Title>Create an Address Change</Title>
   <Content>
-    <p class="{error ? "error" : ""}">(Step 2 of 3) Please select the start date {$address_type == "long_term" ? "" : "and end date "} for your address change:</p>
+    <p class="{error ? "error" : ""}">(Step 2 of 3) Please select the start date {$address_type == "permanent" ? "" : "and end date "} for your address change:</p>
     <h2 class="calendar-footer-h2">
       {monthNames[month]} {year}
     </h2>
@@ -172,8 +172,8 @@
         <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
       </div>
     </div>
-    {#if ($address_type == "long_term" && $start_date != null) || ($address_type != "long_term" && $start_date != null && $end_date != null)}
-      <h3 class="date-informer">Selected date{$address_type == "long_term" ? "" : "s"} {$start_date.toDateString()}{$address_type != "long_term" ? " - " + $end_date.toDateString() : ""}</h3>
+    {#if ($address_type == "permanent" && $start_date != null) || ($address_type != "permanent" && $start_date != null && $end_date != null)}
+      <h3 class="date-informer">Selected date{$address_type == "permanent" ? "" : "s"} {$start_date.toDateString()}{$address_type != "permanent" ? " - " + $end_date.toDateString() : ""}</h3>
     {/if}
     <form on:submit|preventDefault={verify}>
       <div class="alignRight">

@@ -6,9 +6,9 @@ export function post(req, res) {
   api.post('address', { user: req.session.user, user_id: req.session.user.id, address, status, start_date, end_date }, req.session.token)
   .then(response => {
     if (response.address) {
-      if (response.address.address_type == "long_term") {
+      if (response.address.address_type == "permanent") {
         req.session.addresses = req.session.addresses.map( address => {
-          if (address.address_type == "long_term" && !address.end_date) {
+          if (address.address_type == "permanent" && !address.end_date) {
             let newEndDate = new Date(response.address.start_date.split("T")[0])
             newEndDate.setDate(newEndDate.getDate() - 1);
             address.end_date = newEndDate.toISOString()

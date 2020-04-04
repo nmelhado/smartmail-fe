@@ -77,9 +77,23 @@
   #buttons {
     display: flex;
     width: 100%;
-    position: absolute;
-    bottom: 15px;
     justify-content: space-evenly;
+  }
+
+  p {
+    margin: 1em 0 35px;
+  }
+
+  #packageDelivery {
+    color: var(--veryDarkGray);
+    margin: 10px 0 0;
+    font-size: 1.2em;
+  }
+
+  #packageDeliveryBody {
+    font-style: italic;
+    margin: 8px 0 35px;
+    color: var(--darkGray);
   }
 </style>
   <div id="currentAddress">
@@ -94,7 +108,7 @@
       </Dialog>
       {#if todaysAddress != null}
         {#if !update}
-          <h5 class="{todaysAddress.address_type == "long_term" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "long_term" ? "Long-term Address" : "Temporary Address"}</h5>
+          <h5 class="{todaysAddress.address_type == "permanent" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "permanent" ? "Permanent Address" : "Temporary Address"}</h5>
           <p>
             {$session.user.first_name} {$session.user.last_name}<br>
             {#if todaysAddress.attention_to}
@@ -114,6 +128,10 @@
             {todaysAddress.country}<br>
             <a href="tel:{phone}">{phone}</a><br>
           </p>
+          {#if todaysAddress.delivery_instructions}
+            <h5 id="packageDelivery">Package delivery instructions:</h5>
+            <p id="packageDeliveryBody">{todaysAddress.delivery_instructions}</p>
+          {/if}
           {#if !todaysAddress.end_date || standardizeDates(todaysAddress.end_date) > today}
             <div id="buttons">
               <Fab color="secondary" on:click={toggleUpdate} mini><Icon class="material-icons">edit</Icon></Fab>
