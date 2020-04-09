@@ -2,7 +2,6 @@ import * as api from '../api.js';
 
 export function post(req, res) {
   const {email, password} = req.body;
-  console.log(req.body)
 
   api.post('login', { email, password })
     .then(response => {

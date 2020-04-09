@@ -149,7 +149,6 @@
     $validAddress.validate($origAddress, {abortEarly: false})
     .then(function() {
       address = $origAddress;
-      console.log("Finished Step Two");
       submit();
     })
     .catch(function(err) {

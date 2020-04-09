@@ -27,7 +27,6 @@
     let endDate = ""
     if (typeof address.end_date != "undefined" && address.end_date != "") {
       endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
-      console.log(`address ID:    ${address.id},\address.end_date:    ${address.end_date.substring(0,10).replace(/-/g, '\/')},\nendDate:    ${endDate}`)
     }
     return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
   })
@@ -53,7 +52,6 @@
       if ($start_date == null) {
         error = true;
       } else {
-        console.log("Completed step two");
         error = false;
         $addressStepTwoComplete = true;
       }
@@ -61,7 +59,6 @@
       if ($start_date == null || $end_date == null) {
         error = true;
       } else {
-        console.log("Completed step two");
         error = false;
         $addressStepTwoComplete = true;
       }

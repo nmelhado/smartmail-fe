@@ -10,12 +10,9 @@
   const temporary = "Temporary"
 
 	function verify(event) {
-    console.log("Hello");
     if ($address_type == null || $address_type == "") {
       error = true;
-      console.log("No option selected");
     } else {
-      console.log("Completed step one");
       error = false;
       $addressStepOneComplete = true;
     }

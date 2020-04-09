@@ -24,7 +24,6 @@
     .then(function() {
       if ($user.password == confirmPassword) {
         $stepOneComplete = true;
-        console.log("Finished Step One");
       } else {
         invalid['confirm_password'] = true;
         errors = ['Passwords must match']

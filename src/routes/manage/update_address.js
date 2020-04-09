@@ -8,7 +8,6 @@ export function put(req, res) {
   }
   const start_date = submittedAddress.start_date;
   const end_date = submittedAddress.end_date ? new Date(submittedAddress.end_date).toISOString() : null;
-  console.log(`start_date: ${start_date}\n\nend_date: ${end_date}`)
   const id = submittedAddress.id;
 
   api.put(`address/${id}`, { address, start_date, end_date }, req.session.token)

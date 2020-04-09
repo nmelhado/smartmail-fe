@@ -24,7 +24,6 @@
     let endDate = ""
     if (typeof address.end_date != "undefined" && address.end_date != "") {
       endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
-      console.log(`address ID:    ${address.id},\address.end_date:    ${address.end_date.substring(0,10).replace(/-/g, '\/')},\nendDate:    ${endDate}`)
     }
     return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
   })

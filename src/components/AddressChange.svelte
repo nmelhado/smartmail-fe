@@ -19,7 +19,6 @@
   const dispatch = createEventDispatcher();
 
   function processNewMonth() {
-      console.log('made it to Address Change');
       dispatch('processNewMonth');
       dispatch('resetCalendar');
   }

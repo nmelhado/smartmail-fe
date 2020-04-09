@@ -2,11 +2,9 @@
 
 <svelte:head>
   <script>
-    function checkMap() {
-      console.log("Ready");
-    };
+    function checkMap() {};
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARoO29--UJnqVy2U5KcOp9qyrtzNl097c&callback=checkMap" on:load={initMap}></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCUjuA4aQIrKq8UQDaKnJPyc5cqxkzlPU&callback=checkMap" on:load={initMap}></script>
 </svelte:head>
 
 

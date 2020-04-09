@@ -1,4 +1,11 @@
-const base = 'http://localhost:8080';
+
+const { NODE_ENV } = process.env;
+const dev = NODE_ENV === 'development';
+
+let base = 'http://localhost:8080';
+if(!dev) {
+  base = 'https://api.smartmail.co';
+}
 
 function send({ method, path, data, token }) {
 	const fetch = process.browser ? window.fetch : require('node-fetch').default;

@@ -21,8 +21,6 @@
     goto('/');
   }
   
-  console.log($session.user)
-  console.log($session.addresses)
   function formatPhoneNumber(phoneNumberString) {
     var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
     var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)

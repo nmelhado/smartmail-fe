@@ -4,8 +4,6 @@
 
 	const { session } = stores();
 
-  console.log($session.user)
-  console.log($session.addresses)
   function signUp() {
     goto('sign-up')
   }
