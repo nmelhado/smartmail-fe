@@ -12,6 +12,8 @@
     "test": "run-p --race dev cy:run"
   },
   "dependencies": {
+    "@google-cloud/connect-datastore": "^4.0.0",
+    "@google-cloud/datastore": "^5.1.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cross-fetch": "^3.0.4",
