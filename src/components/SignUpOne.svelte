@@ -120,10 +120,10 @@
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
   <div class="centerBlock">
-    <Textfield variant="outlined" label="First name" invalid="{invalid["first_name"]}" class="halfWidth" bind:value={$user.first_name}/>
-    <Textfield variant="outlined" label="Last name" invalid="{invalid["last_name"]}" class="halfWidth" bind:value={$user.last_name}/>
+    <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["first_name"]}" class="halfWidth" bind:value={$user.first_name}/>
+    <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["last_name"]}" class="halfWidth" bind:value={$user.last_name}/>
   </div>
-  <Textfield variant="outlined" label="Phone" invalid="{invalid["phone"]}" class="fullWidth" bind:value={$user.phone}/>
+  <Textfield input$name="phone" type="tel" variant="outlined" label="Phone" invalid="{invalid["phone"]}" class="fullWidth" bind:value={$user.phone}/>
   <Textfield variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={$user.email}>
      <Icon class="material-icons">email</Icon>
   </Textfield>

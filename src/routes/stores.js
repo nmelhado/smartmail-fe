@@ -48,7 +48,7 @@ for(var i = 0; i < 8; i++) {  // loop 8 times
     smartID3 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
 }
 
-export const smartIDOptions = readable([
+export const smartIDOptions = writable([
   smartID1,
   smartID2,
   smartID3

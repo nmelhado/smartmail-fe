@@ -110,7 +110,7 @@
         <ListErrors {errors}/>
 
         <form on:submit|preventDefault={verify}>
-          <Textfield variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="halfWidth" bind:value={user.email}>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="halfWidth" bind:value={user.email}>
             <Icon class="material-icons">email</Icon>
           </Textfield>
           <br>
