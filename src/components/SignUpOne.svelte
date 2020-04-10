@@ -4,6 +4,7 @@
   import Textfield from '@smui/textfield'
   import Icon from '@smui/textfield/icon/index';
   import Button, {Label} from '@smui/button';
+  import IconButton from '@smui/icon-button';
 
   let errors = [];
   let invalid = {
@@ -53,6 +54,22 @@
       invalid = tempInvalid;
       errors = tempErrors;
     });
+  }
+
+  // Create 3 new options for smartIDs
+  const letters = 'ABCDEFGHJKLMNPQRTUVWXY1234567890';  // selection of A-Z & 0-9 (No I, S, Z, or O)
+  function refreshSmartID(e) {
+    e.preventDefault();
+    let smartID1='';  // declare empty string
+    let smartID2='';  // declare empty string
+    let smartID3='';  // declare empty string
+
+    for(var i = 0; i < 8; i++) {  // loop 8 times
+        smartID1 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+        smartID2 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+        smartID3 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+    }
+    $smartIDOptions = [smartID1, smartID2, smartID3];
   }
 </script>
 
@@ -130,7 +147,7 @@
   <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={$user.password}/>
   <Textfield variant="outlined" label="Confirm password" invalid="{invalid["confirm_password"]}" class="fullWidth" type="password" bind:value={confirmPassword}/>
   <div id="smartIDSection">
-    <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID:</label>
+    <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID:  <IconButton class="material-icons" on:click={refreshSmartID}>refresh</IconButton></label>
     <br>
     {#each $smartIDOptions as smartIDOption}
       <label class="radioLabel"><input type="radio" value={smartIDOption} bind:group={$user.smart_id}>  {smartIDOption.substring(0, 4)}  {smartIDOption.substring(4)}</label>
