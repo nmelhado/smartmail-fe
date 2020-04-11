@@ -4,13 +4,14 @@
 	import { post } from './utils.js';
   import * as yup from 'yup';
   import Textfield from '@smui/textfield';
+  import CharacterCounter from '@smui/textfield/character-counter/index';
   import Icon from '@smui/textfield/icon/index';  
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
   import { onMount, onDestroy } from 'svelte';
 
   let verifiedUser = false;
-  async function  verifyUser(resp) {
+  async function  verifyCaptcha(resp) {
     const response = await post(`manage/confirm_captcha`, { key: resp });
     if (response.success) {
       verifiedUser = true;
@@ -19,12 +20,18 @@
     return false;
   }
 
+  function  expireCaptcha() {
+    verifiedUser = false;
+  }
+
   onMount(() => {
-    window.verifyUser = verifyUser;
+    window.verifyCaptcha = verifyCaptcha;
+    window.expireCaptcha = expireCaptcha;
   })
 
   onDestroy(() => {
-    window.verifyUser = null;
+    window.verifyCaptcha = null;
+    window.expireCaptcha = null;
   })
 
   let contact = {
@@ -49,8 +56,6 @@
     replyTo: false,
     captcha: false,
   }
-
-  let captchaFail = false;
   
   function verify(event) {
     validContact.validate(contact, {abortEarly: false})
@@ -68,7 +73,6 @@
       } else {
         invalid.captcha = true;
         errors.push("Please prove you're not a robot!")
-        captchaFail = true;
       }
     })
     .catch(function(err) {
@@ -91,17 +95,13 @@
     });
   }
 
+  let messageSent = false;
+
 	async function submit() {
 		const response = await post(`manage/contact`, { contact });
-
-		// TODO handle network errors
-    console.log(response)
-
-		// if (response.user) {
-		// 	$session.user = response.user;
-		// 	$session.addresses = response.addresses;
-		// 	goto('account');
-		// }
+		if (response.accepted.length > 0) {
+			messageSent = true;
+		}
   }
 </script>
 
@@ -110,6 +110,21 @@
 </svelte:head>
 
 <style>
+  h3 {
+    font-size: 1.4em; 
+    margin: 0.8em 0 .1em;
+    color: var(--primaryAccent);
+  }
+
+  p {
+    margin: 0 0 1.5em;
+    padding-left: 1.5em;
+    color: var(--veryDarkGray);
+  }
+
+  p a {
+    color: var(--veryDarkGray);
+  }
   .centerBlock {
     display: flex;
     justify-content: space-between;
@@ -128,6 +143,16 @@
     min-width: 350px;
   }
 
+  #left {
+    background: url(contact-back.jpg);
+    background-repeat: no-repeat;
+    background-size: auto 140%;
+    background-position: left top;
+    background-attachment: fixed;
+    overflow: hidden;
+    box-shadow: 1px 0px 0px 0px var(--primaryAccentFade);
+  }
+
   h2 {
     margin-top: 0;
   }
@@ -144,15 +169,29 @@
     min-width: 350px;
     width: 75%;
   }
+
+  #buttonsRight {
+    text-align: right
+  }
+
+  .inline {
+    display: inline-block;
+  }
+
+  * :global(.contactSubmit) {
+    margin-top: 4px;
+  }
 </style>
 <div id="contact">
   <div id="left">
     <div id="leftInner">
       <h3 class="contactHeader">Address</h3>
       <p class="contactBody">
-        Smartmail<br>
-        smartID: Smartmail<br>
+        <strong>Mailing Address:</strong><br>
+        smrt mail<br>
         <br>
+        <strong>Physical Address:</strong><br>
+        Smartmail<br>
         251 1st Street, Unit 4E<br>
         Brooklyn, NY, 11215
       </p>
@@ -171,6 +210,10 @@
 
   <div id="right">
     <div id="rightInner">
+    {#if messageSent}
+      <h1 class="text-xs-center">Thank you!</h1>
+      <h2 class="text-xs-center">Your message has been sent</h2>
+    {:else}
       <h2 class="text-xs-center">Send Us a Message</h2>
 
       <ListErrors {errors}/>
@@ -183,11 +226,16 @@
         <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
           <Icon class="material-icons">email</Icon>
         </Textfield>
-        <Textfield input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}/>
-        <div class="g-recaptcha{captchaFail ? " fail" : ""}" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyUser"></div>
-        <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+        <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+          <CharacterCounter>0 / 250</CharacterCounter>
+        </Textfield>
+        <div id="buttonsRight">
+          <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
+          <Button color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+        </div>
       </form>
       <script src='https://www.google.com/recaptcha/api.js'></script>
+    {/if}
     </div>
   </div>
 </div>
