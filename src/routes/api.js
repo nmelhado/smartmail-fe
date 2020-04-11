@@ -7,7 +7,7 @@ if(!dev) {
   base = 'https://api.smartmail.co';
 }
 
-function send({ method, path, data, token }) {
+function send({ method, path, data, token, external = false }) {
 	const fetch = process.browser ? window.fetch : require('node-fetch').default;
 
 	const opts = { method, headers: {} };
@@ -20,8 +20,8 @@ function send({ method, path, data, token }) {
 	if (token) {
 		opts.headers['Authorization'] = `Bearer ${token}`;
 	}
-
-	return fetch(`${base}/${path}`, opts)
+  const url = external ? path : `${base}/${path}`
+	return fetch(url, opts)
 		.then(r => r.text())
 		.then(json => {
 			try {
@@ -30,6 +30,10 @@ function send({ method, path, data, token }) {
 				return json;
 			}
 		});
+}
+
+export function externalGet(path, token) {
+	return send({ method: 'GET', path, token, external: true });
 }
 
 export function get(path, token) {

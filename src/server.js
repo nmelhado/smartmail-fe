@@ -6,6 +6,9 @@ import * as sapper from '@sapper/server';
 import session from 'express-session'
 import sessionFileStore from 'session-file-store'
 import bodyParser from 'body-parser'
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
@@ -15,7 +18,7 @@ if (dev) {
   polka() // You can also use Express
     .use(bodyParser.json())
     .use(session({
-      secret: 'yoursessionsecretkey',
+      secret: process.env.SECRET_KEY,
       resave: false,
       saveUninitialized: true,
       cookie: {

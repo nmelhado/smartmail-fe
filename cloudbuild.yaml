@@ -3,6 +3,9 @@ steps:
 
   - name: gcr.io/cloud-builders/npm
     args: [ install ]
+
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://smartmail-ui/env/.env', '.env']
   
   - name: gcr.io/cloud-builders/npm
     args: [ run, build, --prod ]
