@@ -1,15 +1,5 @@
-const { NODE_ENV } = process.env;
-const prod = NODE_ENV === 'production';
-
-let base = 'http://localhost:3000';
-if(prod) {
-  base = 'https://www.smartmail.co';
-}
-
-import fetch from 'cross-fetch';
-
 export function post(endpoint, data) {
-	return fetch(new URL(endpoint, base), {
+	return fetch(endpoint, {
 		method: 'POST',
 		credentials: 'include',
 		body: JSON.stringify(data),
@@ -22,7 +12,7 @@ export function post(endpoint, data) {
 }
 
 export function put(endpoint, data) {
-	return fetch(new URL(endpoint, base), {
+	return fetch(endpoint, {
 		method: 'PUT',
 		credentials: 'include',
 		body: JSON.stringify(data),
@@ -34,7 +24,7 @@ export function put(endpoint, data) {
 }
 
 export function get(endpoint) {
-	return fetch(new URL(endpoint, base), {
+	return fetch(endpoint, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -45,7 +35,7 @@ export function get(endpoint) {
 }
 
 export function del(endpoint, data) {
-	return fetch(new URL(endpoint, base), {
+	return fetch(endpoint, {
 		method: 'DELETE',
     credentials: 'include',
     body: JSON.stringify(data),

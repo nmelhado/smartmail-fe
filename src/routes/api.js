@@ -1,9 +1,9 @@
 const { NODE_ENV } = process.env;
-const prod = NODE_ENV === 'production';
+const dev = NODE_ENV === 'development';
 
 let base = 'http://localhost:8080';
-if(prod) {
-  base = 'https://www.smartmail.co';
+if(!dev) {
+  base = 'https://api.smartmail.co';
 }
 
 function send({ method, path, data, token, external = false }) {
