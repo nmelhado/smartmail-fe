@@ -39,6 +39,10 @@
     font-size: 2em;
     margin: 1em 0;
   }
+
+  p {
+    text-align: center;
+  }
 </style>
 
 <svelte:head>
