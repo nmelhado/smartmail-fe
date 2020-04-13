@@ -83,9 +83,11 @@
 		<li><a aria-current='{segment === "contact" ? "page" : undefined}' class='{segment === "contact" ? "primary" : ''}' href='contact'>contact us</a></li>
 
     {#if $session.user && $session.user.first_name}
+		  <li><a rel=prefetch aria-current='{segment === "addresses" ? "page" : undefined}' class='{segment === "addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
 		  <li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='account'>my account</a></li>
       <li id='sign-up'><a rel=prefetch href='account'>Hello {$session.user.first_name}!</a></li>
     {:else}
+		  <li><a aria-current='{segment === "addresses" ? "page" : undefined}' class='{segment === "addresses" ? "primary" : ''}' href='login'>address book</a></li>
       <li><a aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='login'>my account</a></li>
       <li id='sign-up'><a aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' class='{segment === "sign-up" || segment === "login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
     {/if}

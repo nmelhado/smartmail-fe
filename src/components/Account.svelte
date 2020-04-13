@@ -1,6 +1,6 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post, standardizeDates } from '../routes/utils.js';
+	import { post, standardizeDates, formatPhoneNumber } from '../routes/utils.js';
 	import AddressCard from './AddressCard.svelte'; 
 	import Calendar from './Calendar.svelte'; 
 	import AddressChange from './AddressChange.svelte'; 
@@ -21,15 +21,6 @@
     goto('/');
   }
   
-  function formatPhoneNumber(phoneNumberString) {
-    var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
-    if (match) {
-      var intlCode = (match[1] ? '+1 ' : '')
-      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
-    }
-    return null
-  }
   let currentDate = standardizeDates(new Date())
   let tempHolder = true;
   let resetCalendarCheck = true;
@@ -157,6 +148,10 @@
 
 </script>
 
+<svelte:head>
+  <title>smartmail - {$session.user.first_name}'s Account</title>
+</svelte:head>
+
 <style>
   h1 {
     margin-bottom: 0px;
@@ -224,10 +219,6 @@
   }
 </style>
 
-<svelte:head>
-  <title>smartmail - {$session.user.first_name}'s Account</title>
-</svelte:head>
-
 <h1 class="text-xs-center">Hello {$session.user.first_name}!</h1>
 <p id="logOut"class="text-xs-center">
   <a href="/"  on:click|preventDefault={logout}>Log out</a>
@@ -236,7 +227,7 @@
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
 <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
-<h2>your smartID is: <strong>{$session.user.smart_id.substring(0, 4)}  {$session.user.smart_id.substring(4)}</strong></h2>
+<h2>your smartID is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 <div id="addressBox">
   {#if !resetCalendarCheck }

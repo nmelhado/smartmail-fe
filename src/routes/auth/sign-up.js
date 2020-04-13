@@ -8,6 +8,7 @@ export function post(req, res) {
       if (response.user) {
         req.session.user = response.user
         req.session.addresses = response.addresses
+        req.session.contacts = response.contacts
         req.session.token = response.token
         req.session.expires = response.expires
       } else {

@@ -1,10 +1,9 @@
-
 const { NODE_ENV } = process.env;
-const dev = NODE_ENV === 'development';
+const prod = NODE_ENV === 'production';
 
 let base = 'http://localhost:8080';
-if(!dev) {
-  base = 'https://api.smartmail.co';
+if(prod) {
+  base = 'https://www.smartmail.co';
 }
 
 function send({ method, path, data, token, external = false }) {
@@ -20,7 +19,7 @@ function send({ method, path, data, token, external = false }) {
 	if (token) {
 		opts.headers['Authorization'] = `Bearer ${token}`;
 	}
-  const url = external ? path : `${base}/${path}`
+  const url = external ? path : new URL(path, base);
 	return fetch(url, opts)
 		.then(r => r.text())
 		.then(json => {
@@ -29,7 +28,10 @@ function send({ method, path, data, token, external = false }) {
 			} catch (err) {
 				return json;
 			}
-		});
+    })
+    .catch(e => {
+      console.log(e)
+    });
 }
 
 export function externalGet(path, token) {

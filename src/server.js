@@ -35,8 +35,7 @@ if (dev) {
         session: req => ({
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
-          token: req.session && req.session.token,
-          expires: req.session && req.session.expires
+          contacts: req.session && req.session.contacts,
         })
       })
     )
@@ -84,8 +83,7 @@ if (dev) {
         session: req => ({
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
-          token: req.session && req.session.token,
-          expires: req.session && req.session.expires
+          contacts: req.session && req.session.contacts,
         })
       })
     )

@@ -26,3 +26,8 @@ $mdc-theme-text-hint-on-dark: hsla(0,0%,100%,0.5);
 $mdc-theme-text-disabled-on-dark: hsla(0,0%,100%,0.5);
 $mdc-theme-text-icon-on-dark: hsla(0,0%,100%,0.5);
 $mdc-typography-font-family: 'B612', 'Roboto', sans-serif;
+
+// table styleing
+$mdc-data-table-header-row-fill-color: #f8f8fa; // veryLightGray
+$mdc-data-table-row-hover-fill-color: rgba(rgb(26, 200, 237), .07);
+$mdc-data-table-divider-color: #ddd; // lightGray

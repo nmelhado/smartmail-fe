@@ -6,11 +6,15 @@
   const { session } = stores();
   
   async function checkConnection() {
-    const response = await get(`auth/check-credentials`);
-    if (!response.ok) {
-      delete($session.user);
-      delete($session.addresses);
-      goto('login');
+    try {
+      const response = await get(`auth/check-credentials`);
+      if (response && !response.ok) {
+        delete($session.user);
+        delete($session.addresses);
+        goto('login');
+      }
+    } catch(err) {
+      console.log(err);
     }
   }
   checkConnection();

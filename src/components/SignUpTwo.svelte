@@ -101,7 +101,7 @@
 		if (response.user) {
 			$session.user = response.user;
       $session.addresses = response.addresses;
-
+			$session.contacts = response.contacts;
 
       // Create 3 new options for smartIDs
       const letters = 'ABCDEFGHJKLMNPQRTUVWXY1234567890';  // selection of A-Z & 0-9 (No I, S, Z, or O)
