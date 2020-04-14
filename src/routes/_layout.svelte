@@ -1,6 +1,7 @@
 <script>
 	import Nav from '../components/Nav.svelte';
-	import Footer from '../components/Footer.svelte';
+  import Footer from '../components/Footer.svelte';
+  import GoogleAnalytics from '../components/GoogleAnalytics.svelte';
 
 	export let segment;
 </script>
@@ -25,6 +26,7 @@
   }
 </style>
 
+<GoogleAnalytics />
 <div id="mainContent">
   <Nav {segment}/>
   {#if segment == "contact"}
