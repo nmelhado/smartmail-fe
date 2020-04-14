@@ -5,6 +5,7 @@
 	import ListErrors from './ListErrors.svelte';
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
+  import Dialog, {Title, Content as DialogContent, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
   import {Title as PaperTitle, Subtitle, Content} from '@smui/paper';
   import { createEventDispatcher } from 'svelte';
@@ -21,13 +22,12 @@
     $origAddress.delivery_instructions = '';
   }
   
-  export let cancel;
+  // export let cancel;
 
   let errors = [];
   let invalid = {
     line_one: false,
     line_two: false,
-    unit_number: false,
     business_name: false,
     attention_to: false,
     city: false,
@@ -38,7 +38,6 @@
     nickname: false,
     delivery_instructions: false,
   }
-  let address;
 
   const states = [
     "Alabama",
@@ -102,39 +101,56 @@
     "Wyoming"
   ]
 
-  export let submitErrors, errorsPresent;
-	async function submit() {
-		const response = await post(`manage/change_address`, { address, status: $address_type, start_date: $start_date, end_date: $end_date });
+  export let address, submitErrors, errorsPresent, addressValidationError, startCompare, compareAddress, loading;
 
-		// TODO handle network errors
-		submitErrors = response.error;
+	async function verifyAddress(testAddress) {
+    loading = true;
+    const response = await post(`manage/verify_address`, testAddress);
+    loading = false;
+    if (response["0"]) {
+      addressValidationError.open();
+    } else {
+      compareAddress = JSON.parse(JSON.stringify(testAddress));
+      compareAddress.line_one = response.street1;
+      compareAddress.line_two = response.street2;
+      compareAddress.zip_code = `${response.zip}-${response.Zip4}`;
+      compareAddress.city = response.city;
 
-		if (response.address) {
-      if (response.address.address_type == "permanent") {
-        $session.addresses = $session.addresses.map( address => {
-          if (address.address_type == "permanent" && !address.end_date) {
-            let newEndDate = new Date(response.address.start_date.split("T")[0])
-            newEndDate.setDate(newEndDate.getDate() - 1);
-            address.end_date = newEndDate.toISOString()
-          }
-          return address;
-        })
-      }
-      $session.addresses.push(response.address)
-      processNewMonth();
-      cancel();
-		}
-    if (submitErrors != null) {
-      console.log(submitErrors);
-      errorsPresent.open();
+      startCompare.open();
     }
   }
+
+	// async function submit() {
+	// 	const response = await post(`manage/change_address`, { address, status: $address_type, start_date: $start_date, end_date: $end_date });
+
+	// 	// TODO handle network errors
+	// 	submitErrors = response.error;
+
+	// 	if (response.address) {
+  //     if (response.address.address_type == "permanent") {
+  //       $session.addresses = $session.addresses.map( address => {
+  //         if (address.address_type == "permanent" && !address.end_date) {
+  //           let newEndDate = new Date(response.address.start_date.split("T")[0])
+  //           newEndDate.setDate(newEndDate.getDate() - 1);
+  //           address.end_date = newEndDate.toISOString()
+  //         }
+  //         return address;
+  //       })
+  //     }
+  //     $session.addresses.push(response.address)
+  //     processNewMonth();
+  //     cancel();
+	// 	}
+  //   if (submitErrors != null) {
+  //     console.log(submitErrors);
+  //     errorsPresent.open();
+  //   }
+  // }
   
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
     .then(function() {
-      address = $origAddress;
-      submit();
+      verifyAddress($origAddress);
     })
     .catch(function(err) {
       const tempInvalid = {
@@ -166,7 +182,6 @@
   function previousStep(e) {
     $addressStepTwoComplete = false;
   }
-
 </script>
 
 <style>
@@ -194,7 +209,6 @@
       <div id="tight">
         <Textfield input$name="address-1" class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
         <Textfield input$name="address-2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
-        <Textfield input$name="unit" class="fullWidth" variant="outlined" label="Unit number (optional)" invalid="{invalid["unit_number"]}" bind:value={$origAddress.unit_number}/>
         <Textfield input$name="business-name" class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
         <Textfield input$name="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
         <div class="centerBlock">

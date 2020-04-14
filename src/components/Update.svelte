@@ -106,9 +106,6 @@
     {#if todaysAddress.line_two}
       {todaysAddress.line_two}<br>
     {/if}
-    {#if todaysAddress.unit_number}
-      {todaysAddress.unit_number}<br>
-    {/if}
     {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
     {todaysAddress.country}<br>
     <a href="tel:{phone}">{phone}</a><br>

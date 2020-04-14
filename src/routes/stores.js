@@ -60,7 +60,6 @@ export const address = writable({
   nickname: '', // optional
   line_one: '',
   line_two: '', // optional
-  unit_number: '', // optional
   business_name: '', // optional
   attention_to: '', // optional
   city: '',
@@ -75,7 +74,6 @@ export const validAddress = writable(yup.object().shape({
   nickname: yup.string(),
   line_one: yup.string().required("Address line 1 required"),
   line_two: yup.string(),
-  unit_number: yup.string(),
   business_name: yup.string(),
   attention_to: yup.string(),
   city: yup.string().required("City is required"),

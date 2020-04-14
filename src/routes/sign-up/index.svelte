@@ -9,7 +9,6 @@
     nickname: '',
     line_one: '',
     line_two: null,
-    unit_number: null,
     business_name: null,
     attention_to: null,
     city: '',

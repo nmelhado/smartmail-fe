@@ -6,14 +6,15 @@
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
   import Button, {Label} from '@smui/button';
-  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog';
+  import ConfirmAddress from './ConfirmAddress';
+  import Loading from './Loading';
 
 	const { session } = stores();
   let errors = [];
   let invalid = {
     line_one: false,
     line_two: false,
-    unit_number: false,
     business_name: false,
     attention_to: false,
     city: false,
@@ -24,9 +25,10 @@
     nickname: false,
     delivery_instructions: false,
   }
+  let loading = false;
   let status = "permanent";
   let start_date = (new Date()).toJSON();
-  let address;
+  let address, compareAddress, startCompare;
   const user = $origUser;
 
   const states = [
@@ -91,13 +93,33 @@
     "Wyoming"
   ]
 
-  let submitErrors;
+  let submitErrors, addressValidationError;
+
+	async function verifyAddress(testAddress) {
+    loading= true;
+    const response = await post(`manage/verify_address`, testAddress);
+    loading= false;
+    if (response["0"]) {
+      addressValidationError.open();
+    } else {
+      compareAddress = JSON.parse(JSON.stringify(testAddress));
+      compareAddress.line_one = response.street1;
+      compareAddress.line_two = response.street2;
+      compareAddress.zip_code = `${response.zip}-${response.Zip4}`;
+      compareAddress.city = response.city;
+
+      startCompare.open();
+    }
+  }
+
 	async function submit() {
+    loading= true;
 		const response = await post(`auth/sign-up`, { user, address, status, start_date });
 
 		// TODO handle network errors
 		submitErrors = response.error;
 
+    loading= false;
 		if (response.user) {
 			$session.user = response.user;
       $session.addresses = response.addresses;
@@ -127,7 +149,6 @@
         nickname: '', // optional
         line_one: '',
         line_two: '', // optional
-        unit_number: '', // optional
         business_name: '', // optional
         attention_to: '', // optional
         city: '',
@@ -148,14 +169,12 @@
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
     .then(function() {
-      address = $origAddress;
-      submit();
+      verifyAddress($origAddress);
     })
     .catch(function(err) {
       const tempInvalid = {
         line_one: false,
         line_two: false,
-        unit_number: false,
         business_name: false,
         attention_to: false,
         city: false,
@@ -178,9 +197,18 @@
     });
   }
 
-
   function previousStep(e) {
     $stepOneComplete = false;
+  }
+
+  function chooseOriginal() {
+    address = $origAddress;
+    submit();
+  }
+
+  function chooseReccomended() {
+    address = compareAddress;
+    submit();
   }
 </script>
 
@@ -198,11 +226,50 @@
   }
 </style>
 
+{#if loading}
+  <Loading />
+{/if}
+
+<!-- Error creating account -->
 <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
-    <Button action="all" default use={[InitialFocus]}>
+    <Button default use={[InitialFocus]}>
       <Label>Ok</Label>
+    </Button>
+  </Actions>
+</Dialog>
+
+<!-- Error validating address -->
+<Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
+  <Title id="event-title">Address Verification Error</Title>
+  <Content id="dialog-content">
+    Please confirm the address you entered
+  </Content>
+  <Actions>
+    <Button default use={[InitialFocus]}>
+      <Label>Ok</Label>
+    </Button>
+  </Actions>
+</Dialog>
+
+<!-- Confirm address -->
+<Dialog bind:this={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
+  <Title id="event-title">Address Verification</Title>
+  <Content id="dialog-content">
+    {#if compareAddress && compareAddress.line_one}
+      <ConfirmAddress enteredAddress={$origAddress} USPSAddress={compareAddress} />
+    {/if}
+  </Content>
+  <Actions>
+    <Button variant="outlined">
+      <Label>Back</Label>
+    </Button>
+    <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+      <Label>Use The Adrress I Entered</Label>
+    </Button>
+    <Button color="secondary" variant="outlined" on:click={chooseReccomended} default use={[InitialFocus]}>
+      <Label>Use The Recommended Adrress</Label>
     </Button>
   </Actions>
 </Dialog>
@@ -211,7 +278,6 @@
 <form on:submit|preventDefault={verify}>
   <Textfield input$name="address-1" class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
   <Textfield input$name="address-2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
-  <Textfield input$name="unit" class="fullWidth" variant="outlined" label="Unit number (optional)" invalid="{invalid["unit_number"]}" bind:value={$origAddress.unit_number}/>
   <Textfield input$name="business-name" class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
   <Textfield input$name="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
   <div class="centerBlock">
