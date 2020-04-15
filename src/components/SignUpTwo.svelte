@@ -8,6 +8,7 @@
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog';
   import ConfirmAddress from './ConfirmAddress';
+  import BypassAddressValidation from './BypassAddressValidation';
   import Loading from './Loading';
 
 	const { session } = stores();
@@ -242,13 +243,16 @@
 
 <!-- Error validating address -->
 <Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
-  <Title id="event-title">Address Verification Error</Title>
+  <Title id="event-title">We Weren't Able to Verify the Address You Entered</Title>
   <Content id="dialog-content">
-    Please confirm the address you entered
+    <BypassAddressValidation enteredAddress={$origAddress} />
   </Content>
   <Actions>
-    <Button default use={[InitialFocus]}>
-      <Label>Ok</Label>
+    <Button variant="outlined">
+      <Label>Back</Label>
+    </Button>
+    <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+      <Label>Proceed With Unverified Address (Not Reccomended)</Label>
     </Button>
   </Actions>
 </Dialog>

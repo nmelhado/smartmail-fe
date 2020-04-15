@@ -16,6 +16,7 @@
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
   import ConfirmAddress from './ConfirmAddress';
+  import BypassAddressValidation from './BypassAddressValidation';
 	import { goto, stores } from '@sapper/app';
   import { post } from '../routes/utils.js';
   import Loading from './Loading';
@@ -155,13 +156,16 @@
 
     <!-- Error validating address -->
     <Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
-      <Title id="event-title">Address Verification Error</Title>
+      <Title id="event-title">We Weren't Able to Verify the Address You Entered</Title>
       <Content id="dialog-content">
-        Please confirm the address you entered
+        <BypassAddressValidation enteredAddress={$address} />
       </Content>
       <Actions>
-        <Button default use={[InitialFocus]}>
-          <Label>Ok</Label>
+        <Button variant="outlined">
+          <Label>Back</Label>
+        </Button>
+        <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+          <Label>Proceed With Unverified Address (Not Reccomended)</Label>
         </Button>
       </Actions>
     </Dialog>
@@ -194,7 +198,7 @@
       {:else if !$addressStepTwoComplete}
         <AddressChangeTwo cancel={cancel} />
       {:else if !$addressStepThreeComplete}
-        <AddressChangeThree bind:loading={loading} bind:address={finalAddress} cancel={cancel} errorsPresent={errorsPresent} bind:addressValidationError={addressValidationError} bind:startCompare={startCompare} bind:compareAddress={compareAddress} bind:submitErrors={submitErrors} on:processNewMonth={processNewMonth} />
+        <AddressChangeThree bind:loading={loading} bind:addressValidationError={addressValidationError} bind:startCompare={startCompare} bind:compareAddress={compareAddress} on:processNewMonth={processNewMonth} />
       {/if}
     </Paper>
   </div>

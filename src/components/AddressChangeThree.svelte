@@ -1,16 +1,13 @@
 <script>
-	import { goto, stores } from '@sapper/app';
-  import { post } from '../routes/utils.js';
   import { address as origAddress, validAddress, addressStepTwoComplete, addressStepThreeComplete, address_type, start_date, end_date } from '../routes/stores.js';
 	import ListErrors from './ListErrors.svelte';
   import Textfield from '@smui/textfield'
   import Select, {Option} from '@smui/select';
   import Dialog, {Title, Content as DialogContent, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
+  import { post } from '../routes/utils.js';
   import {Title as PaperTitle, Subtitle, Content} from '@smui/paper';
   import { createEventDispatcher } from 'svelte';
-
-  const { session } = stores();
 
   const dispatch = createEventDispatcher();
 
@@ -101,7 +98,7 @@
     "Wyoming"
   ]
 
-  export let address, submitErrors, errorsPresent, addressValidationError, startCompare, compareAddress, loading;
+  export let addressValidationError, startCompare, compareAddress, loading;
 
 	async function verifyAddress(testAddress) {
     loading = true;
@@ -119,33 +116,6 @@
       startCompare.open();
     }
   }
-
-	// async function submit() {
-	// 	const response = await post(`manage/change_address`, { address, status: $address_type, start_date: $start_date, end_date: $end_date });
-
-	// 	// TODO handle network errors
-	// 	submitErrors = response.error;
-
-	// 	if (response.address) {
-  //     if (response.address.address_type == "permanent") {
-  //       $session.addresses = $session.addresses.map( address => {
-  //         if (address.address_type == "permanent" && !address.end_date) {
-  //           let newEndDate = new Date(response.address.start_date.split("T")[0])
-  //           newEndDate.setDate(newEndDate.getDate() - 1);
-  //           address.end_date = newEndDate.toISOString()
-  //         }
-  //         return address;
-  //       })
-  //     }
-  //     $session.addresses.push(response.address)
-  //     processNewMonth();
-  //     cancel();
-	// 	}
-  //   if (submitErrors != null) {
-  //     console.log(submitErrors);
-  //     errorsPresent.open();
-  //   }
-  // }
   
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
