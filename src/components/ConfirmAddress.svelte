@@ -50,10 +50,18 @@
       <Cell>{enteredAddress.state}</Cell>
       <Cell>{USPSAddress.state}</Cell>
     </Row>
-    <Row>
-      <Cell style="background-color: var(--veryLightGray)">Zip Code</Cell>
-      <Cell>{enteredAddress.zip_code}</Cell>
-      <Cell>{USPSAddress.zip_code}</Cell>
-    </Row>
+    {#if enteredAddress.zip_code.split("-")[0] != USPSAddress.zip_code.split("-")[0]}
+      <Row style="background-color: var(--invalidRed)">
+        <Cell style="background-color: var(--invalidDarkerRed)">Zip Code</Cell>
+        <Cell>{enteredAddress.zip_code}</Cell>
+        <Cell>{USPSAddress.zip_code}</Cell>
+      </Row>
+    {:else}
+      <Row>
+        <Cell style="background-color: var(--veryLightGray)">Zip Code</Cell>
+        <Cell>{enteredAddress.zip_code}</Cell>
+        <Cell>{USPSAddress.zip_code}</Cell>
+      </Row>
+    {/if}
   </Body>
 </DataTable>
