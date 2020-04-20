@@ -2,6 +2,7 @@
 	import { goto, stores } from '@sapper/app';
   import { get } from '../utils.js';
 	import AddressBook from '../../components/AddressBook.svelte'; 
+	import AddContact from '../../components/AddContact.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
 
   const { session } = stores();
@@ -43,15 +44,41 @@
   p {
     text-align: center;
   }
+
+  #infoBlock {
+    color: var(--gray);
+    font-style: italic;
+    padding: 1em;
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .mobileH1 {
+    font-size: 1.6em;
+  }
 </style>
 
 <svelte:head>
   <title>smartmail - Address Book</title>
 </svelte:head>
 
-<h1>Your Contact List <IconButton class="material-icons" on:click={refreshContacts}>refresh</IconButton></h1>
+<h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List <IconButton class="material-icons" on:click={refreshContacts}>refresh</IconButton></h1>
 {#if $session.contacts && $session.contacts.length > 0}
   <AddressBook contacts={$session.contacts} />
 {:else}
   <p>Sorry! It looks like you don't have any addresses saved yet.</p>
 {/if}
+
+<AddContact />
+
+<div id="infoBlock">
+  <p>
+    The Smartmail address book keeps track of all your Smartmail contacts.
+  </p>
+  <p>
+    When you send mail to or recieve mail from a Smartmail contact, their information will automatically be added to your address book. There's no need to manually add an address ever!
+  </p>
+  <p>
+    If you do want to add an address yourself though, you can. Just give us your contact's smartID and either their email address or their phone number and we will add them to your address book.
+  </p>
+</div>

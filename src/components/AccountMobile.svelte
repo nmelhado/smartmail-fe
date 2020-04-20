@@ -190,23 +190,24 @@
 
 <style>
   h1 {
+    font-size: 2em;
     margin-bottom: 0px;
   }
 
   h2 {
     color: var(--primaryAccent);
-    margin: 0;
-    font-size: 1.8em;
+    margin: 1.5em 0;
+    font-size: 1.7em;
   }
 
   h3 {
-    font-size: 1.8em;
+    font-size: 1.5em;
     text-align: center;
     color: var(--darkGray);
   }
 
   h4 {
-    font-size: 1.6em;
+    font-size: 1.0em;
     text-align: center;
     color: var(--gray);
     margin: 0.5em 0 1em;
@@ -222,6 +223,7 @@
     text-align: center;
     display: block;
     width: 100%;
+    margin-top: -1px;
     border: 1px solid var(--lightGray);
     box-shadow: 0 0 20px 0 var(--lightGray);
   }
@@ -257,7 +259,7 @@
   }
 </style>
 
-<h1 class="text-xs-center">Hello {$session.user.first_name}!</h1>
+<h1>Hello {$session.user.first_name}!</h1>
 <p id="logOut"class="text-xs-center">
   <a href="/"  on:click|preventDefault={logout}>Log out</a>
 </p>

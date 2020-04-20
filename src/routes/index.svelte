@@ -103,6 +103,12 @@
 
 <svelte:head>
 	<title>smartmail - Home</title>
+  <script>
+    window.onresize = function() {
+      document.body.height = window.innerHeight;
+    }
+    window.onresize(); // called to initially set the height.
+  </script>
 </svelte:head>
 
 <div id="bg">

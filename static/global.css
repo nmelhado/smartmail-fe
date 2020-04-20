@@ -109,3 +109,8 @@ code {
   min-width: 700px;
   margin: 20px auto;
 }
+
+#contactTableM {
+  width: 100%;
+  margin: 20px auto;
+}

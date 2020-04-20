@@ -105,9 +105,9 @@
 
       <Scrim />
       <AppContent class="app-content">
-        <main class="main-content">
+        <div class="main-content">
           <IconButton class="material-icons sandwich" on:click={() => myDrawerOpen = !myDrawerOpen}>menu</IconButton>
-        </main>
+        </div>
       </AppContent>
     </div>
   </div>

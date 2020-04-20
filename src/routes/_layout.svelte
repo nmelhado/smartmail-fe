@@ -38,7 +38,7 @@
 
   #mainContact {
     padding: 0;
-    max-width: 100%;
+    width: 100%;
   }
 </style>
 
@@ -50,7 +50,7 @@
     <Nav />
   {/if}
   {#if segment == "contact"}
-    <main class={$session.mobile ? "mobile" : ""} id="mainContact">
+    <main id="mainContact">
       <slot></slot>
     </main>
   {:else}
