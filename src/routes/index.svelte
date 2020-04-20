@@ -22,7 +22,7 @@
     margin: -12px 0 2.5em 20px;
     color: var(--darkGray);
     font-style: italic;
-	}
+  }
   
   #logo {
 		width: 100%;
@@ -31,12 +31,6 @@
     right: 0;
     margin: 0 auto;
 	}
-
-	/* @media (min-width: 480px) {
-		h2 {
-			font-size: 4em;
-		}
-	} */
 
   #home-banner {
     text-align: center;
@@ -64,10 +58,18 @@
     z-index: -1;
   }
 
+  #ctaM {
+    position: relative;
+    width: 85%;
+    max-width: 250px;
+    margin: 4em 0 0;
+    left: 7.5%;
+  }
+
   #cta {
     position: absolute;
-    left: 7.5%;
-    width: 85%;
+    left: 10%;
+    width: 80%;
     max-width: 550px;
     margin-top: 10%;
   }
@@ -76,6 +78,22 @@
     width: 95%;
     margin-left: 4.5%;
     display: flex;
+  }
+
+  #buttonsM {
+    width: 100%;
+    text-align: center;
+  }
+
+  * :global(.homeButton) {
+    min-height: 40px;
+    flex-grow: 12;
+  }
+
+  * :global(.homeButtonM) {
+    min-height: 40px;
+    width: 70%;
+    margin: 0 0 5px;
   }
 
   #spacer {
@@ -94,18 +112,20 @@
   <img src="mailBackground.jpg" id="bgImgBottom" alt="">
 </div>
 
-<div id="cta">
+<div id={$session.mobile ? "ctaM" : "cta"}>
   <div id='home-banner'>
     <img id="logo" alt='logo' src='smartmail v2 long - 1000-min.png'>
   </div>
   <h2>Send mail and packages to people, not places​</h2>
-  <div id="buttons">
-    <Button color="secondary" class="homeButton" variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
-    <div id="spacer"/>
+  <div id={$session.mobile ? "buttonsM" : "buttons"}>
+    <Button color="secondary" class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
+    {#if !$session.mobile}
+      <div id="spacer"/>
+    {/if}
     {#if $session.user}
-      <Button class="homeButton" variant="unelevated"  on:click={myAccount}><Label class="submitButtonLabel">My Account</Label></Button>
+      <Button class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={myAccount}><Label class="submitButtonLabel">My Account</Label></Button>
     {:else}
-      <Button class="homeButton" variant="unelevated"  on:click={signUp}><Label class="submitButtonLabel">Sign Up</Label></Button>
+      <Button class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={signUp}><Label class="submitButtonLabel">Sign Up</Label></Button>
     {/if}
   </div>
 </div>

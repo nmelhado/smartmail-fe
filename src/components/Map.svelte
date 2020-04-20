@@ -1,4 +1,4 @@
-<div id="map"></div>
+<div id="map" class={mobile ? "mapM" : "map"}></div>
 
 <svelte:head>
   <script>
@@ -9,7 +9,7 @@
 
 
 <script>
-  export let todaysAddress, pinTitle;
+  export let todaysAddress, pinTitle, mobile;
   const latitude = todaysAddress.latitude;
   const longitude = todaysAddress.longitude;
   const position = {lat: latitude, lng:longitude};
@@ -299,11 +299,18 @@
 </script>
 
 <style>
-  #map {
+  .map {
     flex-grow: 3;
     height: 450px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
+  }
+
+  .mapM {
+    flex-grow: 3;
+    height: 450px;
+    height: 90vw;
+    width: 100%;
   }
 </style>
 

@@ -53,6 +53,13 @@
     height: 450px;
   }
 
+  #currentAddressM {
+    display: table;
+    padding: 2em 0;
+    width: 100%;
+    background-color: var(--veryLightGray);
+  }
+
   #innerPanel {
     position: relative;
     display: table-cell;
@@ -96,7 +103,7 @@
     color: var(--darkGray);
   }
 </style>
-  <div id="currentAddress">
+  <div id={$session.mobile ? "currentAddressM" : "currentAddress"}>
     <div id="innerPanel">
       <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
         <Title id="event-title">{submitErrors}</Title>

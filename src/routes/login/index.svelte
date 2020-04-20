@@ -111,11 +111,11 @@
         <ListErrors {errors}/>
 
         <form on:submit|preventDefault={verify}>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="halfWidth" bind:value={user.email}>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
             <Icon class="material-icons">email</Icon>
           </Textfield>
           <br>
-          <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="halfWidth" type="password" bind:value={user.password}/>
+          <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} type="password" bind:value={user.password}/>
           <br>
           <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
         </form>

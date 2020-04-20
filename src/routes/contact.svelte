@@ -10,6 +10,8 @@
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
   import { onMount, onDestroy } from 'svelte';
 
+	const { session } = stores();
+
   let verifiedUser = false;
   async function  verifyCaptcha(resp) {
     const response = await post(`manage/confirm_captcha`, { key: resp });
@@ -136,11 +138,31 @@
     min-height: calc(100vh - 248px)
   }
 
+  #contactM {
+    display: block;
+    flex-direction: column;
+    background: url(contact-back.jpg);
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    background-position: left top;
+    background-attachment: fixed;
+  }
+
+
   #left, #right {
     position: relative;
     display: inline-block;
     width: 50%;
     min-width: 350px;
+  }
+
+  #top, #bottom {
+    padding: 2em 7.5%;
+    width: 85%;
+  }
+
+  #top {
+    border-bottom: solid 1px var(--primaryAccentFade);
   }
 
   #left {
@@ -171,7 +193,11 @@
   }
 
   #buttonsRight {
-    text-align: right
+    text-align: right;
+  }
+
+  #buttonsTop {
+    text-align: center;
   }
 
   .inline {
@@ -182,9 +208,41 @@
     margin-top: 4px;
   }
 </style>
-<div id="contact">
-  <div id="left">
-    <div id="leftInner">
+<div id={$session.mobile ? "contactM" : "contact"}>
+  {#if $session.mobile}
+    <div id="top">
+      <div id="topInner">
+      {#if messageSent}
+        <h1 class="text-xs-center">Thank you!</h1>
+        <h2 class="text-xs-center">Your message has been sent</h2>
+      {:else}
+        <h2 class="text-xs-center">Send Us a Message</h2>
+
+        <ListErrors {errors}/>
+
+        <form on:submit|preventDefault={verify}>
+          <div class="centerBlock">
+            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
+            <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+          </div>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
+            <Icon class="material-icons">email</Icon>
+          </Textfield>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+            <CharacterCounter>0 / 250</CharacterCounter>
+          </Textfield>
+          <div id="buttonsTop">
+            <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
+            <Button color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+          </div>
+        </form>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+      {/if}
+      </div>
+    </div>
+  {/if}
+  <div id={$session.mobile ? "bottom" : "left"}>
+    <div id={$session.mobile ? "bottomInner" : "leftInner"}>
       <h3 class="contactHeader">Address</h3>
       <p class="contactBody">
         <strong>Mailing Address:</strong><br>
@@ -208,34 +266,36 @@
     </div>
   </div>
 
-  <div id="right">
-    <div id="rightInner">
-    {#if messageSent}
-      <h1 class="text-xs-center">Thank you!</h1>
-      <h2 class="text-xs-center">Your message has been sent</h2>
-    {:else}
-      <h2 class="text-xs-center">Send Us a Message</h2>
+  {#if !$session.mobile}
+    <div id="right">
+      <div id="rightInner">
+      {#if messageSent}
+        <h1 class="text-xs-center">Thank you!</h1>
+        <h2 class="text-xs-center">Your message has been sent</h2>
+      {:else}
+        <h2 class="text-xs-center">Send Us a Message</h2>
 
-      <ListErrors {errors}/>
+        <ListErrors {errors}/>
 
-      <form on:submit|preventDefault={verify}>
-        <div class="centerBlock">
-          <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
-          <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
-        </div>
-        <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
-          <Icon class="material-icons">email</Icon>
-        </Textfield>
-        <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
-          <CharacterCounter>0 / 250</CharacterCounter>
-        </Textfield>
-        <div id="buttonsRight">
-          <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
-          <Button color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
-        </div>
-      </form>
-      <script src='https://www.google.com/recaptcha/api.js'></script>
-    {/if}
+        <form on:submit|preventDefault={verify}>
+          <div class="centerBlock">
+            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
+            <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+          </div>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
+            <Icon class="material-icons">email</Icon>
+          </Textfield>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+            <CharacterCounter>0 / 250</CharacterCounter>
+          </Textfield>
+          <div id="buttonsRight">
+            <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
+            <Button color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+          </div>
+        </form>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+      {/if}
+      </div>
     </div>
-  </div>
+  {/if}
 </div>

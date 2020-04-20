@@ -8,6 +8,8 @@
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label} from '@smui/button';
   import { addressChangeActive, addressStepOneComplete } from '../routes/stores.js';
+  import Tab, {Icon as TabIcon, Label as TabLabel} from '@smui/tab';
+  import TabBar from '@smui/tab-bar';
 
   const { session } = stores();
 
@@ -42,6 +44,7 @@
     if (todaysAddresses.length < 1) {
       tempHolder = false;
       todaysAddress = null;
+      // resetTabs();
     } else {
       let tempAddress =todaysAddresses[0];
       if (todaysAddresses.length > 1) {
@@ -53,6 +56,7 @@
         setTimeout(() => {
           tempHolder = false;
           todaysAddress = tempAddress;
+          // resetTabs();
         }, 1)
       }
     }
@@ -132,9 +136,11 @@
 	}
 	function dayClick(e) {
     currentDate = e.date;
+    console.log(e.date);
     processHeaderStatement();
     processTodaysAddresses();
     update = false;
+    console.log(keyedTabsActive.k);
   }
   function launchAddressChange() {
     update = false;
@@ -146,6 +152,36 @@
     resetCalendarCheck = resetCalendarCheck != true;
   }
 
+  let keyedTabs = [
+    {
+      k: 1,
+      icon: 'list',
+      label: 'address'
+    },
+    {
+      k: 2,
+      icon: 'map',
+      label: 'map'
+    },
+    {
+      k: 3,
+      icon: 'calendar_today',
+      label: 'calendar'
+    },
+  ];
+
+  let noMapTab = "";
+
+  function resetTabs() {
+    // keyedTabsActive = keyedTabs[0]
+    if (todaysAddress != null) {
+      noMapTab = "";
+    } else {
+      noMapTab = "Disabled";
+    }
+  }
+
+  let keyedTabsActive = keyedTabs[0];
 </script>
 
 <svelte:head>
@@ -184,15 +220,14 @@
 
   #addressBox {
     text-align: center;
-    display: flex;
-    width: 94%;
-    margin: 0 auto;
+    display: block;
+    width: 100%;
+    border: 1px solid var(--lightGray);
     box-shadow: 0 0 20px 0 var(--lightGray);
   }
   
   .calendar-container {
-    min-width: 300px;
-    max-width: 500px;
+    width: 100%;
     flex-grow: 3;
     text-align: center;
     border: 1px solid var(--lightGray);
@@ -200,11 +235,11 @@
   
   .calendar-header {
     width: 100%;
-    height: 50px;
   }
   
   .calendar-header-h2 {
-    font-size: 28px;
+    font-size: 1.6em;
+    margin: 0.3em 0 0;
   }
 
   #button-holder {
@@ -213,9 +248,12 @@
 
   #map-placeholder {
     flex-grow: 3;
-    height: 450px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
+  }
+
+  .hidden {
+    display: none;
   }
 </style>
 
@@ -229,40 +267,56 @@
 <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
 <h2>your smartID is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
+
+<TabBar tabs={keyedTabs} let:tab key={tab => tab.k} bind:active={keyedTabsActive}>
+  <Tab {tab} stacked={true} class={`${tab.label}${noMapTab}`} indicatorSpanOnlyContent={true} style={todaysAddress == null && tab.label == "map" ? "display: none;" : "" } tabIndicator$transition="fade" minWidth>
+    <TabIcon class="material-icons">{tab.icon}</TabIcon>
+    <TabLabel>{tab.label}</TabLabel>
+  </Tab>
+</TabBar>
+
 <div id="addressBox">
+
+  {#if keyedTabsActive && keyedTabsActive.k == 1}
+    <AddressCard bind:update={update} todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
+  {/if}
+
+  {#if keyedTabsActive && keyedTabsActive.k == 2}
+    {#if todaysAddress != null}
+      <Map mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
+    {:else if tempHolder}
+      <div id="map-placeholder" />
+    {/if}
+  {/if}
+
   {#if !resetCalendarCheck }
-    <div class="calendar-container">
+    <div class={keyedTabsActive && keyedTabsActive.k == 3 ? "calendar-container" : "hidden" }>
       <div class="calendar-header">
         <h2 class="calendar-header-h2">
-          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
-          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
-          {monthNames[month]} {year}
-          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
-          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+          {monthNames[month]} {year}<br>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
         </h2>
       </div>
       <Calendar mobile={$session.mobile} currentDate={currentDate} items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
     </div>
   {:else}
-    <div class="calendar-container">
+    <div class={keyedTabsActive && keyedTabsActive.k == 3 ? "calendar-container" : "hidden" }>
       <div class="calendar-header">
         <h2 class="calendar-header-h2">
-          <IconButton class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
-          <IconButton class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
-          {monthNames[month]} {year}
-          <IconButton class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
-          <IconButton class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
+          {monthNames[month]} {year}<br>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>prev("year")}>first_page</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>prev()}>chevron_left</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>next()}>chevron_right</IconButton>
+          <IconButton style="padding: 6px 6px 0 6px; font-size: 1.2em;" class="material-icons" on:click={()=>next("year")}>last_page</IconButton>
         </h2>
       </div>
       <Calendar mobile={$session.mobile} currentDate={currentDate} items={items} year={year} month={month} on:dayClick={(e)=>dayClick(e.detail)} />
     </div>
   {/if}
-  <AddressCard bind:update={update} todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
-  {#if todaysAddress != null}
-    <Map  mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
-  {:else if tempHolder}
-    <div id="map-placeholder" />
-  {/if}
+
 </div>
 <div id="button-holder">
   <Button class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>

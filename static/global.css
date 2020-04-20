@@ -99,11 +99,6 @@ code {
   font-size: 1.5em;
 }
 
-.homeButton {
-  min-height: 40px;
-  flex-grow: 12;
-}
-
 .radioButton {
   padding: 10px 10px 10px 0;
 }

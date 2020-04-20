@@ -1,4 +1,4 @@
-<div class="calendar">
+<div class={mobile ? "calendarM" : "calendar"}>
 	{#each headers as header}
 	<span class="day-name">{header}</span>
 	{/each}
@@ -117,11 +117,11 @@
 
 <script>
 	import {createEventDispatcher } from 'svelte';
-	import { standardizeDates } from '../routes/utils.js';
+  import { standardizeDates } from '../routes/utils.js';
 
 
   export let items = [];
-  export let currentDate;
+  export let currentDate, mobile;
 	var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   let rowCount = 0;
@@ -244,6 +244,19 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.calendarM {
+  display: grid;
+  width: 100%;
+  height: 400px;
+  height: 60vh;
+  grid-template-columns: repeat(7, minmax(14.28%, 1fr));
+  grid-template-rows: 30px;
+  grid-auto-rows: minmax(61px, 1fr);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .day {
   border-bottom: 1px solid rgba(166, 168, 179, 0.12);
   border-right: 1px solid rgba(166, 168, 179, 0.12);

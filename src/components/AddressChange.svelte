@@ -136,6 +136,17 @@
     transform: translate(-50%, -50%);
     z-index: 6;
   }
+
+  #paper-holderM {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    max-height: 80%;
+    overflow-y: auto;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+  }
 </style>
 
 {#if loading}
@@ -191,7 +202,7 @@
       </Actions>
     </Dialog>
   </div>
-  <div id="paper-holder" on:click|stopPropagation={()=>{}}>
+  <div id={$session.mobile ? "paper-holderM" : "paper-holder" } on:click|stopPropagation={()=>{}}>
     <Paper>
       {#if !$addressStepOneComplete}
         <AddressChangeOne cancel={cancel} />

@@ -1,11 +1,10 @@
 <script>
   import { post } from '../routes/utils.js';
 	import { goto, stores } from '@sapper/app';
-  const { session } = stores();
+
+  const { session, page } = stores();
   
   const user = $session.user
-  
-	export let segment;
 </script>
 
 <style>
@@ -78,18 +77,18 @@
 <nav>
 	<ul>
     <li><a id='logo-link' href='.'><img id='home-logo' alt='small logo' src='smartmail v2 square - 100-min.png'></a></li>
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' class='{segment === undefined ? "primary" : ''}' href='.'>home</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' class='{segment === "about" ? "primary" : ''}' href='about'>about</a></li>
-		<li><a aria-current='{segment === "contact" ? "page" : undefined}' class='{segment === "contact" ? "primary" : ''}' href='contact'>contact us</a></li>
+		<li><a aria-current='{$page.path === "/" ? "page" : undefined}' class='{$page.path === undefined ? "primary" : ''}' href='.'>home</a></li>
+		<li><a aria-current='{$page.path === "/about" ? "page" : undefined}' class='{$page.path === "/about" ? "primary" : ''}' href='about'>about</a></li>
+		<li><a aria-current='{$page.path === "/contact" ? "page" : undefined}' class='{$page.path === "/contact" ? "primary" : ''}' href='contact'>contact us</a></li>
 
     {#if $session.user && $session.user.first_name}
-		  <li><a rel=prefetch aria-current='{segment === "addresses" ? "page" : undefined}' class='{segment === "addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
-		  <li><a rel=prefetch aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='account'>my account</a></li>
+		  <li><a rel=prefetch aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
+		  <li><a rel=prefetch aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='account'>my account</a></li>
       <li id='sign-up'><a rel=prefetch href='account'>Hello {$session.user.first_name}!</a></li>
     {:else}
-		  <li><a aria-current='{segment === "addresses" ? "page" : undefined}' class='{segment === "addresses" ? "primary" : ''}' href='login'>address book</a></li>
-      <li><a aria-current='{segment === "account" ? "page" : undefined}' class='{segment === "account" ? "primary" : ''}' href='login'>my account</a></li>
-      <li id='sign-up'><a aria-current='{segment === "sign-up" || segment === "login" ? "page" : undefined}' class='{segment === "sign-up" || segment === "login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
+		  <li><a aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='login'>address book</a></li>
+      <li><a aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='login'>my account</a></li>
+      <li id='sign-up'><a aria-current='{$page.path === "/sign-up" || $page.path === "/login" ? "page" : undefined}' class='{$page.path === "/sign-up" || $page.path === "/login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
     {/if}
 	</ul>
 </nav>

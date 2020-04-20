@@ -113,6 +113,10 @@
     }
   }
 
+	async function emailConfirmation(user) {
+		await post(`manage/confirm_signup_email`, { user });
+  }
+
 	async function submit() {
     loading= true;
 		const response = await post(`auth/sign-up`, { user, address, status, start_date });
@@ -120,7 +124,6 @@
 		// TODO handle network errors
 		submitErrors = response.error;
 
-    loading= false;
 		if (response.user) {
 			$session.user = response.user;
       $session.addresses = response.addresses;
@@ -159,6 +162,8 @@
         phone: '', // optional
         delivery_instructions: '', // optional
       };
+      await emailConfirmation(response.user);
+      loading= false;
 			goto('account');
 		}
     if (submitErrors != null) {

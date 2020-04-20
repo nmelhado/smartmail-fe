@@ -2,6 +2,7 @@
 	import { goto, stores } from '@sapper/app';
   import { get } from '../utils.js';
 	import Account from '../../components/Account.svelte'; 
+	import AccountMobile from '../../components/AccountMobile.svelte'; 
 
   const { session } = stores();
   
@@ -22,5 +23,9 @@
 
 
 {#if $session.user}
-  <Account checkConnection={checkConnection}/>
+  {#if $session.mobile}
+    <AccountMobile checkConnection={checkConnection}/>
+  {:else}
+    <Account checkConnection={checkConnection}/>
+  {/if}
 {/if}

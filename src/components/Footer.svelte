@@ -20,10 +20,20 @@
     text-align: center;
     background-color: var(--veryLightGray);
   }
+
+	footer.mobile {
+    height: 120px;
+  }
   
   #home-logo {
     width: 150px;
     margin: 15px 15px 0;
+    vertical-align: middle;
+  }
+  
+  #home-logo-mobile {
+    width: 150px;
+    margin: 5px 15px 0;
     vertical-align: middle;
   }
 
@@ -33,11 +43,19 @@
     color: var(--darkGray);
   }
 
+  ul {
+    padding: 0;
+  }
+
 	li {
     display: inline-block;
     text-align: center;
     padding: 0 1.3em;
     color: var(--veryDarkGray);
+  }
+
+  .mobileF {
+    padding: 0 0.5em;
   }
   
   a {
@@ -50,20 +68,24 @@
 
 </style>
 
-<footer>
-    <img id='home-logo' alt='small logo' src='smartmail v2 long - 250-min.png'>
+<footer class={$session.mobile ? "mobile" : ""}>
+    <img id={$session.mobile ? "home-logo-mobile" : "home-logo"} alt='small logo' src='smartmail v2 long - 250-min.png'>
     <ul>
-      <li><a href='.'>home</a></li>
-      <li><a href='about'>about</a></li>
-      <li><a href='contact'>contact us</a></li>
+      <li class={$session.mobile ? "mobileF" : ""}><a href='.'>home</a></li>
+      <li class={$session.mobile ? "mobileF" : ""}><a href='about'>about</a></li>
+      <li class={$session.mobile ? "mobileF" : ""}><a href='contact'>contact us</a></li>
 
       {#if $session.user}
-        <li><a rel=prefetch href='account'>my account</a></li>
+        <li class={$session.mobile ? "mobileF" : ""}><a rel=prefetch href='account'>my account</a></li>
       {:else}
-        <li><a  href='sign-up'>sign up</a></li>
-        <li><a  href='login'>login</a></li>
+        <li class={$session.mobile ? "mobileF" : ""}><a  href='sign-up'>sign up</a></li>
+        <li class={$session.mobile ? "mobileF" : ""}><a  href='login'>login</a></li>
       {/if}
     </ul>
-    <p>&copy; {yearText} PinPoint LLC</p>
-    <p>All rights reserved.</p>
+    {#if $session.mobile}
+      <p>&copy; {yearText} PinPoint LLC <span style="margin-left: 0.3em;"> All rights reserved.</span></p>
+    {:else}
+      <p>&copy; {yearText} PinPoint LLC</p>
+      <p>All rights reserved.</p>
+    {/if}
 </footer>
