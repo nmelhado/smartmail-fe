@@ -1,15 +1,15 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-  import { get } from '../utils.js';
-	import AddressBook from '../../components/AddressBook.svelte'; 
-	import AddContact from '../../components/AddContact.svelte'; 
+  import { get } from '../utils/helper.js';
+	import AddressBook from '../../components/AddressBook/AddressBook.svelte'; 
+	import AddContact from '../../components/AddressBook/AddContact.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
 
   const { session } = stores();
   
   async function checkConnection() {
     try {
-      const response = await get(`auth/check-credentials`);
+      const response = await get(`api/auth/check-credentials`);
       if (response && !response.ok) {
         delete($session.user);
         delete($session.addresses);
@@ -22,7 +22,7 @@
 
   async function refreshContacts() {
     try {
-      const response = await get(`manage/get_contacts`);
+      const response = await get(`api/manage/get_contacts`);
       if (response.contacts) {
         $session.contacts = response.contacts;
       }
@@ -64,7 +64,7 @@
 
 <h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List <IconButton class="material-icons" on:click={refreshContacts}>refresh</IconButton></h1>
 {#if $session.contacts && $session.contacts.length > 0}
-  <AddressBook contacts={$session.contacts} />
+  <AddressBook mobile={$session.mobile} contacts={$session.contacts} />
 {:else}
   <p>Sorry! It looks like you don't have any addresses saved yet.</p>
 {/if}

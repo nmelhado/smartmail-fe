@@ -1,7 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
 	import ListErrors from '../../components/ListErrors.svelte';
-	import { post } from '../utils.js';
+	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
   import Textfield from '@smui/textfield'
   import Icon from '@smui/textfield/icon/index';  
@@ -54,7 +54,7 @@
   }
 
 	async function submit() {
-		const response = await post(`auth/login`, { email: user.email, password: user.password });
+		const response = await post(`api/auth/login`, { email: user.email, password: user.password });
 
 		// TODO handle network errors
     submitErrors = response.error;

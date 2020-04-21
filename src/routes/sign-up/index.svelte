@@ -1,7 +1,7 @@
 <script>
-	import SignUpOne from '../../components/SignUpOne.svelte';
-	import SignUpTwo from '../../components/SignUpTwo.svelte';
-  import { stepOneComplete } from '../stores.js';
+	import SignUpOne from '../../components/SignUp/SignUpOne.svelte';
+	import SignUpTwo from '../../components/SignUp/SignUpTwo.svelte';
+  import { stepOneComplete } from '../utils/stores.js';
 
   $stepOneComplete = false;
 

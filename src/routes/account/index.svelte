@@ -1,14 +1,14 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-  import { get } from '../utils.js';
-	import Account from '../../components/Account.svelte'; 
-	import AccountMobile from '../../components/AccountMobile.svelte'; 
+  import { get } from '../utils/helper.js';
+	import Account from '../../components/Account/Account.svelte'; 
+	import AccountMobile from '../../components/Account/AccountMobile.svelte'; 
 
   const { session } = stores();
   
   async function checkConnection() {
     try {
-      const response = await get(`auth/check-credentials`);
+      const response = await get(`api/auth/check-credentials`);
       if (response && !response.ok) {
         delete($session.user);
         delete($session.addresses);

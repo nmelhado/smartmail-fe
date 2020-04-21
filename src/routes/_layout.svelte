@@ -1,6 +1,6 @@
 <script>
-	import Nav from '../components/Nav.svelte';
-	import MobileNav from '../components/MobileNav.svelte';
+	import Nav from '../components/Nav/Nav.svelte';
+	import MobileNav from '../components/Nav/MobileNav.svelte';
   import Footer from '../components/Footer.svelte';
   import GoogleAnalytics from '../components/GoogleAnalytics.svelte';
 	import { stores } from '@sapper/app';
@@ -40,10 +40,15 @@
     padding: 0;
     width: 100%;
   }
+
+  .backMap {
+    background-image: url(world_map.svg);
+    background-size: cover;
+  }
 </style>
 
 <GoogleAnalytics />
-<div id={$session.mobile ? "mainContentMobile" : "mainContent"}>
+<div id={$session.mobile ? "mainContentMobile" : "mainContent"} class={segment == "login" || segment == "sign-up" ? "backMap" : ""}>
   {#if $session.mobile}
     <MobileNav />
   {:else}
