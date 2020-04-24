@@ -147,7 +147,7 @@
   <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={$user.password}/>
   <Textfield variant="outlined" label="Confirm password" invalid="{invalid["confirm_password"]}" class="fullWidth" type="password" bind:value={confirmPassword}/>
   <div id="smartIDSection">
-    <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID:  <IconButton class="material-icons" on:click={refreshSmartID}>refresh</IconButton></label>
+    <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID&trade;:  <IconButton class="material-icons" on:click={refreshSmartID}>refresh</IconButton></label>
     <br>
     {#each $smartIDOptions as smartIDOption}
       <label class="radioLabel"><input type="radio" value={smartIDOption} bind:group={$user.smart_id}>  {smartIDOption.substring(0, 4)}  {smartIDOption.substring(4)}</label>

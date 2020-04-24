@@ -189,13 +189,25 @@
     margin: 0 auto;
     box-shadow: 0 0 20px 0 var(--lightGray);
   }
-  
+
   .calendar-container {
     min-width: 300px;
     max-width: 500px;
     flex-grow: 3;
     text-align: center;
     border: 1px solid var(--lightGray);
+  }
+
+  @media (max-width: 1035px) {
+    #addressBox {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 856px) {
+    .calendar-container {
+      max-width: 730px;
+    }
   }
   
   .calendar-header {
@@ -227,7 +239,7 @@
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
 <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
-<h2>your smartID is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
+<h2>your smartID&trade; is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 <div id="addressBox">
   {#if !resetCalendarCheck }

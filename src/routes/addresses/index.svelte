@@ -79,6 +79,6 @@
     When you send mail to or recieve mail from a Smartmail contact, their information will automatically be added to your address book. There's no need to manually add an address ever!
   </p>
   <p>
-    If you do want to add an address yourself though, you can. Just give us your contact's smartID and either their email address or their phone number and we will add them to your address book.
+    If you do want to add an address yourself though, you can. Just give us your contact's smartID&trade; and either their email address or their phone number and we will add them to your address book.
   </p>
 </div>

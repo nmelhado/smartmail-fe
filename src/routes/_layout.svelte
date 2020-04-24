@@ -7,7 +7,9 @@
 
   const { session } = stores();
 
-	export let segment;
+  export let segment;
+  
+  $: innerWidth = 0
 </script>
 
 <style>
@@ -36,9 +38,10 @@
     box-sizing: border-box;
   }
 
-  #mainContact {
+  #mainNoPadding {
     padding: 0;
     width: 100%;
+    max-width: 100%;
   }
 
   .backMap {
@@ -47,15 +50,17 @@
   }
 </style>
 
+<svelte:window bind:innerWidth />
+
 <GoogleAnalytics />
 <div id={$session.mobile ? "mainContentMobile" : "mainContent"} class={segment == "login" || segment == "sign-up" ? "backMap" : ""}>
-  {#if $session.mobile}
+  {#if $session.mobile || innerWidth < 825}
     <MobileNav />
   {:else}
     <Nav />
   {/if}
-  {#if segment == "contact"}
-    <main id="mainContact">
+  {#if segment == "contact" || segment == "about"}
+    <main id="mainNoPadding">
       <slot></slot>
     </main>
   {:else}

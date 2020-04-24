@@ -267,7 +267,7 @@
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
 <h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
-<h2>your smartID is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
+<h2>your smartID&trade; is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 
 <TabBar tabs={keyedTabs} let:tab key={tab => tab.k} bind:active={keyedTabsActive}>

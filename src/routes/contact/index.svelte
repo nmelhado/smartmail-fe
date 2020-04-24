@@ -105,6 +105,8 @@
 			messageSent = true;
 		}
   }
+
+  $: innerWidth = 0
 </script>
 
 <svelte:head>
@@ -217,15 +219,18 @@
     font-size: 1.8em;
   }
 </style>
-<div id={$session.mobile ? "contactM" : "contact"}>
-  {#if $session.mobile}
+
+<svelte:window bind:innerWidth />
+
+<div id={$session.mobile || innerWidth < 825 ? "contactM" : "contact"}>
+  {#if $session.mobile || innerWidth < 825}
     <div id="top">
       <div id="topInner">
       {#if messageSent}
-        <h1 class={$session.mobile ? "h1M" : "" }>Thank you!</h1>
-        <h2 class={$session.mobile ? "h2M" : "" }>Your message has been sent</h2>
+        <h1 class={$session.mobile || innerWidth < 825 ? "h1M" : "" }>Thank you!</h1>
+        <h2 class={$session.mobile || innerWidth < 825 ? "h2M" : "" }>Your message has been sent</h2>
       {:else}
-        <h2 class={$session.mobile ? "h2M" : "" }>Send Us a Message</h2>
+        <h2 class={$session.mobile || innerWidth < 825 ? "h2M" : "" }>Send Us a Message</h2>
 
         <ListErrors {errors}/>
 
@@ -242,7 +247,7 @@
           </Textfield>
           <div id="buttonsTop">
             <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
-            <Button color="secondary" class={$session.mobile ? "submitButton" : "submitButton contactSubmit" } variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+            <Button color="secondary" class={$session.mobile || innerWidth < 825 ? "submitButton" : "submitButton contactSubmit" } variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
           </div>
         </form>
         <script src='https://www.google.com/recaptcha/api.js'></script>
@@ -250,8 +255,8 @@
       </div>
     </div>
   {/if}
-  <div id={$session.mobile ? "bottom" : "left"}>
-    <div id={$session.mobile ? "bottomInner" : "leftInner"}>
+  <div id={$session.mobile || innerWidth < 825 ? "bottom" : "left"}>
+    <div id={$session.mobile || innerWidth < 825 ? "bottomInner" : "leftInner"}>
       <h3 class="contactHeader">Address</h3>
       <p class="contactBody">
         <strong>Mailing Address:</strong><br>
@@ -275,7 +280,7 @@
     </div>
   </div>
 
-  {#if !$session.mobile}
+  {#if !$session.mobile && innerWidth >= 825}
     <div id="right">
       <div id="rightInner">
       {#if messageSent}
