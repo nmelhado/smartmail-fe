@@ -10,15 +10,12 @@
   export let segment;
   
   $: innerWidth = 0
+  $: innerHeight = 0
 </script>
 
 <style>
   #mainContent {
     min-height: calc(100vh - 191px)
-  }
-
-  #mainContentMobile {
-    min-height: calc(100vh - 121px)
   }
 
 	main {
@@ -50,10 +47,10 @@
   }
 </style>
 
-<svelte:window bind:innerWidth />
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <GoogleAnalytics />
-<div id={$session.mobile ? "mainContentMobile" : "mainContent"} class={segment == "login" || segment == "sign-up" ? "backMap" : ""}>
+<div id="mainContent" class={segment == "login" || segment == "sign-up" ? "backMap" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"}>
   {#if $session.mobile || innerWidth < 825}
     <MobileNav />
   {:else}
