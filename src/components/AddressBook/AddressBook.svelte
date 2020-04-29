@@ -38,17 +38,18 @@
   }
 
   form {
-    display: inline-block;
+    display: inline-flex;
     position: relative;
+    justify-content: space-around;
   }
 </style>
 
 <div id="searchBar">
   <form on:submit|preventDefault={searchContacts}>
     <Textfield variant="outlined" bind:value={search} label="Search by name" />
-    <Button variant="outlined" color="secondary" style="text-align: center;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
+    <Button variant="outlined" color="secondary" style="text-align: center; margin: 10px 0 0 10px;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
     {#if usableContacts.length < contacts.length }
-      <Fab color="secondary" on:click={() => {search = ""; searchContacts();}} mini style="background-color: #aaa; position: absolute; top: 1.2em; right: 80px; width: 20px; height: 20px;"><Icon class="material-icons" style="color: var(--white); font-size: 1.3em; margin: -2px;">close</Icon></Fab>
+      <Fab color="secondary" on:click={() => {search = ""; searchContacts();}} mini style="background-color: #aaa; position: absolute; top: 1.2em; right: 85px; width: 20px; height: 20px;"><Icon class="material-icons" style="color: var(--white); font-size: 1.3em; margin: -2px;">close</Icon></Fab>
     {/if}
   </form>
 </div>
