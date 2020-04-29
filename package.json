@@ -37,6 +37,7 @@
     "@smui/fab": "^1.0.0-beta.20",
     "@smui/form-field": "^1.0.0-beta.20",
     "@smui/icon-button": "^1.0.0-beta.20",
+    "@smui/menu": "^1.0.0-beta.21",
     "@smui/paper": "^1.0.0-beta.20",
     "@smui/radio": "^1.0.0-beta.20",
     "@smui/select": "^1.0.0-beta.20",

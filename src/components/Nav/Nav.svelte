@@ -1,10 +1,24 @@
 <script>
   import { post } from '../../routes/utils/helper.js';
-	import { goto, stores } from '@sapper/app';
+  import { goto, stores } from '@sapper/app';
+  import Menu from '@smui/menu';
+  import {Anchor} from '@smui/menu-surface';
+  import List, {Item, Separator, Text} from '@smui/list';
 
   const { session, page } = stores();
   
   const user = $session.user
+
+	async function logout(event) {
+		await post(`api/auth/logout`);
+    $session.user = null;
+    $session.addresses = null;
+    goto('/');
+  }
+
+
+  let menu;
+  let anchor;
 </script>
 
 <style>
@@ -72,6 +86,11 @@
     color: var(--primary);
   }
 
+  #anchor {
+    position: absolute;
+    right: 0;
+    height: 57px;
+  }
 </style>
 
 <nav>
@@ -84,11 +103,32 @@
     {#if $session.user && $session.user.first_name}
 		  <li><a rel=prefetch aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
 		  <li><a rel=prefetch aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='account'>my account</a></li>
-      <li id='sign-up'><a rel=prefetch href='account'>Hello {$session.user.first_name}!</a></li>
+      <li id='sign-up'><a rel=prefetch on:click|preventDefault={() => menu.setOpen(true)} href='account'>Hello {$session.user.first_name}!</a></li>
+      <Menu style="width: 210px;" bind:this={menu} anchor={false} bind:anchorElement={anchor} anchorCorner="BOTTOM_LEFT">
+        <List>
+          <Item on:SMUI:action={() => goto('/account')}>
+            <Text>
+              my account
+            </Text>
+          </Item>
+          <Item on:SMUI:action={() => goto('/addresses')}>
+            <Text>
+              address book
+            </Text>
+          </Item>
+          <Separator />
+          <Item on:SMUI:action={() => logout()}>
+            <Text>
+              log out
+            </Text>
+          </Item>
+        </List>
+      </Menu>
     {:else}
 		  <li><a aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='login'>address book</a></li>
       <li><a aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='login'>my account</a></li>
       <li id='sign-up'><a aria-current='{$page.path === "/sign-up" || $page.path === "/login" ? "page" : undefined}' class='{$page.path === "/sign-up" || $page.path === "/login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
     {/if}
 	</ul>
+  <div id="anchor"  use:Anchor bind:this={anchor} />
 </nav>

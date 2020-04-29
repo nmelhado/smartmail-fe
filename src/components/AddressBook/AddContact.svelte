@@ -75,6 +75,19 @@
       if ($session.contacts) {
         const tempContacts = [...$session.contacts];
         tempContacts.push(response.contact);
+        tempContacts.sort(function(a, b) {
+          var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+          var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        });
         $session.contacts = tempContacts;
       } else {
         $session.contacts = [response.contact]
@@ -102,7 +115,7 @@
     text-align: center;
     padding: 2em 0;
     border: solid 1px var(--lightGray);
-    margin: 1.5em auto;
+    margin: 3em auto 1.5em;
     color: var(--gray);
   }
 

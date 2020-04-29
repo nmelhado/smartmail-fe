@@ -32,8 +32,8 @@
   }
   
   #home-logo-mobile {
-    width: 150px;
-    margin: 5px 15px 0;
+    width: 90px;
+    margin: 1.3em 0 0;
     vertical-align: middle;
   }
 
@@ -57,6 +57,14 @@
   .mobileF {
     padding: 0 0.5em;
   }
+
+  .mobileFList {
+    margin: 0.9em 0;
+  }
+
+  .mobileCopyright {
+    font-size: 0.7em;
+  }
   
   a {
     text-decoration: none;
@@ -70,7 +78,7 @@
 
 <footer class={$session.mobile ? "mobile" : ""}>
     <img id={$session.mobile ? "home-logo-mobile" : "home-logo"} alt='small logo' src='smartmail v2 long - 250-min.png'>
-    <ul>
+    <ul class={$session.mobile ? "mobileFList" : ""}>
       <li class={$session.mobile ? "mobileF" : ""}><a href='.'>home</a></li>
       <li class={$session.mobile ? "mobileF" : ""}><a href='about'>about</a></li>
       <li class={$session.mobile ? "mobileF" : ""}><a href='contact'>contact us</a></li>
@@ -83,7 +91,7 @@
       {/if}
     </ul>
     {#if $session.mobile}
-      <p>&copy; {yearText} PinPoint LLC <span style="margin-left: 0.3em;"> All rights reserved.</span></p>
+      <p class={$session.mobile ? "mobileCopyright" : ""}>&copy; {yearText} PinPoint LLC <span style="margin-left: 0.3em;"> All rights reserved.</span></p>
     {:else}
       <p>&copy; {yearText} PinPoint LLC</p>
       <p>All rights reserved.</p>

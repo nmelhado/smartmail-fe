@@ -4,7 +4,8 @@
 	import { formatPhoneNumber } from '../../routes/utils/helper.js';
   import Pagination, {paginate} from '../Pagination'
   import Textfield from '@smui/textfield'
-  import Button, {Icon} from '@smui/button';
+  import Fab, {Icon} from '@smui/fab';
+  import Button, {Icon as ButtonIcon} from '@smui/button';
 
   export let contacts, mobile;
 
@@ -38,16 +39,18 @@
 
   form {
     display: inline-block;
+    position: relative;
   }
 </style>
 
 <div id="searchBar">
   <form on:submit|preventDefault={searchContacts}>
     <Textfield variant="outlined" bind:value={search} label="Search by name" />
+    <Button variant="outlined" color="secondary" style="text-align: center;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
+    {#if usableContacts.length < contacts.length }
+      <Fab color="secondary" on:click={() => {search = ""; searchContacts();}} mini style="background-color: #aaa; position: absolute; top: 1.2em; right: 80px; width: 20px; height: 20px;"><Icon class="material-icons" style="color: var(--white); font-size: 1.3em; margin: -2px;">close</Icon></Fab>
+    {/if}
   </form>
-  {#if usableContacts.length < contacts.length}
-    <Button color="secondary" on:click={() => {search = ""; searchContacts();}}><Icon class="material-icons" style="color: var(--darkGray);">close</Icon></Button>
-  {/if}
 </div>
 <DataTable id={mobile ? "contactTableM" : "contactTable" } table$aria-label="Contacts" table$style="width: 100%;">
   <Head>
@@ -74,8 +77,8 @@
 
 {#if itemsLength > pageSize}
   {#if togglePageNumbers}
-    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} />
+    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} {mobile} />
   {:else}
-    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} />
+    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} {mobile} />
   {/if}
 {/if}
