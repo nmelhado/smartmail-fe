@@ -126,7 +126,6 @@ code {
   }
 }
 
-.mdc-notched-outline {
-  background-color: var(--white);
+label.mdc-text-field {
+  background-color: var(--white) !important;
 }
-
