@@ -56,6 +56,25 @@
               <Graphic class="material-icons" aria-hidden="true">home</Graphic>
               <Text>home</Text>
             </Item>
+          {#if $session.user && $session.user.first_name}
+            <Item href="javascript:void(0)" on:click={() => navigate('/account')} activated={$page.path === '/account'}>
+              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+              <Text>my account</Text>
+            </Item>
+            <Item href="javascript:void(0)" on:click={() => navigate('/addresses')} activated={$page.path === '/addresses'}>
+              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+              <Text>address book</Text>
+            </Item>
+          {:else}
+            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/account'}>
+              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+              <Text>my account</Text>
+            </Item>
+            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/addresses'}>
+              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+              <Text>address book</Text>
+            </Item>
+          {/if}
             <Item href="javascript:void(0)" on:click={() => navigate('/about')} activated={$page.path === '/about'}>
               <Graphic class="material-icons" aria-hidden="true">home</Graphic>
               <Text>about</Text>
@@ -64,32 +83,13 @@
               <Graphic class="material-icons" aria-hidden="true">home</Graphic>
               <Text>contact us</Text>
             </Item>
-          {#if $session.user && $session.user.first_name}
-            <Item href="javascript:void(0)" on:click={() => navigate('/addresses')} activated={$page.path === '/addresses'}>
-              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
-              <Text>address book</Text>
-            </Item>
-            <Item href="javascript:void(0)" on:click={() => navigate('/account')} activated={$page.path === '/account'}>
-              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
-              <Text>my account</Text>
-            </Item>
-
             <Separator nav />
+          {#if $session.user && $session.user.first_name}
             <Item href="javascript:void(0)" on:click={() => logout()} activated={$page.path === '/sign-up'}>
               <Graphic class="material-icons" aria-hidden="true">home</Graphic>
               <Text>log out</Text>
             </Item>
           {:else}
-            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/addresses'}>
-              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
-              <Text>address book</Text>
-            </Item>
-            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/account'}>
-              <Graphic class="material-icons" aria-hidden="true">home</Graphic>
-              <Text>my account</Text>
-            </Item>
-
-            <Separator nav />
             <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/login'}>
               <Graphic class="material-icons" aria-hidden="true">home</Graphic>
               <Text>login</Text>

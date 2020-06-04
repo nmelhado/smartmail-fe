@@ -97,12 +97,17 @@
 	<ul>
     <li><a id='logo-link' href='.'><img id='home-logo' alt='small logo' src='smartmail v2 square - 100-min.png'></a></li>
 		<li><a aria-current='{$page.path === "/" ? "page" : undefined}' class='{$page.path === undefined ? "primary" : ''}' href='.'>home</a></li>
+    {#if $session.user && $session.user.first_name}
+		  <li><a rel=prefetch aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='account'>my account</a></li>
+		  <li><a rel=prefetch aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
+    {:else}
+      <li><a aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='login'>my account</a></li>
+		  <li><a aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='login'>address book</a></li>
+    {/if}
 		<li><a aria-current='{$page.path === "/about" ? "page" : undefined}' class='{$page.path === "/about" ? "primary" : ''}' href='about'>about</a></li>
 		<li><a aria-current='{$page.path === "/contact" ? "page" : undefined}' class='{$page.path === "/contact" ? "primary" : ''}' href='contact'>contact us</a></li>
 
     {#if $session.user && $session.user.first_name}
-		  <li><a rel=prefetch aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
-		  <li><a rel=prefetch aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='account'>my account</a></li>
       <li id='sign-up'><a rel=prefetch on:click|preventDefault={() => menu.setOpen(true)} href='account'>Hello {$session.user.first_name}!</a></li>
       <Menu style="width: 210px;" bind:this={menu} anchor={false} bind:anchorElement={anchor} anchorCorner="BOTTOM_LEFT">
         <List>
@@ -125,8 +130,6 @@
         </List>
       </Menu>
     {:else}
-		  <li><a aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='login'>address book</a></li>
-      <li><a aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='login'>my account</a></li>
       <li id='sign-up'><a aria-current='{$page.path === "/sign-up" || $page.path === "/login" ? "page" : undefined}' class='{$page.path === "/sign-up" || $page.path === "/login" ? "primary" : ''}' href='sign-up'>sign up/login</a></li>
     {/if}
 	</ul>
