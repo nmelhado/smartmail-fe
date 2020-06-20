@@ -50,7 +50,7 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <GoogleAnalytics />
-<div id="mainContent" class={segment == "login" || segment == "sign-up" ? "backMap" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"}>
+<div id="mainContent" class={segment == "login" || segment == "sign-up" || segment == "forgot-password" || segment == "reset-password" ? "backMap" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"}>
   {#if $session.mobile || innerWidth < 825}
     <MobileNav />
   {:else}

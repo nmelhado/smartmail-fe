@@ -284,10 +284,10 @@
     <div id="right">
       <div id="rightInner">
       {#if messageSent}
-        <h1 class="text-xs-center">Thank you!</h1>
-        <h2 class="text-xs-center">Your message has been sent</h2>
+        <h1>Thank you!</h1>
+        <h2>Your message has been sent</h2>
       {:else}
-        <h2 class="text-xs-center">Send Us a Message</h2>
+        <h2>Send Us a Message</h2>
 
         <ListErrors {errors}/>
 

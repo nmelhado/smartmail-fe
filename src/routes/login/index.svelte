@@ -80,7 +80,7 @@
     margin: 0 auto;
   }
 
-  #signUpLink {
+  .links {
     text-align: center;
     color: var(--secondaryAccent)
   }
@@ -101,26 +101,25 @@
 
 <div class="auth-page">
 	<div class="container page">
-		<div class="row">
-			<div class="col-md-6 offset-md-3 col-xs-12">
-				<h1 class="text-xs-center">Sign In</h1>
-				<p id="signUpLink" class="text-xs-center">
-					<a href="/sign-up">Need an account?</a>
-				</p>
+    <h1>Sign In</h1>
+    <p class="links">
+      <a href="/sign-up">Need an account?</a>
+    </p>
 
-        <ListErrors {errors}/>
+    <ListErrors {errors}/>
 
-        <form on:submit|preventDefault={verify}>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
-            <Icon class="material-icons">email</Icon>
-          </Textfield>
-          <br>
-          <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} type="password" bind:value={user.password}/>
-          <br>
-          <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
-        </form>
+    <form on:submit|preventDefault={verify}>
+      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
+        <Icon class="material-icons">email</Icon>
+      </Textfield>
+      <br>
+      <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} type="password" bind:value={user.password}/>
+      <br>
+      <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
+    </form>
 
-			</div>
-		</div>
+    <p class="links">
+      <a href="/forgot-password">Forgot your password?</a>
+    </p>
 	</div>
 </div>

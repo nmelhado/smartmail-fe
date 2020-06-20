@@ -231,7 +231,7 @@
   }
 </style>
 
-<h1 class="text-xs-center">Hello {$session.user.first_name}!</h1>
+<h1>Hello {$session.user.first_name}!</h1>
 <p id="logOut"class="text-xs-center">
   <a href="/"  on:click|preventDefault={logout}>Log out</a>
 </p>

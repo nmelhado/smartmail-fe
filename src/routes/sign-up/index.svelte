@@ -41,7 +41,7 @@
 	<div class="container page">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 col-xs-12">
-				<h1 class="text-xs-center">Sign up</h1>
+				<h1>Sign up</h1>
 				<p id="loginLink">
 					<a href="/login">Already have an account?</a>
 				</p>
