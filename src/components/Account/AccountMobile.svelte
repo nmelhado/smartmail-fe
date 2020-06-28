@@ -6,7 +6,7 @@
 	import AddressChange from './AddressChange.svelte'; 
 	import Map from './Map.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
-  import Button, {Label, Group} from '@smui/button';
+  import Button, {Label} from '@smui/button';
   import { addressChangeActive, addressStepOneComplete } from '../../routes/utils/stores.js';
   import Tab, {Icon as TabIcon, Label as TabLabel} from '@smui/tab';
   import TabBar from '@smui/tab-bar';
