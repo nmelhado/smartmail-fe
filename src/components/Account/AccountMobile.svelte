@@ -235,17 +235,7 @@
 <h1>Hello {$session.user.first_name}!</h1>
 
 <div id="accountButtons">
-  <Group variant="outlined">
-    <Button color="secondary" on:click={profile} variant="outlined"><Label>Profile</Label></Button>
-    <Button color="secondary" on:click={addresses} variant="outlined"><Label>Address Book</Label></Button>
-  </Group>
-  <Group variant="outlined">
-    <Button color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
-    <Button color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
-  </Group>
-  <Group variant="outlined">
     <Button color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
-  </Group>
 </div>
 
 {#if $addressChangeActive}
