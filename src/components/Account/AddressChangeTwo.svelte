@@ -9,7 +9,7 @@
   
   const { session } = stores();
 
-	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	let now = new Date();
   let year = now.getFullYear();
   let month = now.getMonth();

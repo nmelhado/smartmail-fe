@@ -6,7 +6,7 @@ dotenv.config();
 const usps = new USPS({
   userId: process.env.USPS_ID,
   // USPS returns ALL CAPS, this boolean turns on Proper Caps for both Address lines and City. This is an optional item.
-  properCase: false
+  properCase: true
 });
 
 export function post(req, res) {

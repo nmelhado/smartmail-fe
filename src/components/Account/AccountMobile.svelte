@@ -1,12 +1,12 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post, standardizeDates, formatPhoneNumber } from '../../routes/utils/helper.js';
+	import { post, standardizeDates, formatPhoneNumber, findTodaysAddress } from '../../routes/utils/helper.js';
 	import AddressCard from './AddressCard.svelte'; 
 	import Calendar from './Calendar.svelte'; 
 	import AddressChange from './AddressChange.svelte'; 
 	import Map from './Map.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
-  import Button, {Label} from '@smui/button';
+  import Button, {Label, Group} from '@smui/button';
   import { addressChangeActive, addressStepOneComplete } from '../../routes/utils/stores.js';
   import Tab, {Icon as TabIcon, Label as TabLabel} from '@smui/tab';
   import TabBar from '@smui/tab-bar';
@@ -20,52 +20,31 @@
 		await post(`api/auth/logout`);
     $session.user = null;
     $session.addresses = null;
+    $session.contacts = null;
     goto('/');
   }
   
+	function profile() {
+    goto('/profile');
+  }
+
+	function addresses() {
+    goto('/addresses');
+  }
+  
+	function tracking() {
+    goto('/addresses');
+  }
+  
   let currentDate = standardizeDates(new Date())
-  let tempHolder = true;
   let resetCalendarCheck = true;
 
-  const todaysAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= currentDate && (!address.end_date || standardizeDates(address.end_date) >= currentDate));
-  let todaysAddress = null;
-  if (todaysAddresses.length < 1) {
-    tempHolder = false;
-    todaysAddress = null;
-  }  else {
-    todaysAddress = todaysAddresses[0];
-    if (todaysAddresses.length > 1) {
-      todaysAddress = todaysAddresses.filter( address => address.address_type == "temporary")[0];
-    }
-  }
-
-  function processTodaysAddresses() {
-    const todaysAddresses = $session.addresses.filter( address => { return standardizeDates(address.start_date) <= currentDate && (!address.end_date || standardizeDates(address.end_date) >= currentDate)});
-    if (todaysAddresses.length < 1) {
-      tempHolder = false;
-      todaysAddress = null;
-      // resetTabs();
-    } else {
-      let tempAddress =todaysAddresses[0];
-      if (todaysAddresses.length > 1) {
-        tempAddress = todaysAddresses.filter( address => address.address_type == "temporary")[0];
-      }
-      if (tempAddress !=todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-          // resetTabs();
-        }, 1)
-      }
-    }
-  }
+  let todaysAddress = findTodaysAddress(currentDate, $session.addresses);
 
   const pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
   const phone = formatPhoneNumber(todaysAddress.phone)
 
-	let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	let now = standardizeDates(new Date());
   let year = now.getFullYear();
   let month = now.getMonth();
@@ -116,7 +95,7 @@
       }
     }
     processNewMonth();
-    processTodaysAddresses();
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
     update = false;
 	}
 	function prev(period="month") {
@@ -131,14 +110,14 @@
       }
     }
     processNewMonth();
-    processTodaysAddresses();
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
     update = false;
 	}
 	function dayClick(e) {
     currentDate = e.date;
     console.log(e.date);
     processHeaderStatement();
-    processTodaysAddresses();
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
     update = false;
     console.log(keyedTabsActive.k);
   }
@@ -213,7 +192,7 @@
     margin: 0.5em 0 1em;
   }
   
-  #logOut {
+  #accountButtons {
     margin: 0 0 40px;
     text-align: center;
     color: var(--secondaryAccent)
@@ -248,21 +227,27 @@
     text-align: center;
   }
 
-  #map-placeholder {
-    flex-grow: 3;
-    min-width: 300px;
-    border: 1px solid var(--lightGray);
-  }
-
   .hidden {
     display: none;
   }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
-<p id="logOut"class="text-xs-center">
-  <a href="/"  on:click|preventDefault={logout}>Log out</a>
-</p>
+
+<div id="accountButtons">
+  <Group variant="outlined">
+    <Button color="secondary" on:click={profile} variant="outlined"><Label>Profile</Label></Button>
+    <Button color="secondary" on:click={addresses} variant="outlined"><Label>Address Book</Label></Button>
+  </Group>
+  <Group variant="outlined">
+    <Button color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
+    <Button color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
+  </Group>
+  <Group variant="outlined">
+    <Button color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
+  </Group>
+</div>
+
 {#if $addressChangeActive}
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
@@ -286,8 +271,6 @@
   {#if keyedTabsActive && keyedTabsActive.k == 2}
     {#if todaysAddress != null}
       <Map mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
-    {:else if tempHolder}
-      <div id="map-placeholder" />
     {/if}
   {/if}
 

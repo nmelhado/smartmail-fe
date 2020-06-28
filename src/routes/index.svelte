@@ -116,7 +116,7 @@
   <div id='home-banner'>
     <img id="logo" alt='logo' src='smartmail v2 long - 1000-min.png'>
   </div>
-  <h2>Send mail and packages to people, not places​</h2>
+  <h2>Send to people, not places​</h2>
   <div id={$session.mobile ? "buttonsM" : "buttons"}>
     <Button color="secondary" class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
     {#if !$session.mobile}

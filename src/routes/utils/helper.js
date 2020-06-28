@@ -8,7 +8,7 @@ export function post(endpoint, data) {
 		}
   })
   .then(r => r.json())
-  .catch(e => console.log(e));
+  .catch(e => console.error(e));
 }
 
 export function put(endpoint, data) {
@@ -20,7 +20,7 @@ export function put(endpoint, data) {
 			'Content-Type': 'application/json'
 		}
 	}).then(r => r.json())
-  .catch(e => console.log(e));
+  .catch(e => console.error(e));
 }
 
 export function get(endpoint) {
@@ -31,7 +31,7 @@ export function get(endpoint) {
 			'Content-Type': 'application/json'
 		}
 	}).then(r => r.json())
-  .catch(e => console.log(e));
+  .catch(e => console.error(e));
 }
 
 export function del(endpoint, data) {
@@ -43,7 +43,7 @@ export function del(endpoint, data) {
 			'Content-Type': 'application/json'
 		}
 	}).then(r => r.json())
-  .catch(e => console.log(e));
+  .catch(e => console.error(e));
 }
 
 export function standardizeDates(date) {
@@ -58,4 +58,38 @@ export function formatPhoneNumber(phoneNumberString) {
     return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
   }
   return null
+}
+
+export function findTodaysAddress(date, addresses) {
+  const todaysAddresses = addresses.filter( address => standardizeDates(address.start_date) <= date && (!address.end_date || standardizeDates(address.end_date) >= date));
+  let todaysAddress = null;
+  if (todaysAddresses.length > 0) {
+    todaysAddress = todaysAddresses[0];
+    if (todaysAddresses.length > 1) {
+      todaysAddress = todaysAddresses.filter( address => address.address_type == "temporary")[0];
+    }
+  }
+  return todaysAddress;
+}
+
+const ups = "UPS";
+const usps = "USPS";
+const lasership = "Lasership";
+
+export async function trackPackage(carrier, trackingNumber) {
+  let additionalInfo = null;
+  switch (carrier) {
+    case ups:
+      additionalInfo = await post(`api/track/ups`, { trackingNumber });
+      break;
+    case usps:
+      additionalInfo = await post(`api/track/usps`, { trackingNumber });
+      break;
+    case lasership:
+      additionalInfo = await post(`api/track/lasership`, { trackingNumber });
+      break;
+    default:
+      break;
+  }
+  return additionalInfo;
 }
