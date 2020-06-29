@@ -1,4 +1,5 @@
-const parseString = require('xml2js').parseString;
+const xml2js = require('xml2js');
+const parser = new xml2js.Parser({explicitArray: false, trim: true});
 const { NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
@@ -35,21 +36,24 @@ function send({ method, path, data, token, external = false }) {
     });
 }
 
-function sendXML({ method, path, external = false }) {
+function sendXML({ method, path, data }) {
 	const fetch = process.browser ? window.fetch : require('node-fetch').default;
 
-  const opts = { method, headers: {} };
-  
-  const url = external ? path : new URL(path, base);
+	const opts = { method, headers: {} };
 
+	if (data) {
+		opts.headers['Content-Type'] = 'application/xml';
+		opts.body = data;
+	}
+  
   return new Promise((resolve, reject) => {
     let data = '';
-    fetch(url, opts)
+    fetch(path, opts)
     .then(res => {
       if (res.status >= 200 && res.status < 400) {
         res.body.on('data', function(data_) { data += data_.toString(); });
         res.body.on('end', function() {
-          parseString(data, function(err, result) {
+          parser.parseString(data, function(err, result) {
             if (err == null) {
               resolve(result);
             } else {
@@ -75,7 +79,7 @@ export function externalGet(path, token) {
 }
 
 export function xmlGet(path) {
-	return sendXML({ method: 'GET', path, external: true });
+	return sendXML({ method: 'GET', path });
 }
 
 export function get(path, token) {
@@ -88,6 +92,10 @@ export function del(path, token) {
 
 export function post(path, data, token) {
 	return send({ method: 'POST', path, data, token });
+}
+
+export function xmlPost(path, data) {
+	return sendXML({ method: 'POST', path, data });
 }
 
 export function put(path, data, token) {

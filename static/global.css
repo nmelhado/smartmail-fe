@@ -114,6 +114,18 @@ code {
   margin: 20px auto;
 }
 
+@media (max-width: 1290px) {
+  .profilePhoneCell {
+    display: none;
+  }
+}
+
+@media (max-width: 990px) {
+  .profilePhoneCell {
+    display: table-cell;
+  }
+}
+
 @media (max-width: 850px) {
   .phoneCell {
     display: none;

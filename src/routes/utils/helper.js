@@ -75,6 +75,7 @@ export function findTodaysAddress(date, addresses) {
 const ups = "UPS";
 const usps = "USPS";
 const lasership = "Lasership";
+const fedex = "FedEx";
 
 export async function trackPackage(carrier, trackingNumber) {
   let additionalInfo = null;
@@ -87,6 +88,9 @@ export async function trackPackage(carrier, trackingNumber) {
       break;
     case lasership:
       additionalInfo = await post(`api/track/lasership`, { trackingNumber });
+      break;
+    case fedex:
+      additionalInfo = await post(`api/track/fedex`, { trackingNumber });
       break;
     default:
       break;

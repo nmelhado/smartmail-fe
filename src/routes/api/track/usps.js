@@ -16,26 +16,26 @@ export function post(req, res) {
       deliveredOn: null
     }
     if(response.TrackResponse) {
-      const summary = response.TrackResponse.TrackInfo[0].TrackSummary[0];
-      const status = summary.Event[0]
+      const summary = response.TrackResponse.TrackInfo.TrackSummary;
+      const status = summary.Event
       finalResponse.status = status.includes("Delivered") ? "Delivered" : status;
 
-      const dateTime = fixTime(summary.EventDate[0] + " " + summary.EventTime[0])
+      const dateTime = fixTime(summary.EventDate + " " + summary.EventTime)
       if (finalResponse.status == "Delivered") {
         finalResponse.deliveredOn = dateTime;
       }
       const tempActivity = [];
       tempActivity.push({
-        Location: `${summary.EventCity[0]}, ${summary.EventState[0]}`,
+        Location: `${summary.EventCity}, ${summary.EventState}`,
         Status: status,
         DateTime: dateTime
       });
 
-      for (const activity of response.TrackResponse.TrackInfo[0].TrackDetail) {
-        const dateTime = fixTime(activity.EventDate[0] + " " + activity.EventTime[0])
+      for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
+        const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
         tempActivity.push({
-          Location: `${activity.EventCity[0]}, ${activity.EventState[0]}`,
-          Status: activity.Event[0],
+          Location: `${activity.EventCity}, ${activity.EventState}`,
+          Status: activity.Event,
           DateTime: dateTime
         });
       }
