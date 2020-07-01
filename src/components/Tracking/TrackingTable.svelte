@@ -1,5 +1,5 @@
 <script>
-	import { stores } from '@sapper/app';
+	import { goto, stores } from '@sapper/app';
 	import { put, trackPackage } from '../../routes/utils/helper.js';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import { Graphic } from '@smui/list';
@@ -49,19 +49,11 @@
     extraInfo = newRows;
   }
 
-  async function updateDescription(row) {
-    checkConnection();
-
-		const response = await put('api/track/update_description', {id: packageDescription[row].id, description: packageDescription[row].description});
-
-		// TODO handle network errors
-		submitErrors = response.error;
-
-    if (submitErrors != null) {
-      console.error(submitErrors);
-      
-    }
+	function goToContact(smartmailID) {
+    goto(`/addresses?smartID=${smartmailID}`);
   }
+
+  console.log(trakingPackages[0])
 </script>
 
 <style>
@@ -84,8 +76,27 @@
     vertical-align: middle;
   }
 
+  .retailerIcon {
+    height: 20px;
+    vertical-align: middle;
+  }
+
+  .retailerIconSmall {
+    height: 18px;
+    vertical-align: middle;
+  }
+
+  .personalIcon {
+    height: 19px;
+    vertical-align: sub;
+    padding: 0 0.4em;
+  }
+
   @media (min-width: 500px) {
     .mailCarrierIconSmall {
+      display: none;
+    }
+    .retailerIconSmall {
       display: none;
     }
   }
@@ -94,33 +105,21 @@
     .mailCarrierIconSmall {
       display: none;
     }
+    .retailerIconSmall {
+      display: none;
+    }
+    .personalIcon {
+      display: none;
+    }
   }
 
   @media (max-width: 499px) {
     .mailCarrierIcon {
       display: none;
     }
-  }
-
-  .discreetInput {
-    background: none;
-    border: none;
-    font-family: B612,Roboto,sans-serif;
-    color: var(--veryDarkGray);
-    padding: 10px;
-    padding-left: 6px;
-    padding-right: 0;
-    max-width: 200px;
-  }
-
-  .discreetInput::placeholder {
-    font-style: italic;
-    color: var(--gray);
-  }
-
-  .discreetInput:focus {
-    outline-color: var(--lightGray);
-    outline-style: solid;
+    .retailerIcon {
+      display: none;
+    }
   }
 
   .smartIDSpacer {
@@ -129,6 +128,11 @@
 
   .nameTable td {
     white-space: pre-wrap;
+  }
+
+  a.contactLink {
+    color: var(--veryDarkGray);
+    text-decoration: none;
   }
 
   * :global(table.extraInfoTable) {
@@ -220,38 +224,62 @@
 <DataTable table$aria-label="Packages" table$style="width: 100%;" style="width:100%;">
   <Head>
     <Row>
-      <Cell class="descHeadingLarge" colspan="2">Description</Cell>
-      <Cell class="descHeadingSmall" colspan="3">Description</Cell>
-      <Cell class="mailHeadingLarge">Mail Carrier</Cell>
+      <Cell class="descHeadingLarge" colspan="3">Description</Cell>
+      <Cell class="descHeadingSmall" colspan="2">Description</Cell>
     </Row>
   </Head>
   <Body>
   {#each trakingPackages as trakingPackage}
-    <Row class="trackingRow {trakingPackage.sender_smart_id == user.smart_id ? "outgoing" : "incoming"}" on:click={() => toggleRow(trakingPackage.tracking, trakingPackage.mail_carrier)}>
-      {#if displayMore[trakingPackage.tracking]}
-        <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_less</Graphic></Cell>
-      {:else}
-        <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_more</Graphic></Cell>
-      {/if}
-      <Cell class="trackingCell trackingInput">
-        <form on:submit|preventDefault>
-          <input on:click|stopPropagation on:blur={() => updateDescription(trakingPackage.tracking, trakingPackage.mail_carrier)} type="text" class="discreetInput" placeholder="add a description" bind:value={packageDescription[trakingPackage.tracking].description}/>
-        </form>
-      </Cell>
-      <Cell class="trackingCell"><img class="mailCarrierIcon" src="mailCarriers/{trakingPackage.mail_carrier.toLowerCase()}.png" alt="{trakingPackage.mail_carrier.toLowerCase()}"/><img class="mailCarrierIconSmall" src="mailCarriers/{trakingPackage.mail_carrier.toLowerCase()}_small.png" alt="{trakingPackage.mail_carrier.toLowerCase()}"/></Cell>
-    </Row>
+    {#if trakingPackage.sender.smart_id == user.smart_id}
+      <!-- Outgoing Package -->
+      <Row class="trackingRow outgoing" on:click={() => toggleRow(trakingPackage.tracking, trakingPackage.mail_carrier)}>
+        {#if displayMore[trakingPackage.tracking]}
+          <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_less</Graphic></Cell>
+        {:else}
+          <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_more</Graphic></Cell>
+        {/if}
+        {#if trakingPackage.recipient.smart_id}
+          {#if trakingPackage.recipient.role == "retailer"}
+            <Cell class="centeredTrackingCell"><a on:click|stopPropagation target="{trakingPackage.recipient.redirect_url && trakingPackage.recipient.redirect_url != "" ? "_blank" : "self"}" class="contactLink" href="{trakingPackage.package_description.order_link && trakingPackage.package_description.order_link != "" ? trakingPackage.package_description.order_link : (trakingPackage.recipient.redirect_url && trakingPackage.recipient.redirect_url != "" ? trakingPackage.recipient.redirect_url : `addresses?smartID=${trakingPackage.recipient.smart_id}`)}"><img class="retailerIcon" src={trakingPackage.recipient.large_logo} alt="{trakingPackage.recipient.name} logo"/><img class="retailerIconSmall" src={trakingPackage.recipient.small_logo} alt="{trakingPackage.recipient.name} logo"/></a></Cell>
+          {:else}
+            <Cell class="centeredTrackingCell"><a on:click|stopPropagation|preventDefault={() => goToContact(trakingPackage.recipient.smart_id)} class="contactLink" href="addresses?smartID={trakingPackage.recipient.smart_id}"><img class="personalIcon" src="/personal_icon.png" alt="{trakingPackage.recipient.name} logo"/>{trakingPackage.recipient.name}</a></Cell>
+          {/if}
+        {:else}
+          <Cell class="centeredTrackingCell">To Non-Smartmail recipient</Cell>
+        {/if}
+        <Cell class="trackingCell">{trakingPackage.package_description.contents && trakingPackage.package_description.contents != "" ? trakingPackage.package_description.contents : trakingPackage.tracking}</Cell>
+      </Row>
+    {:else}
+      <!-- Incoming Package -->
+      <Row class="trackingRow incoming" on:click={() => toggleRow(trakingPackage.tracking, trakingPackage.mail_carrier)}>
+        {#if displayMore[trakingPackage.tracking]}
+          <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_less</Graphic></Cell>
+        {:else}
+          <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_more</Graphic></Cell>
+        {/if}
+
+        {#if trakingPackage.sender.role == "retailer"}
+          <Cell class="centeredTrackingCell"><a on:click|stopPropagation target="{trakingPackage.sender.redirect_url && trakingPackage.sender.redirect_url != "" ? "_blank" : "self"}" class="contactLink" href="{trakingPackage.package_description.order_link && trakingPackage.package_description.order_link != "" ? trakingPackage.package_description.order_link : (trakingPackage.sender.redirect_url && trakingPackage.sender.redirect_url != "" ? trakingPackage.sender.redirect_url : `addresses?smartID=${trakingPackage.sender.smart_id}`)}"><img class="retailerIcon" src={trakingPackage.sender.large_logo} alt="{trakingPackage.sender.name} logo"/><img class="retailerIconSmall" src={trakingPackage.sender.small_logo} alt="{trakingPackage.sender.name} logo"/></a></Cell>
+          <Cell class="trackingCell">{trakingPackage.package_description.contents && trakingPackage.package_description.contents != "" ? trakingPackage.package_description.contents : trakingPackage.tracking}</Cell>
+        {:else}
+          <Cell class="centeredTrackingCell"><a on:click|stopPropagation|preventDefault={() => goToContact(trakingPackage.sender.smart_id)} class="contactLink" href="addresses?smartID={trakingPackage.sender.smart_id}"><img class="personalIcon" src="/personal_icon.png" alt="{trakingPackage.sender.name} logo"/>{trakingPackage.sender.name}</a></Cell>
+          <Cell class="trackingCell">{trakingPackage.tracking}</Cell>
+        {/if}
+      </Row>
+    {/if}
     {#if displayMore[trakingPackage.tracking]}
       <tr class="nameRow">
         <Cell colspan="4" class="nameCell">
           <table class="nameTable">
             <tr>
+              <Cell class="trackingCell">Mail Carrier: <img class="mailCarrierIcon" src="mailCarriers/{trakingPackage.mail_carrier.toLowerCase()}.png" alt="{trakingPackage.mail_carrier.toLowerCase()}"/><img class="mailCarrierIconSmall" src="mailCarriers/{trakingPackage.mail_carrier.toLowerCase()}_small.png" alt="{trakingPackage.mail_carrier.toLowerCase()}"/></Cell>
               {#if trakingPackage.sender_smart_id}
-                <td>From: {trakingPackage.sender_name} (<span class="smartIDSpacer">{trakingPackage.sender_smart_id.substring(0, 4)}</span>{trakingPackage.sender_smart_id.substring(4)})</td>
+                <td>{trakingPackage.sender_name} (<span class="smartIDSpacer">{trakingPackage.sender_smart_id.substring(0, 4)}</span>{trakingPackage.sender_smart_id.substring(4)})</td>
               {:else}
                 <td>No sender provided</td>
               {/if}
               {#if trakingPackage.recipient_smart_id}
-                <td>To: {trakingPackage.recipient_name} (<span class="smartIDSpacer">{trakingPackage.recipient_smart_id.substring(0, 4)}</span>{trakingPackage.recipient_smart_id.substring(4)})</td>
+                <td>{trakingPackage.recipient_name} (<span class="smartIDSpacer">{trakingPackage.recipient_smart_id.substring(0, 4)}</span>{trakingPackage.recipient_smart_id.substring(4)})</td>
               {:else}
                 <td>No recipient provided</td>
               {/if}

@@ -63,26 +63,32 @@
 
   const recentContactLength = 3;
 
-  const recentContacts = [...$session.contacts].sort(function(a, b) {
-    var addedA = standardizeDates(a.added_on); // standardize date
-    var addedB = standardizeDates(b.added_on); // standardize date
+  let recentContacts = [];
+  if ($session.contacts) {
+    recentContacts = [...$session.contacts].sort(function(a, b) {
+      var addedA = standardizeDates(a.added_on); // standardize date
+      var addedB = standardizeDates(b.added_on); // standardize date
 
-    // sort by most recent
-    if (addedA < addedB) {
-      return 1;
-    }
-    if (addedA > addedB) {
-      return -1;
-    }
-    // added at the same time
-    return 0;
-  }).slice(0,recentContactLength);
+      // sort by most recent
+      if (addedA < addedB) {
+        return 1;
+      }
+      if (addedA > addedB) {
+        return -1;
+      }
+      // added at the same time
+      return 0;
+    }).slice(0,recentContactLength);
+  }
 
   let currentDate = standardizeDates(new Date())
   let tempHolder = true;
   let resetCalendarCheck = true;
 
-  const todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+  let todaysAddress = null;
+  if ($session.addresses) {
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+  }
 
   function blah () {
     // chackConnection logs a user out if their token has expired
@@ -324,9 +330,9 @@
       </tr>
     </table>
     <br />
-     <a href="/account"  on:click|preventDefault={myAccount} class="linkedHeader"><h4>Current Address:</h4></a><br />
-    <div id="addressInfo">
-      {#if todaysAddress != null}
+    {#if todaysAddress != null}
+      <a href="/account"  on:click|preventDefault={myAccount} class="linkedHeader"><h4>Current Address:</h4></a><br />
+      <div id="addressInfo">
         <h5 class="{todaysAddress.address_type == "permanent" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "permanent" ? "Permanent Address" : "Temporary Address"}</h5>
         <p>
           {#if todaysAddress.attention_to}
@@ -342,11 +348,11 @@
           {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
           {todaysAddress.country}<br>
         </p>
-      {/if}
-    </div>
-    <p class="lowerLink" id="manageAdresses">
-      <a href="/account"  on:click|preventDefault={myAccount}>Click here to manage your addresses<br>or view your upcoming address schedule</a>
-    </p>
+      </div>
+      <p class="lowerLink" id="manageAdresses">
+        <a href="/account"  on:click|preventDefault={myAccount}>Click here to manage your addresses<br>or view your upcoming address schedule</a>
+      </p>
+    {/if}
   </div>
   <!-- Right side panel -->
   <div class="side">

@@ -38,15 +38,29 @@
   let tempHolder = true;
   let resetCalendarCheck = true;
 
-  let todaysAddress = findTodaysAddress(currentDate, $session.addresses);
-
-  const pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
-  const phone = formatPhoneNumber(todaysAddress.phone)
-
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	let now = standardizeDates(new Date());
   let year = now.getFullYear();
   let month = now.getMonth();
+
+  let todaysAddress = null;
+  let pinTitle = "";
+  let phone = "";
+  let currentMonthAddresses = [];
+  let items = [];
+  if ($session.addresses) {
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
+    phone = formatPhoneNumber(todaysAddress.phone);
+    currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
+    items = currentMonthAddresses.map( address => {
+      let endDate = ""
+      if (typeof address.end_date != "undefined" && address.end_date != "") {
+        endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
+      }
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
+    })
+  }
 
   let headerStatement = 'Your mail and packages are currently going to:';
 
@@ -64,14 +78,6 @@
     }
   }
 
-  let currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
-  let items = currentMonthAddresses.map( address => {
-    let endDate = ""
-    if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
-    }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
-  })
 	function processNewMonth() {
     currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
     items = currentMonthAddresses.map( address => {
@@ -93,8 +99,18 @@
         month=0;
       }
     }
-    processNewMonth();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      processNewMonth();
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
 	}
 	function prev(period="month") {
@@ -108,14 +124,34 @@
         month--;
       }
     }
-    processNewMonth();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      processNewMonth();
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
 	}
 	function dayClick(e) {
     currentDate = e.date;
     processHeaderStatement();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
   }
   function launchAddressChange() {
@@ -141,25 +177,19 @@
 
   h2 {
     color: var(--primaryAccent);
-    margin: 0;
+    margin: 0 0 45px;
     font-size: 1.8em;
-  }
-
-  h3 {
-    font-size: 1.8em;
-    text-align: center;
-    color: var(--darkGray);
   }
 
   h4 {
     font-size: 1.6em;
     text-align: center;
-    color: var(--gray);
+    color: var(--darkGray);
     margin: 0.5em 0 1em;
   }
   
   #accountButtons {
-    margin: 0 0 40px;
+    margin: 0 0 7px;
     text-align: center;
   }
 
@@ -203,6 +233,13 @@
   #button-holder {
     text-align: center;
   }
+  
+  #map-placeholder {
+    flex-grow: 3;
+    height: 450px;
+    min-width: 300px;
+    border: 1px solid var(--lightGray);
+  }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
@@ -219,7 +256,6 @@
 {#if $addressChangeActive}
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
-<h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
 <h2>your smartID&trade; is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 <div id="addressBox">
@@ -253,6 +289,8 @@
   <AddressCard bind:update={update} todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
   {#if todaysAddress != null}
     <Map  mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
+  {:else if tempHolder}
+    <div id="map-placeholder" />
   {/if}
 </div>
 <div id="button-holder">

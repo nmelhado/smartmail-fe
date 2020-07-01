@@ -31,13 +31,15 @@ export function post(req, res) {
         DateTime: dateTime
       });
 
-      for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
-        const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
-        tempActivity.push({
-          Location: `${activity.EventCity}, ${activity.EventState}`,
-          Status: activity.Event,
-          DateTime: dateTime
-        });
+      if(response.TrackResponse.TrackInfo.TrackDetail) {
+        for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
+          const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
+          tempActivity.push({
+            Location: `${activity.EventCity}, ${activity.EventState}`,
+            Status: activity.Event,
+            DateTime: dateTime
+          });
+        }
       }
       finalResponse.activity = tempActivity;
     }

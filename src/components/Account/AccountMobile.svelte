@@ -39,15 +39,30 @@
   let currentDate = standardizeDates(new Date())
   let resetCalendarCheck = true;
 
-  let todaysAddress = findTodaysAddress(currentDate, $session.addresses);
-
-  const pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
-  const phone = formatPhoneNumber(todaysAddress.phone)
-
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	let now = standardizeDates(new Date());
   let year = now.getFullYear();
   let month = now.getMonth();
+
+  let tempHolder = true;
+  let todaysAddress = null;
+  let pinTitle = "";
+  let phone = "";
+  let currentMonthAddresses = [];
+  let items = [];
+  if ($session.addresses) {
+    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    pinTitle = todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.line_one;
+    phone = formatPhoneNumber(todaysAddress.phone);
+    currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
+    items = currentMonthAddresses.map( address => {
+      let endDate = ""
+      if (typeof address.end_date != "undefined" && address.end_date != "") {
+        endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
+      }
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
+    })
+  }
 
   let headerStatement = 'Your mail and packages are currently going to:';
 
@@ -65,14 +80,6 @@
     }
   }
 
-  let currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
-  let items = currentMonthAddresses.map( address => {
-    let endDate = ""
-    if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
-    }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
-  })
 	function processNewMonth() {
     currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
     items = currentMonthAddresses.map( address => {
@@ -94,8 +101,18 @@
         month=0;
       }
     }
-    processNewMonth();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      processNewMonth();
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
 	}
 	function prev(period="month") {
@@ -109,15 +126,35 @@
         month--;
       }
     }
-    processNewMonth();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      processNewMonth();
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
 	}
 	function dayClick(e) {
     currentDate = e.date;
     console.log(e.date);
     processHeaderStatement();
-    todaysAddress = findTodaysAddress(currentDate, $session.addresses);
+    if ($session.addresses) {
+      const tempAddress = findTodaysAddress(currentDate, $session.addresses);
+      if (tempAddress != todaysAddress) {
+        tempHolder = true;
+        todaysAddress = null;
+        setTimeout(() => {
+          tempHolder = false;
+          todaysAddress = tempAddress;
+        }, 1)
+      }
+    }
     update = false;
     console.log(keyedTabsActive.k);
   }
@@ -179,16 +216,10 @@
     font-size: 1.7em;
   }
 
-  h3 {
-    font-size: 1.5em;
-    text-align: center;
-    color: var(--darkGray);
-  }
-
   h4 {
     font-size: 1.0em;
     text-align: center;
-    color: var(--gray);
+    color: var(--darkGray);
     margin: 0.5em 0 1em;
   }
   
@@ -230,6 +261,12 @@
   .hidden {
     display: none;
   }
+  
+  #map-placeholder {
+    flex-grow: 3;
+    min-width: 300px;
+    border: 1px solid var(--lightGray);
+  }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
@@ -241,7 +278,6 @@
 {#if $addressChangeActive}
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
-<h3>HERE IS YOUR ACCOUNT INFORMATION</h3>
 <h2>your smartID&trade; is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
 <h4>{headerStatement}</h4>
 
@@ -261,6 +297,8 @@
   {#if keyedTabsActive && keyedTabsActive.k == 2}
     {#if todaysAddress != null}
       <Map mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
+    {:else if tempHolder}
+      <div id="map-placeholder" />
     {/if}
   {/if}
 
