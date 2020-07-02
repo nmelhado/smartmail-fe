@@ -33,7 +33,17 @@ export function post(req, res) {
       });
 
       if(response.TrackResponse.TrackInfo.TrackDetail) {
-        for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
+        if (Array.isArray(response.TrackResponse.TrackInfo.TrackDetail)) {
+          for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
+            const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
+            tempActivity.push({
+              Location: `${activity.EventCity}, ${activity.EventState}`,
+              Status: activity.Event,
+              DateTime: dateTime
+            });
+          }
+        } else {
+          const activity = response.TrackResponse.TrackInfo.TrackDetail;
           const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
           tempActivity.push({
             Location: `${activity.EventCity}, ${activity.EventState}`,

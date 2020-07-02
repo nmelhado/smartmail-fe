@@ -1,35 +1,44 @@
 
 <script>
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
-	import { formatPhoneNumber } from '../../routes/utils/helper.js';
+	import { formatPhoneNumber, get } from '../../routes/utils/helper.js';
   import Pagination, {paginate} from '../Pagination'
   import Textfield from '@smui/textfield'
   import Fab, {Icon} from '@smui/fab';
   import Button, {Icon as ButtonIcon} from '@smui/button';
 
-  export let contacts, mobile;
-
-  let currentPage = 1
-  const pageSize = 10;
-
-  let usableContacts = contacts;
+  export let contacts, mobile, contactCount, page, limit, search;
 
   let togglePageNumbers = false;
 
-  let itemsLength = usableContacts.length;
-
-  let search = "";
-
-  $: paginatedContacts = paginate( usableContacts, currentPage, pageSize)
+  let noResults = false;
 
   function searchContacts() {
-    usableContacts = contacts.filter( contact => contact.name.toLowerCase().indexOf(search.toLowerCase()) !== -1);
-    itemsLength = usableContacts.length;
-    paginatedContacts = paginate( usableContacts, currentPage, pageSize);
-    currentPage = 1;
-    togglePageNumbers = togglePageNumbers == false;
+    getContacts("search");
   }
 
+  async function getContacts(type = "newPage") {
+    try {
+      let tempPage = page;
+      if(type == "search") {
+        tempPage = 1;
+      }
+      const response = await get(`api/manage/get_contacts?limit=${limit}&page=${tempPage}&sort=name&search=${search}`);
+      if (response.success) {
+        page = tempPage;
+        contacts = response.contacts ? response.contacts : [];
+        contactCount = response.count;
+        if (response.contacts == null) {
+          noResults = true;
+        } else {
+          noResults = false;
+        }
+      }
+    } catch(err) {
+      console.log(err);
+    }
+    togglePageNumbers = togglePageNumbers == false;
+  }
 </script>
 
 <style>
@@ -48,7 +57,7 @@
   <form on:submit|preventDefault={searchContacts}>
     <Textfield variant="outlined" bind:value={search} label="Search by name" />
     <Button variant="outlined" color="secondary" style="text-align: center; margin: 10px 0 0 10px;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
-    {#if usableContacts.length < contacts.length }
+    {#if search != "" }
       <Fab color="secondary" on:click={() => {search = ""; searchContacts();}} mini style="background-color: #aaa; position: absolute; top: 1.2em; right: 85px; width: 20px; height: 20px;"><Icon class="material-icons" style="color: var(--white); font-size: 1.3em; margin: -2px;">close</Icon></Fab>
     {/if}
   </form>
@@ -64,7 +73,7 @@
   </Head>
   <Body>
 
-    {#each paginatedContacts as contact}
+    {#each contacts as contact}
       <Row>
         <Cell>{contact.name}</Cell>
         <Cell><span style="margin-right: 0.4em;">{contact.smart_id.substring(0, 4)}</span>{contact.smart_id.substring(4)}</Cell>
@@ -72,14 +81,19 @@
         <Cell class="phoneCell"><a href="tel:{contact.phone}">{formatPhoneNumber(contact.phone)}</a></Cell>
       </Row>
     {/each}
+    {#if noResults}
+      <Row>
+        <Cell colspan="4" style="text-align: center;">No contacts found</Cell>
+      </Row>
+    {/if}
 
   </Body>
 </DataTable>
 
-{#if itemsLength > pageSize}
+{#if contactCount > page * limit}
   {#if togglePageNumbers}
-    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} {mobile} />
+    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} {mobile} on:changePage={getContacts} />
   {:else}
-    <Pagination bind:togglePageNumbers={togglePageNumbers} bind:currentPage={currentPage} {pageSize} {itemsLength} {mobile} />
+    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} {mobile} on:changePage={getContacts} />
   {/if}
 {/if}

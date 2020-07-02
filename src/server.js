@@ -37,7 +37,6 @@ if (dev) {
           mobile: mobile({ua: req.headers['user-agent'], tablet: true}),
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
-          contacts: req.session && req.session.contacts,
         })
       })
     )
@@ -86,7 +85,6 @@ if (dev) {
           mobile: mobile({ua: req.headers['user-agent'], tablet: true}),
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
-          contacts: req.session && req.session.contacts,
         })
       })
     )

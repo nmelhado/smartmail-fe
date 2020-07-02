@@ -46,7 +46,6 @@
     goto(`/addresses?smartID=${smartmailID}`);
   }
 
-  console.log(trackingPackages[0])
 </script>
 
 <style>
@@ -329,7 +328,7 @@
         {:else}
           <Cell class="expandRow"><Graphic class="material-icons collapse">unfold_more</Graphic></Cell>
         {/if}
-        {#if trackingPackage.recipient.smart_id}
+        {#if trackingPackage.sender.smart_id}
           {#if trackingPackage.sender.role == "retailer"}
             <Cell class="senderRecipient contactCell"><a on:click|stopPropagation target="{trackingPackage.sender.redirect_url && trackingPackage.sender.redirect_url != "" ? "_blank" : "self"}" class="contactLink" href="{trackingPackage.package_description.order_link && trackingPackage.package_description.order_link != "" ? trackingPackage.package_description.order_link : (trackingPackage.sender.redirect_url && trackingPackage.sender.redirect_url != "" ? trackingPackage.sender.redirect_url : `addresses?smartID=${trackingPackage.sender.smart_id}`)}"><img class="retailerIcon" src={trackingPackage.sender.large_logo} alt="{trackingPackage.sender.name} logo"/><img class="retailerIconSmall" src={trackingPackage.sender.small_logo} alt="{trackingPackage.sender.name} logo"/></a></Cell>
           {:else}

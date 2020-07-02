@@ -4,8 +4,43 @@
 	import AddressBook from '../../components/AddressBook/AddressBook.svelte'; 
 	import AddContact from '../../components/AddressBook/AddContact.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
+  import { onMount } from 'svelte';
+  import queryString from "query-string"
+
 
   const { session } = stores();
+
+  let contacts = []
+  let contactCount = 0;
+  let limit = 10;
+  let page = 1;
+  let search = "";
+  let searchParam = "";
+
+  if(typeof window !== 'undefined') {
+    const queryParams = queryString.parse(window.location.search)
+    if (queryParams.smartID && queryParams.smartID != "") {
+      search = queryParams.smartID;
+      searchParam = `&search=${search}`;
+    }
+  }
+
+	onMount(async () => {
+    refreshPage()
+  });
+
+  async function refreshPage() {
+    page = 1;
+    try {
+      const response = await get(`api/manage/get_contacts?limit=${limit}&page=${page}&sort=name${searchParam}`);
+      if (response.contacts) {
+        contacts = response.contacts;
+        contactCount = response.count;
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
   
   async function checkConnection() {
     try {
@@ -14,17 +49,6 @@
         delete($session.user);
         delete($session.addresses);
         goto('login');
-      }
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
-  async function refreshContacts() {
-    try {
-      const response = await get(`api/manage/get_contacts`);
-      if (response.contacts) {
-        $session.contacts = response.contacts;
       }
     } catch(err) {
       console.log(err);
@@ -62,14 +86,14 @@
   <title>smartmail - Address Book</title>
 </svelte:head>
 
-<h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List <IconButton class="material-icons" on:click={refreshContacts}>refresh</IconButton></h1>
-{#if $session.contacts && $session.contacts.length > 0}
-  <AddressBook mobile={$session.mobile} contacts={$session.contacts} />
+<h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List</h1>
+{#if contacts && contacts.length > 0}
+  <AddressBook mobile={$session.mobile} bind:search={search} bind:contacts={contacts} bind:contactCount={contactCount} bind:page={page} {limit} />
 {:else}
   <p>Sorry! It looks like you don't have any addresses saved yet.</p>
 {/if}
 
-<AddContact />
+<AddContact on:refreshPage={refreshPage}/>
 
 <div id="infoBlock">
   <p>

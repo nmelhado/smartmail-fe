@@ -8,8 +8,9 @@
   const { session } = stores();
 
   let trackingPackages = {};
-  let packagesLoading = true;
+  let pageLoading = true;
   let submitErrors = [];
+  let recentContacts = [];
 
   async function checkConnection() {
     try {
@@ -26,37 +27,50 @@
   checkConnection();
 
 	onMount(async () => {
-		const response = await get('api/manage/get_packages/');
+    try {
+      const response = await get(`api/manage/get_contacts?limit=3&page=1&sort=recent`);
+      if (response.contacts) {
+        recentContacts = response.contacts;
+      }
+    } catch(err) {
+      console.error(err);
+    }
 
-		// TODO handle network errors
-		submitErrors = response.error;
+    try {
+      const response = await get('api/manage/get_packages/');
 
-		if (response.success) {
-      const openPackages = [];
-      const deliveredPackages = response.delivered_packages ? response.delivered_packages : [];
-      if (response.open_packages) {
-        for (const openPackage of response.open_packages) {
-          const moreInfo = await trackPackage(openPackage.mail_carrier, openPackage.tracking);
-          if (moreInfo.status == "Delivered" || (!openPackage.estimated_delivery && moreInfo.estimatedDelivery)) {
-            const dateTime = moreInfo.deliveredOn ? moreInfo.deliveredOn.split('-') : null;
-            const estimatedDateTime = moreInfo.estimatedDelivery ? moreInfo.estimatedDelivery.split('-') : null;
-            const dTime = dateTime ? new Date(dateTime[0].substr(0, 4), dateTime[0].substr(4, 2) - 1, dateTime[0].substr(6, 2), dateTime[1].substr(0, 2), dateTime[1].substr(2, 2), dateTime[1].substr(4, 2)) : null;
-            const eTime = estimatedDateTime ? new Date(estimatedDateTime[0].substr(0, 4), estimatedDateTime[0].substr(4, 2) - 1, estimatedDateTime[0].substr(6, 2), estimatedDateTime[1].substr(0, 2), estimatedDateTime[1].substr(2, 2), estimatedDateTime[1].substr(4, 2)) : null;
-            await put('api/track/update', {tracking: openPackage.tracking, delivered_on: dTime});
-            if (moreInfo.status == "Delivered") {
-              deliveredPackages.unshift(openPackage);
+      // TODO handle network errors
+      submitErrors = response.error;
+
+      if (response.success) {
+        const openPackages = [];
+        const deliveredPackages = response.delivered_packages ? response.delivered_packages : [];
+        if (response.open_packages) {
+          for (const openPackage of response.open_packages) {
+            const moreInfo = await trackPackage(openPackage.mail_carrier, openPackage.tracking);
+            if (moreInfo.status == "Delivered" || (!openPackage.estimated_delivery && moreInfo.estimatedDelivery)) {
+              const dateTime = moreInfo.deliveredOn ? moreInfo.deliveredOn.split('-') : null;
+              const estimatedDateTime = moreInfo.estimatedDelivery ? moreInfo.estimatedDelivery.split('-') : null;
+              const dTime = dateTime ? new Date(dateTime[0].substr(0, 4), dateTime[0].substr(4, 2) - 1, dateTime[0].substr(6, 2), dateTime[1].substr(0, 2), dateTime[1].substr(2, 2), dateTime[1].substr(4, 2)) : null;
+              const eTime = estimatedDateTime ? new Date(estimatedDateTime[0].substr(0, 4), estimatedDateTime[0].substr(4, 2) - 1, estimatedDateTime[0].substr(6, 2), estimatedDateTime[1].substr(0, 2), estimatedDateTime[1].substr(2, 2), estimatedDateTime[1].substr(4, 2)) : null;
+              await put('api/track/update', {tracking: openPackage.tracking, delivered_on: dTime, estimated_delivery: eTime});
+              if (moreInfo.status == "Delivered") {
+                deliveredPackages.unshift(openPackage);
+              }
+            } else {
+              openPackages.push(openPackage);
             }
-          } else {
-            openPackages.push(openPackage);
           }
         }
+        trackingPackages = {openPackages, deliveredPackages};
       }
-      trackingPackages = {openPackages, deliveredPackages};
-      packagesLoading= false;
-		}
-    if (submitErrors != null) {
-      console.error(submitErrors);
+      if (submitErrors != null) {
+        console.error(submitErrors);
+      }
+    } catch(err) {
+      console.error(err);
     }
+    pageLoading= false;
 	});
 
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -66,24 +80,6 @@
   const memberSince = user.created_at.split('-');
 
   const recentContactLength = 3;
-
-  let recentContacts = [];
-  if ($session.contacts) {
-    recentContacts = [...$session.contacts].sort(function(a, b) {
-      var addedA = standardizeDates(a.added_on); // standardize date
-      var addedB = standardizeDates(b.added_on); // standardize date
-
-      // sort by most recent
-      if (addedA < addedB) {
-        return 1;
-      }
-      if (addedA > addedB) {
-        return -1;
-      }
-      // added at the same time
-      return 0;
-    }).slice(0,recentContactLength);
-  }
 
   let currentDate = standardizeDates(new Date())
   let tempHolder = true;
@@ -426,7 +422,7 @@
 
     <!-- Recent Open Packages -->
     <a href="/tracking"  on:click|preventDefault={addressBook} class="linkedHeader"><h4>Recent Open Deliveries</h4></a><br />
-      {#if packagesLoading }
+      {#if pageLoading }
         <DataTable table$aria-label="Packages" table$style="width: 100%;">
           <Head>
             <Row>
@@ -440,12 +436,12 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trackingPackages={trackingPackages.openPackages} userSmartId={user} />
+        <TrackingTable trackingPackages={trackingPackages.openPackages} userSmartId={user.smart_id} />
       {/if}
 
     <!-- Recently Delivered Pakages -->
     <a href="/tracking"  on:click|preventDefault={addressBook} class="linkedHeader"><h4>Recently Delivered Pakages</h4></a><br />
-      {#if packagesLoading }
+      {#if pageLoading }
         <DataTable table$aria-label="Packages" table$style="width: 100%;">
           <Head>
             <Row>
@@ -459,7 +455,7 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trackingPackages={trackingPackages.deliveredPackages} userSmartId={user} />
+        <TrackingTable trackingPackages={trackingPackages.deliveredPackages} userSmartId={user.smart_id} />
       {/if}
     <p class="lowerLink">
       <a href="/tracking"  on:click|preventDefault={addressBook}>View Your Recent Packages</a>

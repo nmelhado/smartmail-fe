@@ -23,7 +23,6 @@ export function post(req, res) {
         finalResponse.deliveredOn = fixTime(activities[0].DateTime)
       }
       const tempActivity = [];
-      console.log(activities[0])
       for (const activity of activities) {
         console.log(fixTime(activity.DateTime))
         tempActivity.push({

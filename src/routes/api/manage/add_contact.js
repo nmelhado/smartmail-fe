@@ -5,14 +5,8 @@ export function post(req, res) {
 
   api.post('contacts', { user_id: req.session.user.id, contact }, req.session.token)
   .then(response => {
-    if (response.contact) {
-      if (req.session.contacts) {
-        req.session.contacts.push(response.contact)
-      } else {
-        req.session.contacts = [response.contact]
-      }
-    } else {
-      console.log(response)
+    if (!response.contact) {
+      console.error(response)
     }
 
     res.setHeader('Content-Type', 'application/json');
@@ -20,6 +14,6 @@ export function post(req, res) {
     res.end(JSON.stringify(response));
   })
   .catch(err => {
-    console.log(err);
+    console.error(err);
   });
 }

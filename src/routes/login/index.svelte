@@ -63,7 +63,6 @@
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
-			$session.contacts = response.contacts;
 			goto('account');
 		}
     if (submitErrors != null) {

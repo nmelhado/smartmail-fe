@@ -18,7 +18,6 @@
 		await post(`api/auth/logout`);
     $session.user = null;
     $session.addresses = null;
-    $session.contacts = null;
     goto('/');
   }
   
@@ -233,7 +232,7 @@
   #button-holder {
     text-align: center;
   }
-  
+
   #map-placeholder {
     flex-grow: 3;
     height: 450px;

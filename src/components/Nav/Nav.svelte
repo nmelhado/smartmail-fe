@@ -13,7 +13,6 @@
 		await post(`api/auth/logout`);
     $session.user = null;
     $session.addresses = null;
-    $session.contacts = null;
     goto('/');
   }
 

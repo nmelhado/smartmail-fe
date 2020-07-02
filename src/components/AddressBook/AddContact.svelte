@@ -7,8 +7,13 @@
   import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog';
   import Loading from '../Loading';
   import * as yup from 'yup';
+  import { createEventDispatcher } from 'svelte';
 
-  // export let newContactToggle;
+  const dispatch = createEventDispatcher();
+
+  function refreshPage() {
+      dispatch('refreshPage');
+  }
 
 	const { session } = stores();
   let errors = [];
@@ -72,32 +77,7 @@
 		submitErrors = response.error;
 
 		if (response.contact) {
-      if ($session.contacts) {
-        const tempContacts = [...$session.contacts];
-        tempContacts.push(response.contact);
-        tempContacts.sort(function(a, b) {
-          var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-          var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-
-          // names must be equal
-          return 0;
-        });
-        $session.contacts = tempContacts;
-      } else {
-        $session.contacts = [response.contact]
-      }
-      // newContactToggle = newContactToggle == false;
-      contact = {
-        smart_id: '',
-        email: '',
-        phone: '',
-      };
+      refreshPage()
 		}
     loading= false;
     if (submitErrors != null) {
