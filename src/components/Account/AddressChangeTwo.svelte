@@ -19,17 +19,21 @@
   let startLimit = null;
 
   if ($address_type == "permanent") {
-    startLimit = $session.addresses.filter( address => address.address_type == "permanent" && !address.end_date)[0].start_date
+    startLimit = $session.addresses ? $session.addresses.filter( address => address.address_type == "permanent" && !address.end_date)[0].start_date : null;
   }
 
-  let currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
-  let items = currentMonthAddresses.map( address => {
-    let endDate = ""
-    if (typeof address.end_date != "undefined" && address.end_date != "") {
-      endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
-    }
-    return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
-  })
+  let currentMonthAddresses = [];
+  let items = [];
+  if ($session.addresses) {
+    currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
+    items = currentMonthAddresses.map( address => {
+      let endDate = ""
+      if (typeof address.end_date != "undefined" && address.end_date != "") {
+        endDate = standardizeDates(address.end_date.substring(0,10).replace(/-/g, '\/'))
+      }
+      return {startDate: standardizeDates(address.start_date), endDate, className:`${address.address_type == "permanent" ? "task--primary" : "task--secondary"}`,isBottom: (address.address_type == "permanent")}
+    })
+  }
 	function processNewMonth() {
     currentMonthAddresses = $session.addresses.filter( address => standardizeDates(address.start_date) <= standardizeDates(new Date(year, month + 1, 0)) && (typeof address.end_date == "undefined" || address.end_date == "" || standardizeDates(address.end_date) >= standardizeDates(new Date(year, month, 1)) ));
     items = currentMonthAddresses.map( address => {

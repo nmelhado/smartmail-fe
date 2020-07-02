@@ -97,3 +97,24 @@ export async function trackPackage(carrier, trackingNumber) {
   }
   return additionalInfo;
 }
+
+export function getTrackingLink(carrier, trackingNumber) {
+  let trackingLink = "";
+  switch (carrier) {
+    case ups:
+      trackingLink = `https://www.ups.com/track?loc=en_US&tracknum=${trackingNumber}&requester=WT/trackdetails`;
+      break;
+    case usps:
+      trackingLink = `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${trackingNumber}`;
+      break;
+    case lasership:
+      trackingLink = `https://www.lasership.com/track/${trackingNumber}`;
+      break;
+    case fedex:
+      trackingLink = `https://www.fedex.com/apps/fedextrack/?tracknumbers=${trackingNumber}`;
+      break;
+    default:
+      break;
+  }
+  return trackingLink;
+}

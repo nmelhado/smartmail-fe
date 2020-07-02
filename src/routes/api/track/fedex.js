@@ -49,11 +49,11 @@ export function post(req, res) {
     let finalResponse = {
       status: null,
       activity: [],
-      deliveredOn: null
+      deliveredOn: null,
+      estimatedDelivery: null
     }
-
     const activities = response["SOAP-ENV:Envelope"]["SOAP-ENV:Body"].TrackReply.CompletedTrackDetails.TrackDetails.Events;
-    if(activities.length > 0) {
+    if(activities && activities.length > 0) {
       finalResponse.status = activities[0].EventDescription
       if (finalResponse.status == "Delivered") {
         finalResponse.deliveredOn = fixTime(activities[0].Timestamp);

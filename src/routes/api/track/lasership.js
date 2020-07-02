@@ -13,7 +13,8 @@ export function post(req, res) {
     let finalResponse = {
       status: null,
       activity: [],
-      deliveredOn: null
+      deliveredOn: null,
+      estimatedDelivery: response.EstimatedDeliveryDate ? fixTime(response.EstimatedDeliveryDate) + "-000000" : null
     }
     if(response.Events && response.Events.length > 0) {
       const activities = response.Events;

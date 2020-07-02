@@ -13,7 +13,8 @@ export function post(req, res) {
     let finalResponse = {
       status: null,
       activity: [],
-      deliveredOn: null
+      deliveredOn: null,
+      estimatedDelivery: null
     }
     if(response.TrackResponse) {
       const summary = response.TrackResponse.TrackInfo.TrackSummary;
@@ -54,7 +55,6 @@ export function post(req, res) {
 
 function fixTime(rawTime) {
   const digest = new Date(rawTime);
-  // const digest = Date.parse(rawTime);
   return digest.getUTCFullYear() + ("0" + (digest.getUTCMonth()+1)).slice(-2) +
   ("0" + digest.getUTCDate()).slice(-2) + "-" + ("0" + digest.getUTCHours()).slice(-2) +
   ("0" + digest.getUTCMinutes()).slice(-2) + ("0" + digest.getUTCSeconds()).slice(-2)

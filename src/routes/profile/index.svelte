@@ -7,7 +7,7 @@
 
   const { session } = stores();
 
-  let trakingPackages = {};
+  let trackingPackages = {};
   let packagesLoading = true;
   let submitErrors = [];
 
@@ -37,17 +37,21 @@
       if (response.open_packages) {
         for (const openPackage of response.open_packages) {
           const moreInfo = await trackPackage(openPackage.mail_carrier, openPackage.tracking);
-          if (moreInfo.status == "Delivered") {
-            const dateTime = moreInfo.deliveredOn.split('-');
-            const dTime = new Date(dateTime[0].substr(0, 4), dateTime[0].substr(4, 2) - 1, dateTime[0].substr(6, 2), dateTime[1].substr(0, 2), dateTime[1].substr(2, 2), dateTime[1].substr(4, 2));
+          if (moreInfo.status == "Delivered" || (!openPackage.estimated_delivery && moreInfo.estimatedDelivery)) {
+            const dateTime = moreInfo.deliveredOn ? moreInfo.deliveredOn.split('-') : null;
+            const estimatedDateTime = moreInfo.estimatedDelivery ? moreInfo.estimatedDelivery.split('-') : null;
+            const dTime = dateTime ? new Date(dateTime[0].substr(0, 4), dateTime[0].substr(4, 2) - 1, dateTime[0].substr(6, 2), dateTime[1].substr(0, 2), dateTime[1].substr(2, 2), dateTime[1].substr(4, 2)) : null;
+            const eTime = estimatedDateTime ? new Date(estimatedDateTime[0].substr(0, 4), estimatedDateTime[0].substr(4, 2) - 1, estimatedDateTime[0].substr(6, 2), estimatedDateTime[1].substr(0, 2), estimatedDateTime[1].substr(2, 2), estimatedDateTime[1].substr(4, 2)) : null;
             await put('api/track/update', {tracking: openPackage.tracking, delivered_on: dTime});
-            deliveredPackages.unshift(openPackage);
+            if (moreInfo.status == "Delivered") {
+              deliveredPackages.unshift(openPackage);
+            }
           } else {
             openPackages.push(openPackage);
           }
         }
       }
-      trakingPackages = {openPackages, deliveredPackages};
+      trackingPackages = {openPackages, deliveredPackages};
       packagesLoading= false;
 		}
     if (submitErrors != null) {
@@ -292,16 +296,54 @@
     display: none;
   }
 
+  * :global(.descHeadingMedium) {
+    display: none;
+  }
+
+  * :global(.trackingDescription) {
+    white-space: normal;
+  }
+
   @media (max-width: 479px) {
     * :global(.trackingCell) {
       padding-right: 0;
       text-align: left;
     }
+    * :global(.descHeadingSmall) {
+      display: table-cell;
+    }
+    * :global(.descHeadingMedium) {
+      display: none;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 545px) {
+    * :global(.packageImage) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: none;
+    }
+    * :global(.descHeadingMedium) {
+      display: table-cell;
+    }
     * :global(.descHeadingLarge) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 460px) {
+    * :global(.expandRow) {
       display: none;
     }
     * :global(.descHeadingSmall) {
       display: table-cell;
+    }
+    * :global(.descHeadingMedium) {
+      display: none;
     }
     * :global(.mailHeadingLarge) {
       display: none;
@@ -398,7 +440,7 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trakingPackages={trakingPackages.openPackages} checkConnection={checkConnection} />
+        <TrackingTable trackingPackages={trackingPackages.openPackages} userSmartId={user} />
       {/if}
 
     <!-- Recently Delivered Pakages -->
@@ -417,7 +459,7 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trakingPackages={trakingPackages.deliveredPackages} checkConnection={checkConnection} />
+        <TrackingTable trackingPackages={trackingPackages.deliveredPackages} userSmartId={user} />
       {/if}
     <p class="lowerLink">
       <a href="/tracking"  on:click|preventDefault={addressBook}>View Your Recent Packages</a>

@@ -31,7 +31,8 @@ export function post(req, res) {
     let finalResponse = {
       status: null,
       activity: [],
-      deliveredOn: null
+      deliveredOn: null,
+      estimatedDelivery: null
     }
     if(response.TrackResponse.Response.ResponseStatus.Code == 1) {
       const activities = response.TrackResponse.Shipment.Package.Activity;
