@@ -1,7 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
 	import { post, put, get, standardizeDates, formatPhoneNumber, findTodaysAddress, trackPackage } from '../../routes/utils/helper.js';
-	import TrackingTable from '../../components/Tracking/TrackingTable.svelte'; 
+	import TrackingTableWidget from '../../components/Tracking/TrackingTableWidget.svelte'; 
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import { onMount } from 'svelte';
 
@@ -37,7 +37,7 @@
     }
 
     try {
-      const response = await get('api/manage/get_packages/');
+      const response = await get('api/track/preview_packages/');
 
       // TODO handle network errors
       submitErrors = response.error;
@@ -90,11 +90,6 @@
     todaysAddress = findTodaysAddress(currentDate, $session.addresses);
   }
 
-  function blah () {
-    // chackConnection logs a user out if their token has expired
-    checkConnection();
-  }
-
 	async function logout(event) {
 		await post(`api/auth/logout`);
     $session.user = null;
@@ -113,7 +108,7 @@
 </script>
 
 <svelte:head>
-  <title>smartmail - {user.first_name}'s Profile</title>
+  <title>smartmail - {user.first_name ? user.first_name : ""}'s Profile</title>
 </svelte:head>
 
 <style>
@@ -215,6 +210,46 @@
 
   /* For Tracking Component */
 
+  @media (max-width: 499px) {
+    * :global(.trackingCell) {
+      padding-right: 0;
+      text-align: left;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 460px) {
+    * :global(.expandRow) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: table-cell;
+    }
+    * :global(.descHeadingMedium) {
+      display: none;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 545px) {
+    * :global(.packageImage) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: none;
+    }
+    * :global(.descHeadingMedium) {
+      display: table-cell;
+    }
+    * :global(.descHeadingLarge) {
+      display: none;
+    }
+  }
+
   * :global(table.extraInfoTable) {
     border-collapse: collapse;
   }
@@ -227,14 +262,6 @@
       border-bottom: none; 
   }
 
-  * :global(table.extraInfoTable tr td:first-child) { 
-      padding-left: 0.4em; 
-  }
-
-  * :global(table.extraInfoTable tr td:last-child) { 
-      padding-right: 0.4em; 
-  }
-
   * :global(.extraInfoCell) {
     text-align: left;
     white-space: pre-wrap;
@@ -242,6 +269,18 @@
     max-width: 40px;
   }
 
+  * :global(.trackingDescription) {
+    white-space: normal;
+  }
+
+  * :global(.senderRecipient) {
+    padding-left: 0;
+  }
+
+  * :global(.packageImage) {
+    padding: 2px 0;
+  }
+
   * :global(table.extraInfoTable tr td:first-child) { 
       padding-left: 0.4em; 
   }
@@ -249,7 +288,7 @@
   * :global(table.extraInfoTable tr td:last-child) { 
       padding-right: 0.4em; 
   }
-
+  
   * :global(.trackingRow) {
     cursor: pointer;
   }
@@ -294,56 +333,6 @@
 
   * :global(.descHeadingMedium) {
     display: none;
-  }
-
-  * :global(.trackingDescription) {
-    white-space: normal;
-  }
-
-  @media (max-width: 479px) {
-    * :global(.trackingCell) {
-      padding-right: 0;
-      text-align: left;
-    }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
-    }
-    * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 545px) {
-    * :global(.packageImage) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: none;
-    }
-    * :global(.descHeadingMedium) {
-      display: table-cell;
-    }
-    * :global(.descHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 460px) {
-    * :global(.expandRow) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
-    }
-    * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
   }
 </style>
 
@@ -436,7 +425,7 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trackingPackages={trackingPackages.openPackages} userSmartId={user.smart_id} />
+        <TrackingTableWidget trackingPackages={trackingPackages.openPackages} userSmartId={user.smart_id} />
       {/if}
 
     <!-- Recently Delivered Pakages -->
@@ -455,7 +444,7 @@
         </DataTable>
         <p class="loading>">Loading. . .</p>
       {:else}
-        <TrackingTable trackingPackages={trackingPackages.deliveredPackages} userSmartId={user.smart_id} />
+        <TrackingTableWidget trackingPackages={trackingPackages.deliveredPackages} userSmartId={user.smart_id} />
       {/if}
     <p class="lowerLink">
       <a href="/tracking"  on:click|preventDefault={addressBook}>View Your Recent Packages</a>

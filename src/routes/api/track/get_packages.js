@@ -1,7 +1,9 @@
 import * as api from '../../utils/api.js';
 
 export function get(req, res) {
-  api.get(`packages/${req.session.user.id}`, req.session.token)
+  const { limit, page, search, type } = req.query;
+  const searchString = search  ? search.trim() : "";
+  api.get(`packages/${req.session.user.id}?type=${type}&limit=${limit}&page=${page}&search=${searchString}`, req.session.token)
   .then(response => {
     if (!response.success) {
       console.error(response)

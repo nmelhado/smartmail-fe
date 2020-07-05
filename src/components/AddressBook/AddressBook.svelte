@@ -2,7 +2,7 @@
 <script>
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
 	import { formatPhoneNumber, get } from '../../routes/utils/helper.js';
-  import Pagination, {paginate} from '../Pagination'
+  import Pagination from '../Pagination'
   import Textfield from '@smui/textfield'
   import Fab, {Icon} from '@smui/fab';
   import Button, {Icon as ButtonIcon} from '@smui/button';
@@ -10,8 +10,6 @@
   export let contacts, mobile, contactCount, page, limit, search;
 
   let togglePageNumbers = false;
-
-  let noResults = false;
 
   function searchContacts() {
     getContacts("search");
@@ -28,11 +26,6 @@
         page = tempPage;
         contacts = response.contacts ? response.contacts : [];
         contactCount = response.count;
-        if (response.contacts == null) {
-          noResults = true;
-        } else {
-          noResults = false;
-        }
       }
     } catch(err) {
       console.log(err);
@@ -81,11 +74,6 @@
         <Cell class="phoneCell"><a href="tel:{contact.phone}">{formatPhoneNumber(contact.phone)}</a></Cell>
       </Row>
     {/each}
-    {#if noResults}
-      <Row>
-        <Cell colspan="4" style="text-align: center;">No contacts found</Cell>
-      </Row>
-    {/if}
 
   </Body>
 </DataTable>

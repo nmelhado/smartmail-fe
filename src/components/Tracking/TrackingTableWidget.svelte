@@ -3,25 +3,15 @@
 	import { trackPackage, getTrackingLink } from '../../routes/utils/helper.js';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import { Graphic } from '@smui/list';
-  import { createEventDispatcher } from 'svelte';
-  import Pagination from '../Pagination'
 
-  export let trackingPackages, userSmartId, page, limit, count, mobile;
-
-  const dispatch = createEventDispatcher();
+  export let trackingPackages, userSmartId;
 
   let displayMore = {};
   let extraInfo = '';
   let currentRow = null;
-  let togglePageNumbers = false;
 
   for (const userPackage of trackingPackages) {
     displayMore[userPackage.tracking] = false;
-  }
-
-  function getPackages() {
-    dispatch('getPackages');
-    togglePageNumbers = togglePageNumbers == false;
   }
 
   async function toggleRow(row, mailCarrier) {
@@ -383,11 +373,3 @@
   {/if}
   </Body>
 </DataTable>
-
-{#if count > page * limit}
-  {#if togglePageNumbers}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
-  {:else}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
-  {/if}
-{/if}
