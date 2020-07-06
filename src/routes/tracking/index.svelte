@@ -314,8 +314,8 @@
     <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} on:getPackages={() => getOpenPackages(false)} mobile={$session.mobile} />
   {/if}
 
-<!-- Recently Delivered Pakages -->
-<h4>Recently Delivered Pakages</h4>
+<!-- Recently Delivered Packages -->
+<h4>Recently Delivered Packages</h4>
   {#if pageLoading }
     <DataTable table$aria-label="Packages" table$style="width: 100%;">
       <Head>

@@ -164,16 +164,13 @@
 
   @media (max-width: 460px) {
     * :global(.expandRow) {
-      display: none;
+      padding: 0;
     }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
+    * :global(.trackingDescription) {
+      padding: 0;
     }
     * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
+      display: table-cell;
     }
   }
 

@@ -2,8 +2,11 @@
 	import { goto, stores } from '@sapper/app';
 	import { post, put, get, standardizeDates, formatPhoneNumber, findTodaysAddress, trackPackage } from '../../routes/utils/helper.js';
 	import TrackingTableWidget from '../../components/Tracking/TrackingTableWidget.svelte'; 
+	import CopyToClipboard from '../../components/CopyToClipboard.svelte'; 
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
+  import IconButton from '@smui/icon-button';
   import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
   const { session } = stores();
 
@@ -109,6 +112,18 @@
 	function tracking() {
     goto('/tracking');
   }
+
+  let copySuccess = false, copyFail = false;
+
+  function handleCopySuccess() {
+    copySuccess = true;
+    setTimeout(function (){copySuccess = false}, 4000);
+  }
+
+  function handleCopyFail() {
+    copyFail = true;
+    setTimeout(function (){copyFail = false}, 6000);
+  }
 </script>
 
 <svelte:head>
@@ -131,6 +146,11 @@
     width: 49%;
     text-align: center;
     vertical-align: top;
+  }
+
+  #avatar {
+    width: 256px;
+    height: 256px;
   }
 
   #memberSince {
@@ -211,47 +231,41 @@
     }
   }
 
+
+  /* For copy to clipboard */
+  * :global(.material-icons) {
+    vertical-align: sub;
+  }
+
+  * :global(.copy) {
+    color: var(--gray);
+  }
+
+  * :global(.success) {
+    color: var(--primary);
+  }
+
+  * :global(.fail) {
+    color: #a57171;
+  }
+
+  .copyFail {
+    color: #a57171;
+    border: 1px solid #a57171;
+    padding: 10px 30px;
+    display: inline-block;
+    max-width: 320px;
+  }
+
+  .copySuccess {
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 10px 30px;
+    display: inline-block;
+    max-width: 320px;
+  }
+
   /* For Tracking Component */
-
-  @media (max-width: 499px) {
-    * :global(.trackingCell) {
-      padding-right: 0;
-      text-align: left;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 460px) {
-    * :global(.expandRow) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
-    }
-    * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 545px) {
-    * :global(.packageImage) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: none;
-    }
-    * :global(.descHeadingMedium) {
-      display: table-cell;
-    }
-    * :global(.descHeadingLarge) {
-      display: none;
-    }
-  }
 
   * :global(table.extraInfoTable) {
     border-collapse: collapse;
@@ -337,6 +351,47 @@
   * :global(.descHeadingMedium) {
     display: none;
   }
+
+  @media (max-width: 499px) {
+    * :global(.trackingCell) {
+      padding-right: 0;
+      text-align: left;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 460px) {
+    * :global(.expandRow) {
+      padding: 0;
+    }
+    * :global(.trackingDescription) {
+      padding: 0;
+    }
+    * :global(.descHeadingMedium) {
+      display: table-cell;
+    }
+  }
+
+  @media (max-width: 545px) {
+    * :global(.packageImage) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: none;
+    }
+    * :global(.descHeadingMedium) {
+      display: table-cell;
+    }
+    * :global(.descHeadingLarge) {
+      display: none;
+    }
+    #avatar {
+      width: 160px;
+      height: 160px;
+    }
+  }
 </style>
 
 <p id="logOut"class="text-xs-center">
@@ -345,12 +400,25 @@
 <div id="dashboardBody">
   <!-- Left side panel -->
   <div class="side">
-    <img id="avatar" alt="dashboard image" width="256px" height="256px" src="https://ui-avatars.com/api/?background=1be7ff&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
+    <img id="avatar" alt="dashboard image" src="https://ui-avatars.com/api/?background=1be7ff&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
     <h2 id="name">{user.first_name} {user.last_name}</h2>
     <p id="memberSince">Member since {monthNames[memberSince[1]-1]} '{memberSince[0].substr(2)}</p>
     <table id="contactInfo">
-      <tr>
-        <td>smartID:&nbsp;&nbsp;&nbsp;</td><td><strong><span class="smartIDSpacer">{user.smart_id.substring(0, 4)}</span>{user.smart_id.substring(4)}</strong></td>
+      <tr id="smartID">
+        <td>smartID:&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          {#if !copySuccess && !copyFail}
+            <CopyToClipboard text={user.smart_id} on:copy={handleCopySuccess} on:fail={handleCopyFail} />
+          {/if}
+          {#if copySuccess}
+            <strong><span class="smartIDSpacer">{user.smart_id.substring(0, 4)}</span>{user.smart_id.substring(4)}</strong>
+            <IconButton class="material-icons success" disabled>check_circle</IconButton>
+          {/if}
+          {#if copyFail}
+            <strong><span class="smartIDSpacer">{user.smart_id.substring(0, 4)}</span>{user.smart_id.substring(4)}</strong>
+            <IconButton class="material-icons fail" disabled>cancel</IconButton>
+          {/if}
+        </td>
       </tr>
       <tr>
         <td>email:&nbsp;&nbsp;&nbsp;</td><td>{user.email}</td>
@@ -359,6 +427,12 @@
         <td>phone:&nbsp;&nbsp;&nbsp;</td><td>{phone}</td>
       </tr>
     </table>
+    {#if copyFail}
+      <p transition:slide="{{ duration: 800 }}" class="copyFail">We were unable to copy you smartID to your clipboard. Please copy it manually.</p>
+    {/if}
+    {#if copySuccess}
+      <p transition:slide="{{ duration: 800 }}" class="copySuccess">Your smartID was copied to your clipboard!</p>
+    {/if}
     <br />
     {#if todaysAddress != null}
       <a href="/account"  on:click|preventDefault={myAccount} class="linkedHeader"><h4>Current Address:</h4></a><br />
@@ -429,8 +503,8 @@
         <TrackingTableWidget trackingPackages={trackingPackages.openPackages} userSmartId={user.smart_id} />
       {/if}
 
-    <!-- Recently Delivered Pakages -->
-    <a href="/tracking"  on:click|preventDefault={tracking} class="linkedHeader"><h4>Recently Delivered Pakages</h4></a><br />
+    <!-- Recently Delivered Packages -->
+    <a href="/tracking"  on:click|preventDefault={tracking} class="linkedHeader"><h4>Recently Delivered Packages</h4></a><br />
       {#if pageLoading }
         <DataTable table$aria-label="Packages" table$style="width: 100%;">
           <Head>
