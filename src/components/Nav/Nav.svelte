@@ -111,9 +111,9 @@
       <li id='sign-up'><a rel=prefetch on:click|preventDefault={() => menu.setOpen(true)} href='account'>Hello {$session.user.first_name}!</a></li>
       <Menu style="width: 210px;" bind:this={menu} anchor={false} bind:anchorElement={anchor} anchorCorner="BOTTOM_LEFT">
         <List>
-          <Item on:SMUI:action={() => goto('/profile')}>
+          <Item on:SMUI:action={() => goto('/dashboard')}>
             <Text>
-              profile
+              dashboard
             </Text>
           </Item>
           <Item on:SMUI:action={() => goto('/account')}>

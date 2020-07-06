@@ -115,13 +115,13 @@ code {
 }
 
 @media (max-width: 1290px) {
-  .profilePhoneCell {
+  .dashboardPhoneCell {
     display: none;
   }
 }
 
 @media (max-width: 990px) {
-  .profilePhoneCell {
+  .dashboardPhoneCell {
     display: table-cell;
   }
 }

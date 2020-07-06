@@ -63,7 +63,7 @@
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
-			goto('account');
+			goto('dashboard');
 		}
     if (submitErrors != null) {
       errorsPresent.open()

@@ -57,9 +57,9 @@
               <Text>home</Text>
             </Item>
           {#if $session.user && $session.user.first_name}
-            <Item href="javascript:void(0)" on:click={() => navigate('/profile')} activated={$page.path === '/profile'}>
+            <Item href="javascript:void(0)" on:click={() => navigate('/dashboard')} activated={$page.path === '/dashboard'}>
               <Graphic class="material-icons" aria-hidden="true">account_circle</Graphic>
-              <Text>profile</Text>
+              <Text>dashboard</Text>
             </Item>
             <Item href="javascript:void(0)" on:click={() => navigate('/account')} activated={$page.path === '/account'}>
               <Graphic class="material-icons" aria-hidden="true">article</Graphic>
@@ -70,9 +70,9 @@
               <Text>address book</Text>
             </Item>
           {:else}
-            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/profile'}>
+            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/dashboard'}>
               <Graphic class="material-icons" aria-hidden="true">account_circle</Graphic>
-              <Text>profile</Text>
+              <Text>dashboard</Text>
             </Item>
             <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/account'}>
               <Graphic class="material-icons" aria-hidden="true">article</Graphic>

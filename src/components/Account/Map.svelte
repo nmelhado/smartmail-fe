@@ -9,15 +9,17 @@
 
 
 <script>
+	import { afterUpdate } from 'svelte';
+  
   export let todaysAddress, pinTitle, mobile;
   const latitude = todaysAddress.latitude;
   const longitude = todaysAddress.longitude;
   const position = {lat: latitude, lng:longitude};
 
-  let marker;
+  let marker, map;
   function initMap() {
-    // The map, centered at Uluru
-    var map = new google.maps.Map(
+    // The map object
+    map = new google.maps.Map(
       document.getElementById('map'), {
         zoom: 15,
         center: position,
@@ -295,6 +297,15 @@
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
   };
+
+		$: if(todaysAddress && map && marker) {
+      const newLatLng = new google.maps.LatLng(todaysAddress.latitude, todaysAddress.longitude);
+      map.setCenter({
+        lat : todaysAddress.latitude,
+        lng : todaysAddress.longitude
+      });
+      marker.setPosition(newLatLng);
+      }
 
 </script>
 

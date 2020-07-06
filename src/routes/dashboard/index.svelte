@@ -62,6 +62,8 @@
             }
           }
         }
+        openPackages.length = openPackages.length > 5 ? 5 : openPackages.length;
+        deliveredPackages.length = deliveredPackages.length > 5 ? 5 : deliveredPackages.length;
         trackingPackages = {openPackages, deliveredPackages};
       }
       if (submitErrors != null) {
@@ -78,8 +80,6 @@
   const user = $session.user;
   const phone = formatPhoneNumber(user.phone);
   const memberSince = user.created_at.split('-');
-
-  const recentContactLength = 3;
 
   let currentDate = standardizeDates(new Date())
   let tempHolder = true;
@@ -105,10 +105,14 @@
 	function addressBook() {
     goto('/addresses');
   }
+
+	function tracking() {
+    goto('/tracking');
+  }
 </script>
 
 <svelte:head>
-  <title>smartmail - {user.first_name ? user.first_name : ""}'s Profile</title>
+  <title>smartmail - {user.first_name ? user.first_name : ""}'s Dashboard</title>
 </svelte:head>
 
 <style>
@@ -118,7 +122,7 @@
     font-size: 1.8em;
   }
 
-  #profileBody {
+  #dashboardBody {
     position: relative;
   }
 
@@ -200,7 +204,6 @@
   }
 
   /* Adjust for smaller screens and phones */
-
 
   @media (max-width: 990px) {
     .side {
@@ -339,10 +342,10 @@
 <p id="logOut"class="text-xs-center">
   <a href="/"  on:click|preventDefault={logout}>Not {user.first_name}? Log out</a>
 </p>
-<div id="profileBody">
+<div id="dashboardBody">
   <!-- Left side panel -->
   <div class="side">
-    <img id="avatar" alt="profile image" width="256px" height="256px" src="https://ui-avatars.com/api/?background=1be7ff&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
+    <img id="avatar" alt="dashboard image" width="256px" height="256px" src="https://ui-avatars.com/api/?background=1be7ff&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
     <h2 id="name">{user.first_name} {user.last_name}</h2>
     <p id="memberSince">Member since {monthNames[memberSince[1]-1]} '{memberSince[0].substr(2)}</p>
     <table id="contactInfo">
@@ -391,7 +394,7 @@
           <Cell>Name</Cell>
           <Cell>SmartID</Cell>
           <Cell class="emailCell">E-mail</Cell>
-          <Cell class="profilePhoneCell phoneCell">Phone</Cell>
+          <Cell class="dashboardPhoneCell phoneCell">Phone</Cell>
         </Row>
       </Head>
       <Body>
@@ -400,7 +403,7 @@
             <Cell>{contact.name}</Cell>
             <Cell><span class="smartIDSpacer">{contact.smart_id.substring(0, 4)}</span>{contact.smart_id.substring(4)}</Cell>
             <Cell class="emailCell"><a href="mailto:{contact.email}" target="_top">{contact.email}</a></Cell>
-            <Cell class="profilePhoneCell phoneCell"><a href="tel:{contact.phone}">{formatPhoneNumber(contact.phone)}</a></Cell>
+            <Cell class="dashboardPhoneCell phoneCell"><a href="tel:{contact.phone}">{formatPhoneNumber(contact.phone)}</a></Cell>
           </Row>
         {/each}
       </Body>
@@ -410,14 +413,12 @@
     </p>
 
     <!-- Recent Open Packages -->
-    <a href="/tracking"  on:click|preventDefault={addressBook} class="linkedHeader"><h4>Recent Open Deliveries</h4></a><br />
+    <a href="/tracking"  on:click|preventDefault={tracking} class="linkedHeader"><h4>Recent Open Deliveries</h4></a><br />
       {#if pageLoading }
         <DataTable table$aria-label="Packages" table$style="width: 100%;">
           <Head>
             <Row>
               <Cell>Description</Cell>
-              <Cell>Mail Carrier</Cell>
-              <Cell>Tracking</Cell>
             </Row>
           </Head>
           <Body>
@@ -429,14 +430,12 @@
       {/if}
 
     <!-- Recently Delivered Pakages -->
-    <a href="/tracking"  on:click|preventDefault={addressBook} class="linkedHeader"><h4>Recently Delivered Pakages</h4></a><br />
+    <a href="/tracking"  on:click|preventDefault={tracking} class="linkedHeader"><h4>Recently Delivered Pakages</h4></a><br />
       {#if pageLoading }
         <DataTable table$aria-label="Packages" table$style="width: 100%;">
           <Head>
             <Row>
               <Cell>Description</Cell>
-              <Cell>Mail Carrier</Cell>
-              <Cell>Tracking</Cell>
             </Row>
           </Head>
           <Body>
@@ -447,7 +446,7 @@
         <TrackingTableWidget trackingPackages={trackingPackages.deliveredPackages} userSmartId={user.smart_id} />
       {/if}
     <p class="lowerLink">
-      <a href="/tracking"  on:click|preventDefault={addressBook}>View Your Recent Packages</a>
+      <a href="/tracking"  on:click|preventDefault={tracking}>View Your Recent Packages</a>
     </p>
   </div>
 </div>

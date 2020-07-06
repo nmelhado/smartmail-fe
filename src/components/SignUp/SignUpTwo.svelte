@@ -163,7 +163,7 @@
       };
       await emailConfirmation(response.user);
       loading= false;
-			goto('account');
+			goto('dashboard');
 		}
     if (submitErrors != null) {
       errorsPresent.open()

@@ -368,7 +368,7 @@
   {/each}
   {#if trackingPackages.length < 1 }
     <Row>
-        <Cell colspan="3">No recent packages delivered using your smartID</Cell>
+        <Cell colspan="3">No recent packages...</Cell>
     </Row>
   {/if}
   </Body>

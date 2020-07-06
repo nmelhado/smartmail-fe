@@ -21,8 +21,8 @@
     goto('/');
   }
   
-	function profile() {
-    goto('/profile');
+	function dashboard() {
+    goto('/dashboard');
   }
 
 	function addresses() {
@@ -30,11 +30,10 @@
   }
   
 	function tracking() {
-    goto('/addresses');
+    goto('/tracking');
   }
   
   let currentDate = standardizeDates(new Date())
-  let tempHolder = true;
   let resetCalendarCheck = true;
 
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -102,12 +101,7 @@
       processNewMonth();
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -127,12 +121,7 @@
       processNewMonth();
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -143,12 +132,7 @@
     if ($session.addresses) {
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -232,20 +216,13 @@
   #button-holder {
     text-align: center;
   }
-
-  #map-placeholder {
-    flex-grow: 3;
-    height: 450px;
-    min-width: 300px;
-    border: 1px solid var(--lightGray);
-  }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
 
 <div id="accountButtons">
   <Group variant="outlined">
-    <Button color="secondary" on:click={profile} variant="outlined"><Label>Profile</Label></Button>
+    <Button color="secondary" on:click={dashboard} variant="outlined"><Label>Dashboard</Label></Button>
     <Button color="secondary" on:click={addresses} variant="outlined"><Label>Address Book</Label></Button>
     <Button color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
     <Button color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
@@ -286,11 +263,7 @@
     </div>
   {/if}
   <AddressCard bind:update={update} todaysAddress={todaysAddress} phone={phone} on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth}/>
-  {#if todaysAddress != null}
-    <Map  mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
-  {:else if tempHolder}
-    <div id="map-placeholder" />
-  {/if}
+  <Map  mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
 </div>
 <div id="button-holder">
   <Button class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>

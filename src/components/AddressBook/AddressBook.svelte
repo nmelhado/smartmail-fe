@@ -78,7 +78,7 @@
   </Body>
 </DataTable>
 
-{#if contactCount > page * limit}
+{#if contactCount > limit}
   {#if togglePageNumbers}
     <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} {mobile} on:changePage={getContacts} />
   {:else}

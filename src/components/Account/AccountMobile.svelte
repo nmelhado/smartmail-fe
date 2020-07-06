@@ -23,8 +23,8 @@
     goto('/');
   }
   
-	function profile() {
-    goto('/profile');
+	function dashboard() {
+    goto('/dashboard');
   }
 
 	function addresses() {
@@ -43,7 +43,6 @@
   let year = now.getFullYear();
   let month = now.getMonth();
 
-  let tempHolder = true;
   let todaysAddress = null;
   let pinTitle = "";
   let phone = "";
@@ -104,12 +103,7 @@
       processNewMonth();
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -129,12 +123,7 @@
       processNewMonth();
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -146,12 +135,7 @@
     if ($session.addresses) {
       const tempAddress = findTodaysAddress(currentDate, $session.addresses);
       if (tempAddress != todaysAddress) {
-        tempHolder = true;
-        todaysAddress = null;
-        setTimeout(() => {
-          tempHolder = false;
-          todaysAddress = tempAddress;
-        }, 1)
+        todaysAddress = tempAddress;
       }
     }
     update = false;
@@ -260,12 +244,6 @@
   .hidden {
     display: none;
   }
-  
-  #map-placeholder {
-    flex-grow: 3;
-    min-width: 300px;
-    border: 1px solid var(--lightGray);
-  }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
@@ -296,8 +274,6 @@
   {#if keyedTabsActive && keyedTabsActive.k == 2}
     {#if todaysAddress != null}
       <Map mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
-    {:else if tempHolder}
-      <div id="map-placeholder" />
     {/if}
   {/if}
 

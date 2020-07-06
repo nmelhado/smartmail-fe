@@ -4,24 +4,23 @@
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import { Graphic } from '@smui/list';
   import { createEventDispatcher } from 'svelte';
-  import Pagination from '../Pagination'
+  import Pagination from '../Pagination';
 
   export let trackingPackages, userSmartId, page, limit, count, mobile;
+
 
   const dispatch = createEventDispatcher();
 
   let displayMore = {};
   let extraInfo = '';
   let currentRow = null;
-  let togglePageNumbers = false;
 
-  for (const userPackage of trackingPackages) {
+  $: for (const userPackage of trackingPackages) {
     displayMore[userPackage.tracking] = false;
   }
 
   function getPackages() {
     dispatch('getPackages');
-    togglePageNumbers = togglePageNumbers == false;
   }
 
   async function toggleRow(row, mailCarrier) {
@@ -32,7 +31,8 @@
     currentRow = row;
     const moreInfo = await trackPackage(mailCarrier, row);
     // Create tracking data rows
-    createExtraInfo(moreInfo.activity)
+    createExtraInfo(moreInfo.activity);
+    console.log(displayMore);
   }
 
   function createExtraInfo(activities) {
@@ -159,47 +159,21 @@
     }
   }
 
-  @media (max-width: 499px) {
-    .mailCarrierIcon {
-      display: none;
-    }
-    * :global(.trackingCell) {
-      padding-right: 0;
-      text-align: left;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
+  * :global(.collapse) {
+    margin-right: 0px;
   }
 
-  @media (max-width: 460px) {
-    * :global(.expandRow) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
-    }
-    * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
+  * :global(.trackingCell) {
+    padding-left: 0;
+    text-align: left;
   }
 
-  @media (max-width: 545px) {
-    * :global(.packageImage) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: none;
-    }
-    * :global(.descHeadingMedium) {
-      display: table-cell;
-    }
-    * :global(.descHeadingLarge) {
-      display: none;
-    }
+  * :global(.descHeadingSmall) {
+    display: none;
+  }
+
+  * :global(.descHeadingMedium) {
+    display: none;
   }
 
   * :global(table.extraInfoTable) {
@@ -270,21 +244,47 @@
     padding-left: 4px;
   }
 
-  * :global(.collapse) {
-    margin-right: 0px;
+  @media (max-width: 499px) {
+    .mailCarrierIcon {
+      display: none;
+    }
+    * :global(.trackingCell) {
+      padding-right: 0;
+      text-align: left;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
   }
 
-  * :global(.trackingCell) {
-    padding-left: 0;
-    text-align: left;
+  @media (max-width: 460px) {
+    * :global(.expandRow) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: table-cell;
+    }
+    * :global(.descHeadingMedium) {
+      display: none;
+    }
+    * :global(.mailHeadingLarge) {
+      display: none;
+    }
   }
 
-  * :global(.descHeadingSmall) {
-    display: none;
-  }
-
-  * :global(.descHeadingMedium) {
-    display: none;
+  @media (max-width: 545px) {
+    * :global(.packageImage) {
+      display: none;
+    }
+    * :global(.descHeadingSmall) {
+      display: none;
+    }
+    * :global(.descHeadingMedium) {
+      display: table-cell;
+    }
+    * :global(.descHeadingLarge) {
+      display: none;
+    }
   }
 </style>
 
@@ -378,16 +378,12 @@
   {/each}
   {#if trackingPackages.length < 1 }
     <Row>
-        <Cell colspan="3">No recent packages delivered using your smartID</Cell>
+        <Cell colspan="3">No recent packages...</Cell>
     </Row>
   {/if}
   </Body>
 </DataTable>
 
-{#if count > page * limit}
-  {#if togglePageNumbers}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
-  {:else}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
-  {/if}
+{#if count > limit}
+  <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
 {/if}
