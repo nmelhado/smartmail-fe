@@ -6,7 +6,7 @@
   import { createEventDispatcher } from 'svelte';
   import Pagination from '../Pagination';
 
-  export let trackingPackages, userSmartId, page, limit, count, mobile;
+  export let trackingPackages, userSmartId, page, limit, count;
 
 
   const dispatch = createEventDispatcher();
@@ -371,5 +371,5 @@
 </DataTable>
 
 {#if count > limit}
-  <Pagination bind:page={page} bind:limit={limit} bind:count={count} {mobile} on:changePage={getPackages} />
+  <Pagination bind:page={page} bind:limit={limit} bind:count={count} on:changePage={getPackages} />
 {/if}

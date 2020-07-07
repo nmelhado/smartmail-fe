@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 	import { get } from '../routes/utils/helper.js';
 
-  export let page, limit, count, mobile;
+  export let page, limit, count;
 
   const dispatch = createEventDispatcher();
 

@@ -11,7 +11,7 @@
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import IconButton from '@smui/icon-button';
   import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import { slide, blur } from 'svelte/transition';
 
   const { session } = stores();
 
@@ -85,7 +85,7 @@
 
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const user = $session.user;
+  let user = $session.user;
   const phone = formatPhoneNumber(user.phone);
   const memberSince = user.created_at.split('-');
 
@@ -158,9 +158,10 @@
   const validInfo =yup.object().shape({
     first_name: yup.string().required("Your first name is requires"),
     last_name: yup.string().required("Your last name is requires"),
-    email: yup.string().email("Email is not valid"),
-    // phone: yup.string().matches(phoneRegExp, "Phone number is not valid"),
-    phone: yup.string(),
+    email: yup.string().required("Email is required").email("Email is not valid"),
+    phone: yup.string()
+      .required("Phone number is required")
+      .matches(phoneRegExp, "Phone number is not valid")
   });
   
 	function verifyBasicInfo(event) {
@@ -190,7 +191,6 @@
 
 	async function submit() {
 		const response = await put(`api/manage/update_info`, { updateInfo });
-
 		// TODO handle network errors
 		submitErrors = response.error;
 
@@ -199,8 +199,9 @@
       user = response.user;
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent.open();
     }
+    cancelUpdate();
   }
 
   let errorsPresent;
@@ -366,6 +367,11 @@
   :global(.editButton) {
     color: var(--gray);
   }
+
+  #updateButtons {
+    display: flex;
+    justify-content: space-around;
+  }
 </style>
 
 <UtilityBar exclude="dashboard" />
@@ -374,7 +380,16 @@
   <!-- Left side panel -->
   <div class="side">
     <img id="avatar" alt="dashboard image" src="https://ui-avatars.com/api/?background=	D9EBE4&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
-    <h2 id="name">{user.first_name} {user.last_name}</h2>
+    {#if updatingInfo}
+      <h2 in:blur="{{ duration: 400 }}" id="name">
+        <Textfield class="formInputs halfWidth" variant="outlined" label="first name" invalid="{invalid["first_name"]}" bind:value={updateInfo.first_name}/>
+        <Textfield class="formInputs halfWidth" variant="outlined" label="last name" invalid="{invalid["last_name"]}" bind:value={updateInfo.last_name}/>
+      </h2>
+    {:else}
+      <h2 in:blur="{{ duration: 400 }}" id="name">
+        {user.first_name} {user.last_name}
+      </h2>
+    {/if}
     <p id="memberSince">Member since {monthNames[memberSince[1]-1]} '{memberSince[0].substr(2)}</p>
     <table id="contactInfo">
       <tr id="smartID">
@@ -395,33 +410,41 @@
       </tr>
       <tr>
         <td>email:&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          {#if updatingInfo}
+        {#if updatingInfo}
+          <td in:blur="{{ duration: 400 }}">
             <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["email"]}" bind:value={updateInfo.email}/>
-          {:else}
+          </td>
+        {:else}
+          <td in:blur="{{ duration: 400 }}">
             {user.email}
-          {/if}
-        </td>
+          </td>
+        {/if}
       </tr>
       <tr>
         <td>phone:&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          {#if updatingInfo}
+        {#if updatingInfo}
+          <td in:blur="{{ duration: 400 }}">
             <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["phone"]}" bind:value={updateInfo.phone}/>
-          {:else}
+          </td>
+        {:else}
+          <td in:blur="{{ duration: 400 }}">
             {phone}
-          {/if}
-        </td>
+          </td>
+        {/if}
       </tr>
     </table>
     {#if updatingInfo}
       <ListErrors {errors}/>
-      <Button color="secondary" class="buttonParent" variant="unelevated" on:click={cancelUpdate}><Label class="buttonLabel">Cancel</Label></Button>
-      <form on:submit|preventDefault={verifyBasicInfo}>
-        <Button color="secondary" class="buttonParent" variant="unelevated"><Label class="buttonLabel">Update Information</Label></Button>
-      </form>
+      <div in:blur="{{ duration: 400 }}" id="updateButtons">
+        <Button color="secondary" class="buttonParent" variant="unelevated" on:click={cancelUpdate}><Label class="buttonLabel">Cancel</Label></Button>
+        <form style="display: inline-block" on:submit|preventDefault={verifyBasicInfo}>
+          <Button color="secondary" class="buttonParent" variant="unelevated"><Label class="buttonLabel">Update Information</Label></Button>
+        </form>
+      </div>
     {:else}
-      <Button color="secondary" class="buttonParent" on:click={startlUpdate}><Label class="buttonLabel buttonLabelEdit">Edit basic information </Label><Icon class="material-icons editButton">edit</Icon></Button>
+      <div in:blur="{{ duration: 400 }}">
+        <Button color="secondary" class="buttonParent" on:click={startlUpdate}><Label class="buttonLabel buttonLabelEdit">Edit basic information </Label><Icon class="material-icons editButton">edit</Icon></Button>
+      </div>
     {/if}
     {#if copyFail}
       <p transition:slide="{{ duration: 800 }}" class="copyFail">We were unable to copy you smartID to your clipboard. Please copy it manually.</p>

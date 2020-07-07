@@ -80,8 +80,8 @@
 
 {#if contactCount > limit}
   {#if togglePageNumbers}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} {mobile} on:changePage={getContacts} />
+    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} on:changePage={getContacts} />
   {:else}
-    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} {mobile} on:changePage={getContacts} />
+    <Pagination bind:page={page} bind:limit={limit} bind:count={contactCount} on:changePage={getContacts} />
   {/if}
 {/if}

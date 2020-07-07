@@ -184,7 +184,7 @@
     </DataTable>
     <p class="loading>">Loading. . .</p>
   {:else}
-    <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} on:getPackages={() => getOpenPackages(false)} mobile={$session.mobile} />
+    <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} on:getPackages={() => getOpenPackages(false)} />
   {/if}
 
 <!-- Delivered Packages -->
@@ -201,5 +201,5 @@
     </DataTable>
     <p class="loading>">Loading. . .</p>
   {:else}
-    <TrackingTable trackingPackages={deliveredPackages} userSmartId={user.smart_id} bind:page={deliveredPage} bind:count={deliveredCount} {limit} on:getPackages={() => getDeliveredPackages(false)} mobile={$session.mobile} />
+    <TrackingTable trackingPackages={deliveredPackages} userSmartId={user.smart_id} bind:page={deliveredPage} bind:count={deliveredCount} {limit} on:getPackages={() => getDeliveredPackages(false)} />
   {/if}
