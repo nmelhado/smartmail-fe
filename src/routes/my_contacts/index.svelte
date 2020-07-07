@@ -3,6 +3,7 @@
   import { get } from '../utils/helper.js';
 	import AddressBook from '../../components/AddressBook/AddressBook.svelte'; 
 	import AddContact from '../../components/AddressBook/AddContact.svelte'; 
+	import UtilityBar from '../../components/UtilityBar.svelte'; 
   import IconButton, {Icon} from '@smui/icon-button';
   import { onMount } from 'svelte';
   import queryString from "query-string"
@@ -83,8 +84,10 @@
 </style>
 
 <svelte:head>
-  <title>smartmail - Address Book</title>
+  <title>smartmail - My Contacts</title>
 </svelte:head>
+
+<UtilityBar exclude="my_contacts" />
 
 <h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List</h1>
 {#if contacts && contacts.length > 0}
@@ -97,12 +100,12 @@
 
 <div id="infoBlock">
   <p>
-    The Smartmail address book keeps track of all your Smartmail contacts.
+    The Smartmail my contacts keeps track of all your Smartmail contacts.
   </p>
   <p>
-    When you send mail to or recieve mail from a Smartmail contact, their information will automatically be added to your address book. There's no need to manually add an address ever!
+    When you send mail to or recieve mail from a Smartmail contact, their information will automatically be added to your my contacts. There's no need to manually add an address ever!
   </p>
   <p>
-    If you do want to add an address yourself though, you can. Just give us your contact's smartID&trade; and either their email address or their phone number and we will add them to your address book.
+    If you do want to add an address yourself though, you can. Just give us your contact's smartID&trade; and either their email address or their phone number and we will add them to your my contacts.
   </p>
 </div>

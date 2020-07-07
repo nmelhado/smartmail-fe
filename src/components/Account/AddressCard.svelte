@@ -16,7 +16,7 @@
       dispatch('resetCalendar');
   }
 
-  export let todaysAddress, phone, update;
+  export let todaysAddress, phone, update, edit = true;
 
   const today = standardizeDates(new Date());
   let submitErrors, errorsPresent;
@@ -57,6 +57,14 @@
     display: table;
     padding: 2em 0;
     width: 100%;
+    background-color: var(--veryLightGray);
+  }
+
+  #currentAddressNoEdit {
+    display: table;
+    padding: 0.5em 0 0;
+    width: 100%;
+    font-size: 0.8em;
     background-color: var(--veryLightGray);
   }
 
@@ -102,8 +110,12 @@
     margin: 8px 0 35px;
     color: var(--darkGray);
   }
+
+  .addressPreview {
+    margin: 0.1em 0 2em;
+  }
 </style>
-  <div id={$session.mobile ? "currentAddressM" : "currentAddress"}>
+  <div id={$session.mobile ? edit ? "currentAddressM" : "currentAddressNoEdit" : "currentAddress"}>
     <div id="innerPanel">
       <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
         <Title id="event-title">{submitErrors}</Title>
@@ -116,7 +128,7 @@
       {#if todaysAddress != null}
         {#if !update}
           <h5 class="{todaysAddress.address_type == "permanent" ? "primary" : "secondary"}">{todaysAddress.nickname ? todaysAddress.nickname : todaysAddress.address_type == "permanent" ? "Permanent Address" : "Temporary Address"}</h5>
-          <p>
+          <p class="{edit ? "" : "addressPreview" }">
             {$session.user.first_name} {$session.user.last_name}<br>
             {#if todaysAddress.attention_to}
               Attention to: {todaysAddress.attention_to}<br>
@@ -130,13 +142,15 @@
             {/if}
             {todaysAddress.city}, {todaysAddress.state}, {todaysAddress.zip_code}<br>
             {todaysAddress.country}<br>
-            <a href="tel:{phone}">{phone}</a><br>
+            {#if edit}
+              <a href="tel:{phone}">{phone}</a><br>
+            {/if}
           </p>
-          {#if todaysAddress.delivery_instructions}
+          {#if edit && todaysAddress.delivery_instructions}
             <h5 id="packageDelivery">Package delivery instructions:</h5>
             <p id="packageDeliveryBody">{todaysAddress.delivery_instructions}</p>
           {/if}
-          {#if !todaysAddress.end_date || standardizeDates(todaysAddress.end_date) > today}
+          {#if edit && (!todaysAddress.end_date || standardizeDates(todaysAddress.end_date) > today)}
             <div id="buttons">
               <Fab color="secondary" on:click={toggleUpdate} mini><Icon class="material-icons">edit</Icon></Fab>
               {#if standardizeDates(todaysAddress.start_date) > today}

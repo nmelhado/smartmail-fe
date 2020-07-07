@@ -1,6 +1,6 @@
 <div class={mobile ? "calendarM" : "calendar"}>
 	{#each headers as header}
-	<span class="day-name">{header}</span>
+	<span class="{mobile ? "day-nameM" : "day-name" }">{header}</span>
 	{/each}
 
 	{#each days as day}
@@ -249,10 +249,10 @@
   display: grid;
   width: 100%;
   height: 400px;
-  height: 60vh;
+  height: 40vh;
   grid-template-columns: repeat(7, minmax(14.28%, 1fr));
-  grid-template-rows: 30px;
-  grid-auto-rows: minmax(61px, 1fr);
+  grid-template-rows: 20px;
+  grid-auto-rows: minmax(41px, 1fr);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -330,6 +330,15 @@
   line-height: 50px;
   font-weight: 500;
 }
+.day-nameM {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--lightGray);
+  text-align: center;
+  border-bottom: 1px solid rgba(166, 168, 179, 0.12);
+  line-height: 20px;
+  font-weight: 500;
+}
 .day-disabled {
   color: rgba(152, 160, 166, 0.5);
   background-color: var(--veryLightGray);
@@ -354,12 +363,14 @@
   border: 0;
   border-radius: 14px;
   box-shadow: 0 10px 14px rgba(55, 179, 81, 0.301);
+  opacity: .5;
 }
 .task--primary {
   background: var(--primaryAccent);
   border: 0;
   border-radius: 14px;
   box-shadow: 0 10px 14px rgba(56, 151, 206, 0.301);
+  opacity: .5;
 }
 
 </style>

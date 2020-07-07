@@ -8,6 +8,8 @@
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label, Group} from '@smui/button';
   import { addressChangeActive, addressStepOneComplete } from '../../routes/utils/stores.js';
+	import CopyToClipboard from '../../components/CopyToClipboard.svelte'; 
+	import { slide } from 'svelte/transition';
 
   const { session } = stores();
 
@@ -26,7 +28,7 @@
   }
 
 	function addresses() {
-    goto('/addresses');
+    goto('/my_contacts');
   }
   
 	function tracking() {
@@ -147,6 +149,17 @@
     resetCalendarCheck = resetCalendarCheck != true;
   }
 
+  let copySuccess = false, copyFail = false;
+
+  function handleCopySuccess() {
+    copySuccess = true;
+    setTimeout(function (){copySuccess = false}, 4000);
+  }
+
+  function handleCopyFail() {
+    copyFail = true;
+    setTimeout(function (){copyFail = false}, 6000);
+  }
 </script>
 
 <svelte:head>
@@ -160,7 +173,7 @@
 
   h2 {
     color: var(--primaryAccent);
-    margin: 0 0 45px;
+    margin: 0;
     font-size: 1.8em;
   }
 
@@ -177,11 +190,13 @@
   }
 
   #addressBox {
+    place-content: center;
     text-align: center;
     display: flex;
     width: 94%;
     margin: 0 auto;
     box-shadow: 0 0 20px 0 var(--lightGray);
+    background-color: var(--lightGray);
   }
 
   .calendar-container {
@@ -190,6 +205,7 @@
     flex-grow: 3;
     text-align: center;
     border: 1px solid var(--lightGray);
+    background-color: white;
   }
 
   @media (max-width: 1035px) {
@@ -216,6 +232,50 @@
   #button-holder {
     text-align: center;
   }
+
+  /* For copy to clipboard */
+  * :global(.material-icons) {
+    vertical-align: baseline;
+  }
+
+  * :global(.copy) {
+    color: var(--gray);
+  }
+
+  * :global(.success) {
+    color: var(--primary);
+  }
+
+  * :global(.fail) {
+    color: #a57171;
+  }
+
+  .copyMessage {
+    text-align: center;
+    margin-bottom: 45px;
+  }
+
+  .copyFail {
+    color: #a57171;
+    border: 1px solid #a57171;
+    padding: 10px 30px;
+    display: inline-block;
+    max-width: 320px;
+    margin: 0;
+  }
+
+  .copySuccess {
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 10px 30px;
+    display: inline-block;
+    max-width: 320px;
+    margin: 0;
+  }
+
+  .smartIDSpacer {
+    margin-right: 0.4em; 
+  }
 </style>
 
 <h1>Hello {$session.user.first_name}!</h1>
@@ -223,7 +283,7 @@
 <div id="accountButtons">
   <Group variant="outlined">
     <Button color="secondary" on:click={dashboard} variant="outlined"><Label>Dashboard</Label></Button>
-    <Button color="secondary" on:click={addresses} variant="outlined"><Label>Address Book</Label></Button>
+    <Button color="secondary" on:click={addresses} variant="outlined"><Label>My Contacts</Label></Button>
     <Button color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
     <Button color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
     <Button color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
@@ -232,7 +292,28 @@
 {#if $addressChangeActive}
   <AddressChange on:resetCalendar={resetCalendar} on:processNewMonth={processNewMonth} />
 {/if}
-<h2>your smartID&trade; is: <strong><span style="margin-right: 0.4em;">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong></h2>
+<h2>
+  your smartID&trade; is: 
+  {#if !copySuccess && !copyFail}
+    <CopyToClipboard text={$session.user.smart_id} on:copy={handleCopySuccess} on:fail={handleCopyFail} />
+  {/if}
+  {#if copySuccess}
+    <strong><span class="smartIDSpacer">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong>
+    <IconButton class="material-icons success" disabled>check_circle</IconButton>
+  {/if}
+  {#if copyFail}
+    <strong><span class="smartIDSpacer">{$session.user.smart_id.substring(0, 4)}</span>{$session.user.smart_id.substring(4)}</strong>
+    <IconButton class="material-icons fail" disabled>cancel</IconButton>
+  {/if}
+</h2>
+<div class="copyMessage">
+  {#if copyFail}
+    <p transition:slide="{{ duration: 800 }}" class="copyFail">We were unable to copy you smartID to your clipboard. Please copy it manually.</p>
+  {/if}
+  {#if copySuccess}
+    <p transition:slide="{{ duration: 800 }}" class="copySuccess">Your smartID was copied to your clipboard!</p>
+  {/if}
+</div>
 <h4>{headerStatement}</h4>
 <div id="addressBox">
   {#if !resetCalendarCheck }

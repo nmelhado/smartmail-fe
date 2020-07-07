@@ -21,6 +21,7 @@
     displayMore[row] = currentStatus == false;
     currentRow = row;
     const moreInfo = await trackPackage(mailCarrier, row);
+    console.log(moreInfo)
     // Create tracking data rows
     createExtraInfo(moreInfo.activity)
   }
@@ -43,7 +44,7 @@
   }
 
 	function goToContact(smartmailID) {
-    goto(`/addresses?smartID=${smartmailID}`);
+    goto(`/my_contacts?smartID=${smartmailID}`);
   }
 
 </script>
@@ -96,6 +97,91 @@
   a.contactLink {
     color: var(--veryDarkGray);
     text-decoration: none;
+  }
+
+  :global(table.extraInfoTable) {
+    border-collapse: collapse;
+  }
+
+  :global(table.extraInfoTable tr) {
+    border-bottom: 1px solid #d0d0d0;
+  }
+
+  :global(table.extraInfoTable tr:last-child) { 
+      border-bottom: none; 
+  }
+
+  :global(.extraInfoCell) {
+    text-align: left;
+    white-space: pre-wrap;
+    padding: 0.7em 0.2em;
+    max-width: 40px;
+  }
+
+  :global(.trackingDescription) {
+    white-space: normal;
+  }
+
+  :global(.senderRecipient) {
+    padding-left: 0;
+  }
+
+  :global(.packageImage) {
+    padding: 2px 0;
+  }
+
+  :global(table.extraInfoTable tr td:first-child) { 
+      padding-left: 0.4em; 
+  }
+
+  :global(table.extraInfoTable tr td:last-child) { 
+      padding-right: 0.4em; 
+  }
+  
+  :global(.trackingRow) {
+    cursor: pointer;
+  }
+
+  :global(.nameCell) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  :global(.extraInfoRow) {
+    background-color: #e2e2e2;
+    box-shadow: inset 0 8px 8px -2px #ccc;
+    padding: 0;
+  }
+
+  :global(.outgoing) {
+    background-color: rgba(26,200,237,.07);
+  }
+
+  :global(.incoming) {
+    background-color: rgba(26,237,200,.07);
+  }
+
+  :gobal(.expandRow) {
+    text-align:center;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  :global(.collapse) {
+    margin-right: 0px;
+  }
+
+  :global(.trackingCell) {
+    padding-left: 0;
+    text-align: left;
+  }
+
+  :global(.descHeadingSmall) {
+    display: none;
+  }
+
+  :global(.descHeadingMedium) {
+    display: none;
   }
 
   @media (min-width: 1241px) {
@@ -153,125 +239,40 @@
     .mailCarrierIcon {
       display: none;
     }
-    * :global(.trackingCell) {
+    :global(.trackingCell) {
       padding-right: 0;
       text-align: left;
     }
-    * :global(.mailHeadingLarge) {
+    :global(.mailHeadingLarge) {
       display: none;
     }
   }
 
   @media (max-width: 460px) {
-    * :global(.expandRow) {
+    :global(.expandRow) {
       padding: 0;
     }
-    * :global(.trackingDescription) {
+    :global(.trackingDescription) {
       padding: 0;
     }
-    * :global(.descHeadingMedium) {
+    :global(.descHeadingMedium) {
       display: table-cell;
     }
   }
 
   @media (max-width: 545px) {
-    * :global(.packageImage) {
+    :global(.packageImage) {
       display: none;
     }
-    * :global(.descHeadingSmall) {
+    :global(.descHeadingSmall) {
       display: none;
     }
-    * :global(.descHeadingMedium) {
+    :global(.descHeadingMedium) {
       display: table-cell;
     }
-    * :global(.descHeadingLarge) {
+    :global(.descHeadingLarge) {
       display: none;
     }
-  }
-
-  * :global(table.extraInfoTable) {
-    border-collapse: collapse;
-  }
-
-  * :global(table.extraInfoTable tr) {
-    border-bottom: 1px solid #d0d0d0;
-  }
-
-  * :global(table.extraInfoTable tr:last-child) { 
-      border-bottom: none; 
-  }
-
-  * :global(.extraInfoCell) {
-    text-align: left;
-    white-space: pre-wrap;
-    padding: 0.7em 0.2em;
-    max-width: 40px;
-  }
-
-  * :global(.trackingDescription) {
-    white-space: normal;
-  }
-
-  * :global(.senderRecipient) {
-    padding-left: 0;
-  }
-
-  * :global(.packageImage) {
-    padding: 2px 0;
-  }
-
-  * :global(table.extraInfoTable tr td:first-child) { 
-      padding-left: 0.4em; 
-  }
-
-  * :global(table.extraInfoTable tr td:last-child) { 
-      padding-right: 0.4em; 
-  }
-  
-  * :global(.trackingRow) {
-    cursor: pointer;
-  }
-
-  * :global(.nameCell) {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-
-  * :global(.extraInfoRow) {
-    background-color: #e2e2e2;
-    box-shadow: inset 0 8px 8px -2px #ccc;
-    padding: 0;
-  }
-
-  * :global(.outgoing) {
-    background-color: rgba(26,200,237,.07);
-  }
-
-  * :global(.incoming) {
-    background-color: rgba(26,237,200,.07);
-  }
-
-  * :gobal(.expandRow) {
-    text-align:center;
-    padding-right: 4px;
-    padding-left: 4px;
-  }
-
-  * :global(.collapse) {
-    margin-right: 0px;
-  }
-
-  * :global(.trackingCell) {
-    padding-left: 0;
-    text-align: left;
-  }
-
-  * :global(.descHeadingSmall) {
-    display: none;
-  }
-
-  * :global(.descHeadingMedium) {
-    display: none;
   }
 </style>
 

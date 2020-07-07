@@ -134,7 +134,7 @@
 <form on:submit|preventDefault={verify}>
   <Textfield class="formInputs" variant="outlined" label="smartID" invalid="{invalid["smart_id"]}" bind:value={contact.smart_id}/>
   <hr/>
-  <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["phone"]}" bind:value={contact.email}/>
+  <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["email"]}" bind:value={contact.email}/>
   <p>or</p>
   <Textfield class="formInputs" variant="outlined" label="phone number" invalid="{invalid["phone"]}" bind:value={contact.phone}/>
   <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Add Contact</Label></Button>

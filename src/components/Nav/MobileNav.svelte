@@ -65,9 +65,13 @@
               <Graphic class="material-icons" aria-hidden="true">article</Graphic>
               <Text>my account</Text>
             </Item>
-            <Item href="javascript:void(0)" on:click={() => navigate('/addresses')} activated={$page.path === '/addresses'}>
+            <Item href="javascript:void(0)" on:click={() => navigate('/my_contacts')} activated={$page.path === '/my_contacts'}>
               <Graphic class="material-icons" aria-hidden="true">menu_book</Graphic>
-              <Text>address book</Text>
+              <Text>my contacts</Text>
+            </Item>
+            <Item href="javascript:void(0)" on:click={() => navigate('/tracking')} activated={$page.path === '/tracking'}>
+              <Graphic class="material-icons" aria-hidden="true">my_location</Graphic>
+              <Text>tracking</Text>
             </Item>
           {:else}
             <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/dashboard'}>
@@ -78,9 +82,9 @@
               <Graphic class="material-icons" aria-hidden="true">article</Graphic>
               <Text>my account</Text>
             </Item>
-            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/addresses'}>
+            <Item href="javascript:void(0)" on:click={() => navigate('/login')} activated={$page.path === '/my_contacts'}>
               <Graphic class="material-icons" aria-hidden="true">menu_book</Graphic>
-              <Text>address book</Text>
+              <Text>my contacts</Text>
             </Item>
           {/if}
             <Item href="javascript:void(0)" on:click={() => navigate('/about')} activated={$page.path === '/about'}>

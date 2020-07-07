@@ -1,7 +1,8 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post, put, get, standardizeDates, formatPhoneNumber, findTodaysAddress, trackPackage } from '../../routes/utils/helper.js';
+	import { post, put, get, standardizeDates, formatPhoneNumber, findTodaysAddress, trackPackage } from '../utils/helper.js';
 	import TrackingTable from '../../components/Tracking/TrackingTable.svelte'; 
+	import UtilityBar from '../../components/UtilityBar.svelte'; 
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import Textfield from '@smui/textfield'
   import Button, {Icon as ButtonIcon} from '@smui/button';
@@ -31,7 +32,7 @@
         goto('login');
       }
     } catch(err) {
-      console.log(err);
+      console.error(err);
     }
   }
   checkConnection();
@@ -98,17 +99,14 @@
   }
   
   async function getDeliveredPackages(newSearch = false) {
-    console.log(`HERE 3! page: ${newSearch}`)
     // if this is a new search, reset back to the first page
     if (newSearch) {
       deliveredPage = 1;
     }
-    console.log(`HERE 4! page: ${deliveredPage}`)
     search = search.trim();
     // now pull in delivered packages
     try {
       const response = await get(`api/track/get_packages?type=delivered&limit=${limit}&page=${deliveredPage}&search=${search}`);
-      console.log(response);
       // TODO handle network errors
       submitErrors = response.error;
 
@@ -131,7 +129,7 @@
   }
 
 	function addressBook() {
-    goto('/addresses');
+    goto('/my_contacts');
   }
 </script>
 
@@ -157,134 +155,9 @@
     font-weight: 700;
     margin: 1.8em 1em 1.6em;
   }
-
-  /* Styling for global Tracking Table classes */
-
-  * :global(.collapse) {
-    margin-right: 0px;
-  }
-
-  * :global(.trackingCell) {
-    padding-left: 0;
-    text-align: left;
-  }
-
-  * :global(.descHeadingSmall) {
-    display: none;
-  }
-
-  * :global(.descHeadingMedium) {
-    display: none;
-  }
-
-  * :global(table.extraInfoTable) {
-    border-collapse: collapse;
-  }
-
-  * :global(table.extraInfoTable tr) {
-    border-bottom: 1px solid #d0d0d0;
-  }
-
-  * :global(table.extraInfoTable tr:last-child) { 
-      border-bottom: none; 
-  }
-
-  * :global(.extraInfoCell) {
-    text-align: left;
-    white-space: pre-wrap;
-    padding: 0.7em 0.2em;
-    max-width: 40px;
-  }
-
-  * :global(.trackingDescription) {
-    white-space: normal;
-  }
-
-  * :global(.senderRecipient) {
-    padding-left: 0;
-  }
-
-  * :global(.packageImage) {
-    padding: 2px 0;
-  }
-
-  * :global(table.extraInfoTable tr td:first-child) { 
-      padding-left: 0.4em; 
-  }
-
-  * :global(table.extraInfoTable tr td:last-child) { 
-      padding-right: 0.4em; 
-  }
-  
-  * :global(.trackingRow) {
-    cursor: pointer;
-  }
-
-  * :global(.nameCell) {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-
-  * :global(.extraInfoRow) {
-    background-color: #e2e2e2;
-    box-shadow: inset 0 8px 8px -2px #ccc;
-    padding: 0;
-  }
-
-  * :global(.outgoing) {
-    background-color: rgba(26,200,237,.07);
-  }
-
-  * :global(.incoming) {
-    background-color: rgba(26,237,200,.07);
-  }
-
-  * :gobal(.expandRow) {
-    text-align:center;
-    padding-right: 4px;
-    padding-left: 4px;
-  }
-
-  @media (max-width: 499px) {
-    * :global(.trackingCell) {
-      padding-right: 0;
-      text-align: left;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 460px) {
-    * :global(.expandRow) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: table-cell;
-    }
-    * :global(.descHeadingMedium) {
-      display: none;
-    }
-    * :global(.mailHeadingLarge) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 545px) {
-    * :global(.packageImage) {
-      display: none;
-    }
-    * :global(.descHeadingSmall) {
-      display: none;
-    }
-    * :global(.descHeadingMedium) {
-      display: table-cell;
-    }
-    * :global(.descHeadingLarge) {
-      display: none;
-    }
-  }
 </style>
+
+<UtilityBar exclude="tracking" />
 
 <div id="searchBar">
   <form on:submit|preventDefault={searchPackages}>
@@ -298,7 +171,7 @@
 
 
 <!-- Recent Open Packages -->
-<h4>Recent Open Deliveries</h4>
+<h4>{!pageLoading && openPackages ? `${openCount > 0 ? openCount : "No"} Open Packages` : "Open Packages" }</h4>
   {#if pageLoading }
     <DataTable table$aria-label="Packages" table$style="width: 100%;">
       <Head>
@@ -314,8 +187,8 @@
     <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} on:getPackages={() => getOpenPackages(false)} mobile={$session.mobile} />
   {/if}
 
-<!-- Recently Delivered Packages -->
-<h4>Recently Delivered Packages</h4>
+<!-- Delivered Packages -->
+<h4>{!pageLoading && deliveredPackages ? `${deliveredCount > 0 ? deliveredCount : "No"} Delivered Packages` : "Delivered Packages" }</h4>
   {#if pageLoading }
     <DataTable table$aria-label="Packages" table$style="width: 100%;">
       <Head>

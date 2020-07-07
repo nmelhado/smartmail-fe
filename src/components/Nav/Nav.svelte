@@ -98,11 +98,11 @@
     <li><a id='logo-link' href='.'><img id='home-logo' alt='small logo' src='smartmail v2 square - 100-min.png'></a></li>
 		<li><a aria-current='{$page.path === "/" ? "page" : undefined}' class='{$page.path === undefined ? "primary" : ''}' href='.'>home</a></li>
     {#if $session.user && $session.user.first_name}
+		  <li><a rel=prefetch aria-current='{$page.path === "/dashboard" ? "page" : undefined}' class='{$page.path === "/dashboard" ? "primary" : ''}' href='dashboard'>dashboard</a></li>
 		  <li><a rel=prefetch aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='account'>my account</a></li>
-		  <li><a rel=prefetch aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='addresses'>address book</a></li>
     {:else}
+		  <li><a aria-current='{$page.path === "/dashboard" ? "page" : undefined}' class='{$page.path === "/dashboard" ? "primary" : ''}' href='login'>dashboard</a></li>
       <li><a aria-current='{$page.path === "/account" ? "page" : undefined}' class='{$page.path === "/account" ? "primary" : ''}' href='login'>my account</a></li>
-		  <li><a aria-current='{$page.path === "/addresses" ? "page" : undefined}' class='{$page.path === "/addresses" ? "primary" : ''}' href='login'>address book</a></li>
     {/if}
 		<li><a aria-current='{$page.path === "/about" ? "page" : undefined}' class='{$page.path === "/about" ? "primary" : ''}' href='about'>about</a></li>
 		<li><a aria-current='{$page.path === "/contact" ? "page" : undefined}' class='{$page.path === "/contact" ? "primary" : ''}' href='contact'>contact us</a></li>
@@ -121,9 +121,14 @@
               my account
             </Text>
           </Item>
-          <Item on:SMUI:action={() => goto('/addresses')}>
+          <Item on:SMUI:action={() => goto('/my_contacts')}>
             <Text>
-              address book
+              my contacts
+            </Text>
+          </Item>
+          <Item on:SMUI:action={() => goto('/tracking')}>
+            <Text>
+              tracking
             </Text>
           </Item>
           <Separator />
