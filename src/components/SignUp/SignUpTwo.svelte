@@ -106,7 +106,7 @@
       compareAddress = JSON.parse(JSON.stringify(testAddress));
       compareAddress.line_one = response.street1;
       compareAddress.line_two = response.street2;
-      compareAddress.zip_code = `${response.zip}-${response.Zip4}`;
+      compareAddress.zip_code = `${response.zip.split("-")[0]}-${response.Zip4}`;
       compareAddress.city = response.city;
 
       startCompare.open();
