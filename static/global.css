@@ -141,3 +141,7 @@ code {
 label.mdc-text-field {
   background-color: var(--white) !important;
 }
+
+div.mdc-select {
+  background-color: var(--white) !important;
+}
