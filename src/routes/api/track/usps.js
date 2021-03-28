@@ -16,8 +16,12 @@ export function post(req, res) {
       deliveredOn: null,
       estimatedDelivery: null
     }
-    if(response.TrackResponse) {
-      const summary = response.TrackResponse.TrackInfo.TrackSummary;
+    const trackInfo = response.TrackResponse.TrackInfo;
+    if(trackInfo.Error) {
+      finalResponse.activity.push(trackInfo.Error.Description)
+    } else if(response.TrackResponse) {
+      const summary = trackInfo.TrackSummary;
+      console.log(trackInfo.Error)
       const status = summary.Event
       finalResponse.status = status.includes("Delivered") ? "Delivered" : status;
 
@@ -32,9 +36,9 @@ export function post(req, res) {
         DateTime: dateTime
       });
 
-      if(response.TrackResponse.TrackInfo.TrackDetail) {
-        if (Array.isArray(response.TrackResponse.TrackInfo.TrackDetail)) {
-          for (const activity of response.TrackResponse.TrackInfo.TrackDetail) {
+      if(trackInfo.TrackDetail) {
+        if (Array.isArray(trackInfo.TrackDetail)) {
+          for (const activity of trackInfo.TrackDetail) {
             const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
             tempActivity.push({
               Location: `${activity.EventCity}, ${activity.EventState}`,
@@ -43,7 +47,7 @@ export function post(req, res) {
             });
           }
         } else {
-          const activity = response.TrackResponse.TrackInfo.TrackDetail;
+          const activity = trackInfo.TrackDetail;
           const dateTime = fixTime(activity.EventDate + " " + activity.EventTime)
           tempActivity.push({
             Location: `${activity.EventCity}, ${activity.EventState}`,

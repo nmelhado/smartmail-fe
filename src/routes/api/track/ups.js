@@ -34,7 +34,12 @@ export function post(req, res) {
       deliveredOn: null,
       estimatedDelivery: null
     }
-    if(response.TrackResponse.Response.ResponseStatus.Code == 1) {
+
+    if(response.Fault) {
+      finalResponse.activity.push(response.Fault.detail.Errors.ErrorDetail.PrimaryErrorCode.Description);
+    }
+
+    if(response.TrackResponse && response.TrackResponse.Response.ResponseStatus.Code == 1) {
       const activities = response.TrackResponse.Shipment.Package.Activity;
       finalResponse.status = activities[0].Status.Description
       if (finalResponse.status == "Delivered") {

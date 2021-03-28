@@ -2,13 +2,7 @@
 	import { stores } from '@sapper/app';
   const { session } = stores();
 
-  let yearText = '';
-  const year = new Date().getFullYear()
-  if (year > 2020) {
-    yearText = "2020 - " + year
-  } else {
-    yearText = year
-  }
+  const yearText = "2020 - " + new Date().getFullYear();
 </script>
 
 <style>
@@ -91,9 +85,9 @@
       {/if}
     </ul>
     {#if $session.mobile}
-      <p class={$session.mobile ? "mobileCopyright" : ""}>&copy; {yearText} PinPoint LLC <span style="margin-left: 0.3em;"> All rights reserved.</span></p>
+      <p class={$session.mobile ? "mobileCopyright" : ""}>&copy; {yearText} Smartmail Inc. <span style="margin-left: 0.3em;"> All rights reserved.</span></p>
     {:else}
-      <p>&copy; {yearText} PinPoint LLC</p>
+      <p>&copy; {yearText} Smartmail Inc.</p>
       <p>All rights reserved.</p>
     {/if}
 </footer>

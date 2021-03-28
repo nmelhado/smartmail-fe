@@ -28,7 +28,22 @@
 
   function createExtraInfo(activities) {
     let newRows = '';
+    if(activities.length == 0) {
+      newRows = `
+          <tr>
+            <td class="extraInfoCell" colSpan="3">No tracking information available</td>
+          </tr>
+        `;
+    }
     for (const activity of activities) {
+      if(!activity.Status) {
+        newRows = `
+          <tr>
+            <td class="extraInfoCell" colSpan="3">${activity}</td>
+          </tr>
+        `;
+        break;
+      }
       const dateTime = activity.DateTime.split('-');
       const dTime = new Date(dateTime[0].substr(0, 4), dateTime[0].substr(4, 2) - 1, dateTime[0].substr(6, 2), dateTime[1].substr(0, 2), dateTime[1].substr(2, 2), dateTime[1].substr(4, 2));
       const row = `
