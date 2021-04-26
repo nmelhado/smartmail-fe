@@ -4,7 +4,7 @@
 	import AddressBook from '../../components/AddressBook/AddressBook.svelte'; 
 	import AddContact from '../../components/AddressBook/AddContact.svelte'; 
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
-  import IconButton, {Icon} from '@smui/icon-button';
+  // import IconButton, {Icon} from '@smui/icon-button';
   import { onMount } from 'svelte';
   import queryString from "query-string"
 

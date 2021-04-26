@@ -4,7 +4,7 @@
   import {Title, Subtitle, Content} from '@smui/paper';
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label} from '@smui/button';
-  import CalendarDatePicker from './CalendarDatePicker';
+  import CalendarDatePicker from './CalendarDatePicker.svelte';
 	import { standardizeDates } from '../../routes/utils/helper.js';
   
   const { session } = stores();

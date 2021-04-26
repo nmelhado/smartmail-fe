@@ -7,7 +7,7 @@ import session from 'express-session'
 import sessionFileStore from 'session-file-store'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
-import * as mobile from 'is-mobile'
+import isMobile from 'is-mobile'
 
 dotenv.config();
 
@@ -34,7 +34,7 @@ if (dev) {
       sirv('static', { dev }),
       sapper.middleware({
         session: req => ({
-          mobile: mobile({ua: req.headers['user-agent'], tablet: true}),
+          mobile: isMobile({ua: req.headers['user-agent'], tablet: true}),
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
         })
@@ -82,7 +82,7 @@ if (dev) {
       sirv('static', { dev }),
       sapper.middleware({
         session: req => ({
-          mobile: mobile({ua: req.headers['user-agent'], tablet: true}),
+          mobile: isMobile({ua: req.headers['user-agent'], tablet: true}),
           user: req.session && req.session.user,
           addresses: req.session && req.session.addresses,
         })

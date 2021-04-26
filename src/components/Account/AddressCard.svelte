@@ -5,7 +5,7 @@
 	import { standardizeDates, del } from '../../routes/utils/helper.js';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import Update from './Update';
+  import Update from './Update.svelte';
 
   const { session } = stores();
 
@@ -117,7 +117,7 @@
 </style>
   <div id={$session.mobile ? edit ? "currentAddressM" : "currentAddressNoEdit" : "currentAddress"}>
     <div id="innerPanel">
-      <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+      <Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
         <Title id="event-title">{submitErrors}</Title>
         <Actions>
           <Button action="all" default use={[InitialFocus]}>

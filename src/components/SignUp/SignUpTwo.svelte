@@ -3,29 +3,29 @@
   import { post } from '../../routes/utils/helper.js';
   import { user as origUser, address as origAddress, validAddress, stepOneComplete, smartIDOptions } from '../../routes/utils/stores.js';
 	import ListErrors from '../ListErrors.svelte';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield/styled'
   import Select, {Option} from '@smui/select';
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog';
-  import ConfirmAddress from '../ConfirmAddress';
-  import BypassAddressValidation from '../BypassAddressValidation';
-  import Loading from '../Loading';
+  import ConfirmAddress from '../ConfirmAddress.svelte';
+  import BypassAddressValidation from '../BypassAddressValidation.svelte';
+  import Loading from '../Loading.svelte';
 
 	const { session } = stores();
   let errors = [];
-  let invalid = {
-    line_one: false,
-    line_two: false,
-    business_name: false,
-    attention_to: false,
-    city: false,
-    state: false,
-    zip_code: false,
-    country: false,
-    phone: false,
-    nickname: false,
-    delivery_instructions: false,
-  }
+
+  let invalidLineOne = false;
+  let invalidLineTwo = false;
+  let invalidBusinessName = false;
+  let invalidAttentionTo = false;
+  let invalidCity = false;
+  let invalidState = false;
+  let invalidZipCode = false;
+  let invalidCountry = false;
+  let invalidPhone = false;
+  let invalidNickname = false;
+  let invalidDeliveryInstructions = false;
+
   let loading = false;
   let status = "permanent";
   let start_date = (new Date()).toJSON();
@@ -166,10 +166,10 @@
 			goto('dashboard');
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent = true;
     }
   }
-  let errorsPresent;
+  let errorsPresent = false;
   
 	function verify(event) {
     $validAddress.validate($origAddress, {abortEarly: false})
@@ -177,27 +177,67 @@
       verifyAddress($origAddress);
     })
     .catch(function(err) {
-      const tempInvalid = {
-        line_one: false,
-        line_two: false,
-        business_name: false,
-        attention_to: false,
-        city: false,
-        state: false,
-        zip_code: false,
-        country: false,
-        phone: false,
-        nickname: false,
-        delivery_instructions: false,
-      };
       const tempErrors = [];
+      invalidLineOne = false
+      invalidLineTwo = false
+      invalidBusinessName = false
+      invalidAttentionTo = false
+      invalidCity = false
+      invalidState = false
+      invalidZipCode = false
+      invalidCountry = false
+      invalidPhone = false
+      invalidNickname = false
+      invalidDeliveryInstructions = false;
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "line_one":
+            invalidLineOne = true;
+            tempErrors.push(error.message);
+            break;
+          case "line_two":
+            invalidLineTwo = true;
+            tempErrors.push(error.message);
+            break;
+          case "business_name":
+            invalidBusinessName = true;
+            break;
+          case "attention_to":
+            invalidAttentionTo = true;
+            tempErrors.push(error.message);
+            break;
+          case "city":
+            invalidCity = true;
+            tempErrors.push(error.message);
+            break;
+          case "state":
+            invalidState = true;
+            tempErrors.push(error.message);
+            break;
+          case "zip_code":
+            invalidZipCode = true;
+            tempErrors.push(error.message);
+            break;
+          case "country":
+            invalidCountry = true;
+            tempErrors.push(error.message);
+            break;
+          case "phone":
+            invalidPhone = true;
+            tempErrors.push(error.message);
+            break;
+          case "nickname":
+            invalidNickname = true;
+            tempErrors.push(error.message);
+            break;
+          case "delivery_instructions":
+            invalidDeliveryInstructions = true;
+            tempErrors.push(error.message);
+            break;
+          default:
+            break;
         }
       }
-      invalid = tempInvalid;
       errors = tempErrors;
     });
   }
@@ -236,7 +276,7 @@
 {/if}
 
 <!-- Error creating account -->
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={previousStep}>
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
     <Button default use={[InitialFocus]}>
@@ -246,7 +286,7 @@
 </Dialog>
 
 <!-- Error validating address -->
-<Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
+<Dialog bind:open={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
   <Title id="event-title">We Weren't Able to Verify the Address You Entered</Title>
   <Content id="dialog-content">
     <BypassAddressValidation enteredAddress={$origAddress} />
@@ -262,7 +302,7 @@
 </Dialog>
 
 <!-- Confirm address -->
-<Dialog bind:this={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
+<Dialog bind:open={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
   <Title id="event-title">Address Verification</Title>
   <Content id="dialog-content">
     {#if compareAddress && compareAddress.line_one}
@@ -284,23 +324,23 @@
 
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
-  <Textfield input$name="address-1" class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
-  <Textfield input$name="address-2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
-  <Textfield input$name="business-name" class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
-  <Textfield input$name="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
+  <Textfield input$autocomplete="address-line1" class="fullWidth {invalidLineOne ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address line 1" bind:invalid="{invalidLineOne}" bind:value={$origAddress.line_one} required/>
+  <Textfield input$autocomplete="address-line2" class="fullWidth {invalidLineTwo ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address line 2 (optional)" bind:invalid="{invalidLineTwo}" bind:value={$origAddress.line_two}/>
+  <Textfield input$autocomplete="organization" class="fullWidth {invalidBusinessName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Business name (optional)" bind:invalid="{invalidBusinessName}" bind:value={$origAddress.business_name}/>
+  <Textfield input$autocomplete="attention-to" class="fullWidth {invalidAttentionTo ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Attention to (optional)" bind:invalid="{invalidAttentionTo}" bind:value={$origAddress.attention_to}/>
   <div class="centerBlock">
-    <Textfield input$name="city" class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
-    <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
+    <Textfield input$autocomplete="city" class="thirdWidth {invalidCity ? "mdc-text-field--invalid" : ""}" variant="outlined" label="City" bind:invalid="{invalidCity}" bind:value={$origAddress.city} required/>
+    <Select variant="outlined" class="thirdWidth" bind:invalid="{invalidState}" bind:value={$origAddress.state} label="State" required>
       {#each states as state}
         <Option value={state} selected={$origAddress.state === state}>{state}</Option>
       {/each}
     </Select>
-    <Textfield input$name="zip" class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
+    <Textfield input$autocomplete="zip" class="thirdWidth {invalidZipCode ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Zip Code" bind:invalid="{invalidZipCode}" bind:value={$origAddress.zip_code} required/>
   </div>
-  <Textfield input$name="country" class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
-  <Textfield class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
-  <Textfield class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" invalid="{invalid["delivery_instructions"]}" bind:value={$origAddress.delivery_instructions}/>
-  <Textfield class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
+  <Textfield input$autocomplete="country" class="fullWidth {invalidCountry ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Country" bind:invalid="{invalidCountry}" bind:value={$origAddress.country} required/>
+  <Textfield class="fullWidth {invalidPhone ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address specific phone number (optional)" bind:invalid="{invalidPhone}" bind:value={$origAddress.phone}/>
+  <Textfield class="fullWidth {invalidDeliveryInstructions ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Package delivery instructions (optional)" bind:invalid="{invalidDeliveryInstructions}" bind:value={$origAddress.delivery_instructions}/>
+  <Textfield class="fullWidth {invalidNickname ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address nickname (optional)" bind:invalid="{invalidNickname}" bind:value={$origAddress.nickname}/>
   <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Submit</Label></Button>
 </form>
 <Button color="gray" class="submitButton" variant="unelevated"  on:click={previousStep} ><Label class="submitButtonLabel">Previous Step</Label></Button>

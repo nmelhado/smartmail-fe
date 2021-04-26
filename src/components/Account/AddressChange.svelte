@@ -8,18 +8,18 @@
     address_type,
     start_date,
     end_date } from '../../routes/utils/stores.js';
-  import AddressChangeOne from './AddressChangeOne';
-  import AddressChangeTwo from './AddressChangeTwo';
-  import AddressChangeThree from './AddressChangeThree';
+  import AddressChangeOne from './AddressChangeOne.svelte';
+  import AddressChangeTwo from './AddressChangeTwo.svelte';
+  import AddressChangeThree from './AddressChangeThree.svelte';
   import Paper from '@smui/paper';
   import Dialog, {Content, Title, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import ConfirmAddress from '../ConfirmAddress';
-  import BypassAddressValidation from '../BypassAddressValidation';
+  import ConfirmAddress from '../ConfirmAddress.svelte';
+  import BypassAddressValidation from '../BypassAddressValidation.svelte';
 	import { goto, stores } from '@sapper/app';
   import { post } from '../../routes/utils/helper.js';
-  import Loading from '../Loading';
+  import Loading from '../Loading.svelte';
 
   const { session } = stores();
 
@@ -166,7 +166,7 @@
     </Dialog>
 
     <!-- Error validating address -->
-    <Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
+    <Dialog bind:open={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
       <Title id="event-title">We Weren't Able to Verify the Address You Entered</Title>
       <Content id="dialog-content">
         <BypassAddressValidation enteredAddress={$address} />
@@ -182,7 +182,7 @@
     </Dialog>
 
     <!-- Confirm address -->
-    <Dialog bind:this={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
+    <Dialog bind:open={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
       <Title id="event-title">Address Verification</Title>
       <Content id="dialog-content">
         {#if compareAddress && compareAddress.line_one}

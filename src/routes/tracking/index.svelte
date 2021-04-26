@@ -4,7 +4,7 @@
 	import TrackingTable from '../../components/Tracking/TrackingTable.svelte'; 
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield';
   import Button, {Icon as ButtonIcon} from '@smui/button';
   import Fab, {Icon} from '@smui/fab';
   import { onMount } from 'svelte';

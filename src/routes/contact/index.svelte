@@ -7,7 +7,7 @@
   import CharacterCounter from '@smui/textfield/character-counter/index';
   import Icon from '@smui/textfield/icon/index';  
   import Button, {Label} from '@smui/button';
-  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  // import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
   import { onMount, onDestroy } from 'svelte';
 
 	const { session } = stores();
@@ -236,13 +236,13 @@
 
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
-            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
-            <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
+            <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
           </div>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" bind:invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
             <Icon class="material-icons">email</Icon>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
             <CharacterCounter>0 / 250</CharacterCounter>
           </Textfield>
           <div id="buttonsTop">
@@ -293,13 +293,13 @@
 
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
-            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
-            <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
+            <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
           </div>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
+          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" bind:invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
             <Icon class="material-icons">email</Icon>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
             <CharacterCounter>0 / 250</CharacterCounter>
           </Textfield>
           <div id="buttonsRight">

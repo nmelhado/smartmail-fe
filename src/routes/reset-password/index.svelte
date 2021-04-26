@@ -3,8 +3,8 @@
 	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
-  import Icon from '@smui/textfield/icon/index';  
+  import Textfield from '@smui/textfield/styled'
+  // import Icon from '@smui/textfield/icon/index';  
   import Button, {Label} from '@smui/button';
   import Dialog, {Content, Title, Actions, InitialFocus} from '@smui/dialog';
   import queryString from "query-string"
@@ -121,7 +121,7 @@
 </svelte:head>
 
 <!-- Error Dialog -->
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
     <Button action="all" default use={[InitialFocus]}>
@@ -131,7 +131,7 @@
 </Dialog>
 
 <!-- Success Dialog -->
-<Dialog bind:this={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
+<Dialog bind:open={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
   <Title id="event-title">Password Reset Successfully</Title>
   <Content id="dialog-content">Thanks {successUser.name}. Your password has been reset.</Content>
   <Actions>
@@ -151,8 +151,8 @@
     <ListErrors {errors}/>
 
     <form on:submit|preventDefault={verify}>
-      <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={passwordInfo.password}/>
-      <Textfield variant="outlined" label="Confirm password" invalid="{invalid["matching"]}" class="fullWidth" type="password" bind:value={passwordInfo.verifyPassword}/>
+      <Textfield variant="outlined" label="Password" bind:invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={passwordInfo.password}/>
+      <Textfield variant="outlined" label="Confirm password" bind:invalid="{invalid["matching"]}" class="fullWidth" type="password" bind:value={passwordInfo.verifyPassword}/>
       <br>
       <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Reset Password</Label></Button>
     </form>

@@ -3,8 +3,8 @@
 	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
-  import Icon from '@smui/textfield/icon/index';  
+  import Textfield from '@smui/textfield/styled'
+  import { Icon as CommonIcon } from '@smui/common';
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 
@@ -26,10 +26,8 @@
   });
   
   let errors = [];
-  let invalid = {
-    email: false,
-    password: false
-  }
+  let invalidEmail = false;
+  let invalidPassword = false;
   
   function verify(event) {
     validUser.validate(user, {abortEarly: false})
@@ -42,13 +40,22 @@
         password: false
       };
       const tempErrors = [];
+      invalidEmail = false;
+      invalidPassword = false;
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "email":
+            invalidEmail = true;
+            tempErrors.push(error.message);
+            break;
+          case "password":
+            invalidPassword = true;
+            tempErrors.push(error.message);
+            break;
+          default:
+            break;
         }
       }
-      invalid = tempInvalid;
       errors = tempErrors;
     });
   }
@@ -66,10 +73,10 @@
 			goto('dashboard');
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent = true;
     }
   }
-  let errorsPresent;
+  let errorsPresent = false;
 </script>
 <style>
   form {
@@ -89,7 +96,7 @@
 	<title>smartmail - Sign in</title>
 </svelte:head>
 
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
     <Button action="all" default use={[InitialFocus]}>
@@ -108,11 +115,17 @@
     <ListErrors {errors}/>
 
     <form on:submit|preventDefault={verify}>
-      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
-        <Icon class="material-icons">email</Icon>
+      <Textfield variant="outlined" input$autocomplete="email" type="email" bind:invalid="{invalidEmail}" class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidEmail ? "mdc-text-field--invalid" : ""}" bind:value={user.email} required>
+        <svelte:fragment slot="label">
+          <CommonIcon
+            class="material-icons"
+            style="font-size: 1em; line-height: normal; vertical-align: top;"
+            >email</CommonIcon
+          > Email
+        </svelte:fragment>
       </Textfield>
       <br>
-      <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} type="password" bind:value={user.password}/>
+      <Textfield variant="outlined" label="Password" bind:invalid="{invalidPassword}" class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidPassword ? "mdc-text-field--invalid" : ""}" type="password" bind:value={user.password} required/>
       <br>
       <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
     </form>

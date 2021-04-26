@@ -1,21 +1,20 @@
 <script>
   import { validUser, user, smartIDOptions, stepOneComplete } from '../../routes/utils/stores.js';
 	import ListErrors from '../ListErrors.svelte';
-  import Textfield from '@smui/textfield'
-  import Icon from '@smui/textfield/icon/index';
+  import Textfield from '@smui/textfield/styled'
+  import { Icon as CommonIcon } from '@smui/common';
   import Button, {Label} from '@smui/button';
   import IconButton from '@smui/icon-button';
 
   let errors = [];
-  let invalid = {
-    first_name: false,
-    last_name: false,
-    email: false,
-    phone: false,
-    password: false,
-    confirm_password: false,
-    smart_id: false,
-  }
+
+  let invalidFName = false;
+  let invalidLName = false;
+  let invalidEmail = false;
+  let invalidPhone = false;
+  let invalidPassword = false;
+  let invalidConfirmPassword = false;
+  let invalidSmartID = false;
 
   let confirmPassword = '';
   
@@ -26,32 +25,57 @@
       if ($user.password == confirmPassword) {
         $stepOneComplete = true;
       } else {
-        invalid['confirm_password'] = true;
+        invalidConfirmPassword = true;
         errors = ['Passwords must match']
       }
     })
     .catch(function(err) {
       const tempErrors = [];
-      const tempInvalid = {
-        first_name: false,
-        last_name: false,
-        email: false,
-        phone: false,
-        password: false,
-        confirm_password: false,
-        smart_id: false,
-      };
+      invalidFName = false;
+      invalidLName = false;
+      invalidEmail = false;
+      invalidPhone = false;
+      invalidPassword = false;
+      invalidConfirmPassword = false;
+      invalidSmartID = false;
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "first_name":
+            invalidFName = true;
+            tempErrors.push(error.message);
+            break;
+          case "last_name":
+            invalidLName = true;
+            tempErrors.push(error.message);
+            break;
+          case "email":
+            invalidEmail = true;
+            tempErrors.push(error.message);
+            break;
+          case "phone":
+            invalidPhone = true;
+            tempErrors.push(error.message);
+            break;
+          case "password":
+            invalidPassword = true;
+            tempErrors.push(error.message);
+            break;
+          case "confirm_password":
+            invalidConfirmPassword = true;
+            tempErrors.push(error.message);
+            break;
+          case "smart_id":
+            invalidSmartID = true;
+            tempErrors.push(error.message);
+            break;
+          default:
+            break;
         }
       }
       if ($user.password != confirmPassword) {
-        tempInvalid['confirm_password'] = true;
+        invalidConfirmPassword = true;
         tempErrors.push('Passwords must match');
       }
-      invalid = tempInvalid;
       errors = tempErrors;
     });
   }
@@ -98,6 +122,14 @@
   }
 
   .sectionLabel {
+    display: inline-block;
+    color: var(--primaryAccent);
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 4px;
+    letter-spacing: 1.9px;
+    line-height: 2;
+    text-align: center;
     font-size: 1.4em;
   }
 
@@ -120,11 +152,15 @@
     border-radius:100%;
   }
 
+  input[type="radio"]:checked {
+    background-color: var(--primaryAccent);
+  }
+
   #smartIDSection {
     text-align: center;
   }
 
-  label.invalid {
+  p.invalid {
     color: darkred;
   }
 
@@ -137,17 +173,23 @@
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
   <div class="centerBlock">
-    <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" invalid="{invalid["first_name"]}" class="halfWidth" bind:value={$user.first_name}/>
-    <Textfield input$name="last-name" variant="outlined" label="Last name" invalid="{invalid["last_name"]}" class="halfWidth" bind:value={$user.last_name}/>
+    <Textfield input$autocomplete="given-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFName}" class="halfWidth {invalidFName ? "mdc-text-field--invalid" : ""}" bind:value={$user.first_name} required/>
+    <Textfield input$autocomplete="family-name" variant="outlined" label="Last name" bind:invalid="{invalidLName}" class="halfWidth {invalidLName ? "mdc-text-field--invalid" : ""}" bind:value={$user.last_name} required/>
   </div>
-  <Textfield input$name="phone" type="tel" variant="outlined" label="Phone" invalid="{invalid["phone"]}" class="fullWidth" bind:value={$user.phone}/>
-  <Textfield variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class="fullWidth" bind:value={$user.email}>
-     <Icon class="material-icons">email</Icon>
+  <Textfield input$autocomplete="phone" type="tel" variant="outlined" label="Phone" bind:invalid="{invalidPhone}" class="fullWidth {invalidPhone ? "mdc-text-field--invalid" : ""}" bind:value={$user.phone} required/>
+  <Textfield variant="outlined" input$autocomplete="email" type="email" bind:invalid="{invalidEmail}" class="fullWidth {invalidEmail ? "mdc-text-field--invalid" : ""}" bind:value={$user.email} required>
+    <svelte:fragment slot="label">
+      <CommonIcon
+        class="material-icons"
+        style="font-size: 1em; line-height: normal; vertical-align: top;"
+        >email</CommonIcon
+      > Email
+    </svelte:fragment>
   </Textfield>
-  <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class="fullWidth" type="password" bind:value={$user.password}/>
-  <Textfield variant="outlined" label="Confirm password" invalid="{invalid["confirm_password"]}" class="fullWidth" type="password" bind:value={confirmPassword}/>
+  <Textfield variant="outlined" label="Password" bind:invalid="{invalidPassword}" class="fullWidth {invalidPassword ? "mdc-text-field--invalid" : ""}" type="password" bind:value={$user.password} required/>
+  <Textfield variant="outlined" label="Confirm password" bind:invalid="{invalidConfirmPassword}" class="fullWidth {invalidConfirmPassword ? "mdc-text-field--invalid" : ""}" type="password" bind:value={confirmPassword} required/>
   <div id="smartIDSection">
-    <label class="sectionLabel {invalid["smart_id"] ? "invalid" : ""}">Select your smartID&trade;:  <IconButton class="material-icons" on:click={refreshSmartID}>refresh</IconButton></label>
+    <p class="sectionLabel {invalidSmartID ? "invalid" : ""}">Select your smartID&trade;:  <IconButton class="material-icons" on:click={refreshSmartID}>refresh</IconButton></p>
     <br>
     {#each $smartIDOptions as smartIDOption}
       <label class="radioLabel"><input type="radio" value={smartIDOption} bind:group={$user.smart_id}>  {smartIDOption.substring(0, 4)}  {smartIDOption.substring(4)}</label>

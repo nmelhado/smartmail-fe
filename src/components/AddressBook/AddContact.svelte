@@ -2,10 +2,10 @@
 	import { stores } from '@sapper/app';
   import { post } from '../../routes/utils/helper.js';
 	import ListErrors from '../ListErrors.svelte';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield/styled'
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Content, Actions, InitialFocus} from '@smui/dialog';
-  import Loading from '../Loading';
+  import Loading from '../Loading.svelte';
   import * as yup from 'yup';
   import { createEventDispatcher } from 'svelte';
 
@@ -121,7 +121,7 @@
 {/if}
 
 <!-- Error creating account -->
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
     <Button default use={[InitialFocus]}>
@@ -132,10 +132,10 @@
 
 <ListErrors {errors}/>
 <form on:submit|preventDefault={verify}>
-  <Textfield class="formInputs" variant="outlined" label="smartID" invalid="{invalid["smart_id"]}" bind:value={contact.smart_id}/>
+  <Textfield class="formInputs" variant="outlined" label="smartID" bind:invalid="{invalid["smart_id"]}" bind:value={contact.smart_id}/>
   <hr/>
-  <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["email"]}" bind:value={contact.email}/>
+  <Textfield class="formInputs" variant="outlined" label="e-mail" bind:invalid="{invalid["email"]}" bind:value={contact.email}/>
   <p>or</p>
-  <Textfield class="formInputs" variant="outlined" label="phone number" invalid="{invalid["phone"]}" bind:value={contact.phone}/>
+  <Textfield class="formInputs" variant="outlined" label="phone number" bind:invalid="{invalid["phone"]}" bind:value={contact.phone}/>
   <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Add Contact</Label></Button>
 </form>

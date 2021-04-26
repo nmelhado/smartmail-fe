@@ -16,7 +16,6 @@
     goto('/');
   }
 
-
   let menu;
   let anchor;
 </script>

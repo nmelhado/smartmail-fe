@@ -6,7 +6,7 @@
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
 	import ListErrors from '../../components/ListErrors.svelte';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield/styled'
   import Button, {Label, Icon} from '@smui/button';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import IconButton from '@smui/icon-button';
@@ -382,8 +382,8 @@
     <img id="avatar" alt="dashboard image" src="https://ui-avatars.com/api/?background=	D9EBE4&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
     {#if updatingInfo}
       <h2 in:blur="{{ duration: 400 }}" id="name">
-        <Textfield class="formInputs halfWidth" variant="outlined" label="first name" invalid="{invalid["first_name"]}" bind:value={updateInfo.first_name}/>
-        <Textfield class="formInputs halfWidth" variant="outlined" label="last name" invalid="{invalid["last_name"]}" bind:value={updateInfo.last_name}/>
+        <Textfield class="formInputs halfWidth" variant="outlined" label="first name" bind:invalid="{invalid["first_name"]}" bind:value={updateInfo.first_name}/>
+        <Textfield class="formInputs halfWidth" variant="outlined" label="last name" bind:invalid="{invalid["last_name"]}" bind:value={updateInfo.last_name}/>
       </h2>
     {:else}
       <h2 in:blur="{{ duration: 400 }}" id="name">
@@ -412,7 +412,7 @@
         <td>email:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["email"]}" bind:value={updateInfo.email}/>
+            <Textfield class="formInputs" variant="outlined" label="e-mail" bind:invalid="{invalid["email"]}" bind:value={updateInfo.email}/>
           </td>
         {:else}
           <td in:blur="{{ duration: 400 }}">
@@ -424,7 +424,7 @@
         <td>phone:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["phone"]}" bind:value={updateInfo.phone}/>
+            <Textfield class="formInputs" variant="outlined" label="e-mail" bind:invalid="{invalid["phone"]}" bind:value={updateInfo.phone}/>
           </td>
         {:else}
           <td in:blur="{{ duration: 400 }}">

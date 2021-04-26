@@ -3,7 +3,7 @@
 	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield/styled'
   import Icon from '@smui/textfield/icon/index';  
   import Button, {Label} from '@smui/button';
   import Dialog, {Content, Title, Actions, InitialFocus} from '@smui/dialog';
@@ -90,7 +90,7 @@
 </svelte:head>
 
 <!-- Error Dialog -->
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
     <Button action="all" default use={[InitialFocus]}>
@@ -100,7 +100,7 @@
 </Dialog>
 
 <!-- Success Dialog -->
-<Dialog bind:this={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
+<Dialog bind:open={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
   <Title id="event-title">Password Reset Requested</Title>
   <Content id="dialog-content">Sorry you forgot your password, {successUser.name}. We've sent a password reset email to: {successUser.email}<br><br>Please use the link in the email to reset your password within the hour.</Content>
   <Actions>
@@ -120,7 +120,7 @@
     <ListErrors {errors}/>
 
     <form on:submit|preventDefault={verify}>
-      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email associated with your account" type="email" invalid="{invalidEmail}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
+      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email associated with your account" type="email" bind:invalid="{invalidEmail}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
         <Icon class="material-icons">email</Icon>
       </Textfield>
       <br>

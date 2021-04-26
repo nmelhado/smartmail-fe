@@ -2,8 +2,8 @@
 <script>
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
 	import { formatPhoneNumber, get } from '../../routes/utils/helper.js';
-  import Pagination from '../Pagination'
-  import Textfield from '@smui/textfield'
+  import Pagination from '../Pagination.svelte'
+  import Textfield from '@smui/textfield/styled'
   import Fab, {Icon} from '@smui/fab';
   import Button, {Icon as ButtonIcon} from '@smui/button';
 

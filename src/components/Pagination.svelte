@@ -1,7 +1,7 @@
 <script>
   import Button, {Label, Icon} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-	import { get } from '../routes/utils/helper.js';
+	// import { get } from '../routes/utils/helper.js';
 
   export let page, limit, count;
 

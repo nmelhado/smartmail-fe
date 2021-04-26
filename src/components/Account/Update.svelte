@@ -1,12 +1,12 @@
 <script>
   import { stores } from '@sapper/app';
   import Fab, {Icon} from '@smui/fab';
-  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  // import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 	import { standardizeDates, put } from '../../routes/utils/helper.js';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import Textfield from '@smui/textfield'
-  import EnclosedCalendar from './EnclosedCalendar'
+  import Textfield from '@smui/textfield/styled'
+  import EnclosedCalendar from './EnclosedCalendar.svelte'
 
   const { session } = stores();
 

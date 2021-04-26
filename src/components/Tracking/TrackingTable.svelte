@@ -4,7 +4,7 @@
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import { Graphic } from '@smui/list';
   import { createEventDispatcher } from 'svelte';
-  import Pagination from '../Pagination';
+  import Pagination from '../Pagination.svelte';
 
   export let trackingPackages, userSmartId, page, limit, count;
 
