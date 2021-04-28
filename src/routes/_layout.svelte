@@ -4,6 +4,7 @@
   import Footer from '../components/Footer.svelte';
   import GoogleAnalytics from '../components/GoogleAnalytics.svelte';
 	import { stores } from '@sapper/app';
+	import { lazyLoadBG } from './utils/helper.js';
 
   const { session } = stores();
 
@@ -42,7 +43,7 @@
   }
 
   .backMap {
-    background-image: url(world_map.svg);
+    background-image: url(world_map-lazy.png);
     background-size: cover;
   }
 </style>
@@ -50,7 +51,7 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <GoogleAnalytics />
-<div id="mainContent" class={segment == "login" || segment == "sign-up" || segment == "forgot-password" || segment == "reset-password" ? "backMap" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"}>
+<div data-src="world_map.svg" id="mainContent" class={segment == "login" || segment == "sign-up" || segment == "forgot-password" || segment == "reset-password" ? "backMap lazyBG lazyTransitionBG" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"} use:lazyLoadBG>
   {#if $session.mobile || innerWidth < 825}
     <MobileNav />
   {:else}

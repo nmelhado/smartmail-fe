@@ -1,10 +1,10 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
-  import Icon from '@smui/textfield/icon/index';  
+  import Textfield from '@smui/textfield';
+  import HelperText from '@smui/textfield/helper-text/index';
+  import { Icon as CommonIcon } from '@smui/common';
   import Button, {Label} from '@smui/button';
   import Dialog, {Content, Title, Actions, InitialFocus} from '@smui/dialog';
 
@@ -25,22 +25,19 @@
     email: yup.string().required("Email is required").email("Email is not valid")
   });
   
-  let errors = [];
+  let emailError = "";
   let invalidEmail = false;
   
-  function verify(event) {
+  function verify() {
     validUser.validate(user)
     .then(function() {
       submit();
     })
     .catch(function(err) {
-      invalidEmail = false;
-      const tempErrors = [];
-      for (const error of err.inner) {
+      for (const error of err.errors) {
         invalidEmail = true;
-        tempErrors.push(error.message);
+        emailError = error;
       }
-      errors = tempErrors;
     });
   }
 
@@ -54,13 +51,13 @@
 		if (response.success) {
       successUser.name = response.name;
       successUser.email = user.email;
-      resetSuccess.open()
+      resetSuccess = true;
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent = true;
     }
   }
-  let errorsPresent, resetSuccess;
+  let errorsPresent, resetSuccess = false;
 
   function login() {
     goto('login');
@@ -90,21 +87,21 @@
 </svelte:head>
 
 <!-- Error Dialog -->
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
-    <Button action="all" default use={[InitialFocus]}>
+    <Button touch action="all" default use={[InitialFocus]}>
       <Label>Ok</Label>
     </Button>
   </Actions>
 </Dialog>
 
 <!-- Success Dialog -->
-<Dialog bind:this={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
+<Dialog bind:open={resetSuccess} aria-labelledby="event-title" aria-describedby="event-content">
   <Title id="event-title">Password Reset Requested</Title>
   <Content id="dialog-content">Sorry you forgot your password, {successUser.name}. We've sent a password reset email to: {successUser.email}<br><br>Please use the link in the email to reset your password within the hour.</Content>
   <Actions>
-    <Button color="secondary" variant="outlined" on:click={login} default use={[InitialFocus]}>
+    <Button touch color="secondary" variant="outlined" on:click={login} default use={[InitialFocus]}>
       <Label>Back to Log In</Label>
     </Button>
   </Actions>
@@ -117,14 +114,21 @@
       <a href="/login">Know your password? Go back to Log In</a>
     </p>
 
-    <ListErrors {errors}/>
-
     <form on:submit|preventDefault={verify}>
-      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email associated with your account" type="email" invalid="{invalidEmail}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
-        <Icon class="material-icons">email</Icon>
+      <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidEmail}" class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidEmail ? "mdc-text-field--invalid" : ""}" bind:value={user.email} on:change={()=>invalidEmail=false}>
+        <HelperText class="{$session.mobile ? "fullWidth" : "halfWidth"} errorHelper" validationMsg slot="helper">
+          {emailError}
+        </HelperText>
+        <svelte:fragment slot="label">
+          <CommonIcon
+            class="material-icons"
+            style="font-size: 1em; line-height: normal; vertical-align: top;"
+            >email</CommonIcon
+          > Email associated with your account
+        </svelte:fragment>
       </Textfield>
       <br>
-      <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Reset Password</Label></Button>
+      <Button touch color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Reset Password</Label></Button>
     </form>
 	</div>
 </div>

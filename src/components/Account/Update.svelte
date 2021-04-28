@@ -1,12 +1,12 @@
 <script>
   import { stores } from '@sapper/app';
   import Fab, {Icon} from '@smui/fab';
-  import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  // import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 	import { standardizeDates, put } from '../../routes/utils/helper.js';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import Textfield from '@smui/textfield'
-  import EnclosedCalendar from './EnclosedCalendar'
+  import Textfield from '@smui/textfield';
+  import EnclosedCalendar from './EnclosedCalendar.svelte'
 
   const { session } = stores();
 
@@ -113,13 +113,13 @@
   </p>
   <div>
     {#if standardizeDates(todaysAddress.start_date) > standardizeDates(new Date())}
-      <Button dense color="secondary" on:click={toggleStartDate} class="dateButtons" variant="outlined"><Label>{standardizeDates(todaysAddress.start_date).toDateString().split(/ (.*)/)[1]}</Label></Button>
+      <Button touch dense color="secondary" on:click={toggleStartDate} class="dateButtons" variant="outlined"><Label>{standardizeDates(todaysAddress.start_date).toDateString().split(/ (.*)/)[1]}</Label></Button>
     {/if}
     {#if todaysAddress.end_date && standardizeDates(todaysAddress.end_date) > standardizeDates(new Date())}
       {#if standardizeDates(todaysAddress.start_date) > standardizeDates(new Date())}
         <p id="inline"> - </p>
       {/if}
-      <Button dense color="secondary" on:click={toggleEndDate} class="dateButtons" variant="outlined"><Label>{standardizeDates(todaysAddress.end_date).toDateString().split(/ (.*)/)[1]}</Label></Button>
+      <Button touch dense color="secondary" on:click={toggleEndDate} class="dateButtons" variant="outlined"><Label>{standardizeDates(todaysAddress.end_date).toDateString().split(/ (.*)/)[1]}</Label></Button>
     {/if}
   </div>
   {#if startDateOpen}

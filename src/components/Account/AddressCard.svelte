@@ -5,7 +5,7 @@
 	import { standardizeDates, del } from '../../routes/utils/helper.js';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import Update from './Update';
+  import Update from './Update.svelte';
 
   const { session } = stores();
 
@@ -19,7 +19,8 @@
   export let todaysAddress, phone, update, edit = true;
 
   const today = standardizeDates(new Date());
-  let submitErrors, errorsPresent;
+  let submitErrors;
+  let errorsPresent = false;
 
 	async function deleteAddress() {
 		const response = await del(`api/manage/delete_address`, { address: todaysAddress });
@@ -32,7 +33,7 @@
       processNewMonth();
 		}
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent = true;
     }
   }
 
@@ -117,10 +118,10 @@
 </style>
   <div id={$session.mobile ? edit ? "currentAddressM" : "currentAddressNoEdit" : "currentAddress"}>
     <div id="innerPanel">
-      <Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+      <Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
         <Title id="event-title">{submitErrors}</Title>
         <Actions>
-          <Button action="all" default use={[InitialFocus]}>
+          <Button touch action="all" default use={[InitialFocus]}>
             <Label>Ok</Label>
           </Button>
         </Actions>

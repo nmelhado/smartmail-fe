@@ -4,9 +4,9 @@
 	import TrackingTableWidget from '../../components/Tracking/TrackingTableWidget.svelte'; 
 	import CopyToClipboard from '../../components/CopyToClipboard.svelte'; 
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
-	import ListErrors from '../../components/ListErrors.svelte';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield';
+  import HelperText from '@smui/textfield/helper-text/index';
   import Button, {Label, Icon} from '@smui/button';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import IconButton from '@smui/icon-button';
@@ -20,6 +20,7 @@
   let submitErrors = [];
   let recentContacts = [];
 
+  let checking = true;
   async function checkConnection() {
     try {
       const response = await get(`api/auth/check-credentials`);
@@ -27,14 +28,17 @@
         delete($session.user);
         delete($session.addresses);
         goto('login');
+      } else {
+        checking = false;
       }
     } catch(err) {
-      console.log(err);
+      console.error(err);
     }
   }
   checkConnection();
 
 	onMount(async () => {
+    checkConnection();
     try {
       const response = await get(`api/manage/get_contacts?limit=3&page=1&sort=recent`);
       if (response.contacts) {
@@ -86,12 +90,21 @@
 	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   let user = $session.user;
+
+  if (user == undefined) {
+    user = {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      created_at: "",
+      smart_id: ""
+    }
+  }
   const phone = formatPhoneNumber(user.phone);
   const memberSince = user.created_at.split('-');
 
   let currentDate = standardizeDates(new Date())
-  let tempHolder = true;
-  let resetCalendarCheck = true;
 
   let todaysAddress = null;
   if ($session.addresses) {
@@ -136,6 +149,14 @@
 
   function cancelUpdate() {
     updatingInfo = false;
+    updateInfo = {
+      first_name: `${user.first_name}`,
+      last_name: `${user.last_name}`,
+      email: `${user.email}`,
+      phone: `${user.phone}`,
+      smart_id: ""
+    };
+    invalidFName, invalidLName, invalidEmail, invalidPhone = false;
   }
 
   let updateInfo = {
@@ -145,13 +166,8 @@
     phone: `${user.phone}`
   }
 
-  let errors = [];
-  let invalid = {
-    first_name: false,
-    last_name: false,
-    email: false,
-    phone: false,
-  }
+  let invalidFName, invalidLName, invalidEmail, invalidPhone = false;
+  let errorFName, errorLName, errorEmail, errorPhone = false;
 
   const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -164,28 +180,36 @@
       .matches(phoneRegExp, "Phone number is not valid")
   });
   
-	function verifyBasicInfo(event) {
+	function verifyBasicInfo() {
+    invalidFName, invalidLName, invalidEmail, invalidPhone = false;
     updateInfo.phone = updateInfo.phone.replace(/[()\- /]/gi, '')
     validInfo.validate(updateInfo, {abortEarly: false})
     .then(function() {
       submit();
     })
     .catch(function(err) {
-      const tempInvalid = {
-        first_name: false,
-        last_name: false,
-        email: false,
-        phone: false,
-      };
-      const tempErrors = [];
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "first_name":
+            invalidFName = true;
+            errorFName = error.message;
+            break;
+          case "last_name":
+            invalidLName = true;
+            errorLName = error.message;
+            break;
+          case "email":
+            invalidEmail = true;
+            errorEmail = error.message;
+            break;
+          case "phone":
+            invalidPhone = true;
+            errorPhone = error.message;
+            break;
+          default:
+            break;
         }
       }
-      invalid = tempInvalid;
-      errors = tempErrors;
     })
   }
 
@@ -199,16 +223,16 @@
       user = response.user;
 		}
     if (submitErrors != null) {
-      errorsPresent.open();
+      errorsPresent = true;
     }
     cancelUpdate();
   }
 
-  let errorsPresent;
+  let errorsPresent = false;
 </script>
 
 <svelte:head>
-  <title>smartmail - {user.first_name ? user.first_name : ""}'s Dashboard</title>
+  <title>smartmail - {!checking && user.first_name ? user.first_name : ""}'s Dashboard</title>
 </svelte:head>
 
 <style>
@@ -370,7 +394,15 @@
 
   #updateButtons {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+  }
+
+  :global(.updateButton) {
+    margin: 0 5px;
+  }
+
+  .updateTable {
+    border-spacing: 0 1em;
   }
 </style>
 
@@ -379,19 +411,25 @@
 <div id="dashboardBody">
   <!-- Left side panel -->
   <div class="side">
-    <img id="avatar" alt="dashboard image" src="https://ui-avatars.com/api/?background=	D9EBE4&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
-    {#if updatingInfo}
+    <img id="avatar" alt="dashboard avatar" src="https://ui-avatars.com/api/?background=	D9EBE4&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
       <h2 in:blur="{{ duration: 400 }}" id="name">
-        <Textfield class="formInputs halfWidth" variant="outlined" label="first name" invalid="{invalid["first_name"]}" bind:value={updateInfo.first_name}/>
-        <Textfield class="formInputs halfWidth" variant="outlined" label="last name" invalid="{invalid["last_name"]}" bind:value={updateInfo.last_name}/>
+        {#if updatingInfo}
+          <Textfield class="formInputs halfWidth {invalidFName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="first name" bind:invalid="{invalidFName}" bind:value={updateInfo.first_name}>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorFName}
+            </HelperText>
+          </Textfield>
+          <Textfield class="formInputs halfWidth {invalidLName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="last name" bind:invalid="{invalidLName}" bind:value={updateInfo.last_name}>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorLName}
+            </HelperText>
+          </Textfield>
+        {:else}
+            {user.first_name} {user.last_name}
+        {/if}
       </h2>
-    {:else}
-      <h2 in:blur="{{ duration: 400 }}" id="name">
-        {user.first_name} {user.last_name}
-      </h2>
-    {/if}
     <p id="memberSince">Member since {monthNames[memberSince[1]-1]} '{memberSince[0].substr(2)}</p>
-    <table id="contactInfo">
+    <table id="contactInfo" class="{updatingInfo ? "updateTable" : ""}">
       <tr id="smartID">
         <td>smartID:&nbsp;</td>
         <td>
@@ -412,7 +450,11 @@
         <td>email:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["email"]}" bind:value={updateInfo.email}/>
+            <Textfield class="formInputs {invalidEmail ? "mdc-text-field--invalid" : ""}" variant="outlined" label="e-mail" bind:invalid="{invalidEmail}" bind:value={updateInfo.email}>
+              <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                {errorEmail}
+              </HelperText>
+            </Textfield>
           </td>
         {:else}
           <td in:blur="{{ duration: 400 }}">
@@ -424,7 +466,11 @@
         <td>phone:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs" variant="outlined" label="e-mail" invalid="{invalid["phone"]}" bind:value={updateInfo.phone}/>
+            <Textfield class="formInputs {invalidPhone ? "mdc-text-field--invalid" : ""}" variant="outlined" label="phone" bind:invalid="{invalidPhone}" bind:value={updateInfo.phone}>
+              <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                {errorPhone}
+              </HelperText>
+            </Textfield>
           </td>
         {:else}
           <td in:blur="{{ duration: 400 }}">
@@ -434,16 +480,15 @@
       </tr>
     </table>
     {#if updatingInfo}
-      <ListErrors {errors}/>
       <div in:blur="{{ duration: 400 }}" id="updateButtons">
-        <Button color="secondary" class="buttonParent" variant="unelevated" on:click={cancelUpdate}><Label class="buttonLabel">Cancel</Label></Button>
+        <Button touch color="secondary" class="buttonParent updateButton" variant="unelevated" on:click={cancelUpdate}><Label class="buttonLabel">Cancel</Label></Button>
         <form style="display: inline-block" on:submit|preventDefault={verifyBasicInfo}>
-          <Button color="secondary" class="buttonParent" variant="unelevated"><Label class="buttonLabel">Update Information</Label></Button>
+          <Button touch color="secondary" class="buttonParent updateButton" variant="unelevated"><Label class="buttonLabel">Update Information</Label></Button>
         </form>
       </div>
     {:else}
       <div in:blur="{{ duration: 400 }}">
-        <Button color="secondary" class="buttonParent" on:click={startlUpdate}><Label class="buttonLabel buttonLabelEdit">Edit basic information </Label><Icon class="material-icons editButton">edit</Icon></Button>
+        <Button touch color="secondary" class="buttonParent" on:click={startlUpdate}><Label class="buttonLabel buttonLabelEdit">Edit basic information </Label><Icon class="material-icons editButton">edit</Icon></Button>
       </div>
     {/if}
     {#if copyFail}

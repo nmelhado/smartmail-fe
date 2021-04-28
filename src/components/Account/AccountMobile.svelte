@@ -315,7 +315,7 @@
 <h1>Hello {$session.user.first_name}!</h1>
 
 <div id="accountButtons">
-    <Button color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
+    <Button touch color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
 </div>
 
 {#if $addressChangeActive}
@@ -399,5 +399,5 @@
 
 </div>
 <div id="button-holder">
-  <Button class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>
+  <Button touch class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>
 </div>

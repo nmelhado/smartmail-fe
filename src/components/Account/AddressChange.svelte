@@ -8,18 +8,18 @@
     address_type,
     start_date,
     end_date } from '../../routes/utils/stores.js';
-  import AddressChangeOne from './AddressChangeOne';
-  import AddressChangeTwo from './AddressChangeTwo';
-  import AddressChangeThree from './AddressChangeThree';
+  import AddressChangeOne from './AddressChangeOne.svelte';
+  import AddressChangeTwo from './AddressChangeTwo.svelte';
+  import AddressChangeThree from './AddressChangeThree.svelte';
   import Paper from '@smui/paper';
   import Dialog, {Content, Title, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
   import { createEventDispatcher } from 'svelte';
-  import ConfirmAddress from '../ConfirmAddress';
-  import BypassAddressValidation from '../BypassAddressValidation';
+  import ConfirmAddress from '../ConfirmAddress.svelte';
+  import BypassAddressValidation from '../BypassAddressValidation.svelte';
 	import { goto, stores } from '@sapper/app';
   import { post } from '../../routes/utils/helper.js';
-  import Loading from '../Loading';
+  import Loading from '../Loading.svelte';
 
   const { session } = stores();
 
@@ -30,7 +30,8 @@
       dispatch('resetCalendar');
   }
   
-  let errorsPresent, finalAddress, submitErrors;
+  let finalAddress, submitErrors;
+  let errorsPresent = false;
 
   $address = {
     nickname: '', // optional
@@ -93,7 +94,7 @@
 		}
     if (submitErrors != null) {
       console.log(submitErrors);
-      errorsPresent.open();
+      errorsPresent = true;
     }
   }
 
@@ -113,7 +114,8 @@
     submit();
   }
 
-  let addressValidationError, startCompare, compareAddress;
+  let compareAddress;
+  let addressValidationError, startCompare = false;
 </script>
 
 <style>
@@ -156,33 +158,33 @@
 <div id="paper-back"  on:click|stopPropagation={cancel}>
   <div on:click|stopPropagation={()=>{}}>
     <!-- Error creating account -->
-    <Dialog style="z-index: 97;" bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={goBack}>
+    <Dialog style="z-index: 97;" bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={goBack}>
       <Title id="event-title">{submitErrors}</Title>
       <Actions>
-        <Button action="all" default use={[InitialFocus]}>
+        <Button touch action="all" default use={[InitialFocus]}>
           <Label>Ok</Label>
         </Button>
       </Actions>
     </Dialog>
 
     <!-- Error validating address -->
-    <Dialog bind:this={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
+    <Dialog bind:open={addressValidationError} aria-labelledby="event-title" aria-describedby="event-content">
       <Title id="event-title">We Weren't Able to Verify the Address You Entered</Title>
       <Content id="dialog-content">
         <BypassAddressValidation enteredAddress={$address} />
       </Content>
       <Actions>
-        <Button variant="outlined">
+        <Button touch variant="outlined">
           <Label>Back</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseOriginal}>
           <Label>Proceed With Unverified Address (Not Reccomended)</Label>
         </Button>
       </Actions>
     </Dialog>
 
     <!-- Confirm address -->
-    <Dialog bind:this={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
+    <Dialog bind:open={startCompare} aria-labelledby="event-title" aria-describedby="event-content">
       <Title id="event-title">Address Verification</Title>
       <Content id="dialog-content">
         {#if compareAddress && compareAddress.line_one}
@@ -190,13 +192,13 @@
         {/if}
       </Content>
       <Actions>
-        <Button variant="outlined">
+        <Button touch variant="outlined">
           <Label>Back</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseOriginal}>
           <Label>Use The Adrress I Entered</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseReccomended} default use={[InitialFocus]}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseReccomended} default use={[InitialFocus]}>
           <Label>Use The Recommended Adrress</Label>
         </Button>
       </Actions>

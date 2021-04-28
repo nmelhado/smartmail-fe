@@ -1,10 +1,10 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
-  import Textfield from '@smui/textfield'
-  import Icon from '@smui/textfield/icon/index';  
+  import Textfield from '@smui/textfield';
+  import HelperText from '@smui/textfield/helper-text/index';
+  import { Icon as CommonIcon } from '@smui/common';
   import Button, {Label} from '@smui/button';
   import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
 
@@ -25,51 +25,51 @@
       .max(30, "Password must be shorter than 30 characters")
   });
   
-  let errors = [];
-  let invalid = {
-    email: false,
-    password: false
-  }
+  let invalidEmail = false;
+  let emailError = "Invalid email address";
+  let invalidPassword = false;
+  let passwordError = "Invalid Password";
   
-  function verify(event) {
+  function verify() {
+    invalidEmail = false;
+    invalidPassword = false;
     validUser.validate(user, {abortEarly: false})
     .then(function() {
       submit();
     })
     .catch(function(err) {
-      const tempInvalid = {
-        email: false,
-        password: false
-      };
-      const tempErrors = [];
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "email":
+            invalidEmail = true;
+            emailError = error.message;
+            break;
+          case "password":
+            invalidPassword = true;
+            passwordError = error.message;
+            break;
+          default:
+            break;
         }
       }
-      invalid = tempInvalid;
-      errors = tempErrors;
     });
   }
 
 	async function submit() {
 		const response = await post(`api/auth/login`, { email: user.email, password: user.password });
 
-		// TODO handle network errors
-    submitErrors = response.error;
-    console.log(submitErrors)
-
 		if (response.user) {
 			$session.user = response.user;
 			$session.addresses = response.addresses;
 			goto('dashboard');
 		}
+
+    submitErrors = response.error;
     if (submitErrors != null) {
-      errorsPresent.open()
+      errorsPresent = true;
     }
   }
-  let errorsPresent;
+  let errorsPresent = false;
 </script>
 <style>
   form {
@@ -89,32 +89,61 @@
 	<title>smartmail - Sign in</title>
 </svelte:head>
 
-<Dialog bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
+<Dialog bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" >
   <Title id="event-title">{submitErrors}</Title>
   <Actions>
-    <Button action="all" default use={[InitialFocus]}>
+    <Button touch action="all" default use={[InitialFocus]}>
       <Label>Ok</Label>
     </Button>
   </Actions>
 </Dialog>
 
 <div class="auth-page">
-	<div class="container page">
+	<div>
     <h1>Sign In</h1>
     <p class="links">
       <a href="/sign-up">Need an account?</a>
     </p>
 
-    <ListErrors {errors}/>
-
     <form on:submit|preventDefault={verify}>
-      <Textfield input$name="email" variant="outlined" withLeadingIcon label="Email" type="email" invalid="{invalid["email"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} bind:value={user.email}>
-        <Icon class="material-icons">email</Icon>
+      <Textfield
+        variant="outlined"
+        input$autocomplete="username"
+        type="email"
+        bind:invalid="{invalidEmail}"
+        class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidEmail ? "mdc-text-field--invalid" : ""}"
+        bind:value={user.email}
+        on:change={()=>invalidEmail=false}
+      >
+        <HelperText class="errorHelper {$session.mobile ? "fullWidth" : "halfWidth"}" validationMsg slot="helper">
+          {emailError}
+        </HelperText>
+        <svelte:fragment slot="label">
+          <CommonIcon
+            class="material-icons"
+            style="font-size: 1em; line-height: normal; vertical-align: top;"
+          >
+            email
+          </CommonIcon>
+          Email
+        </svelte:fragment>
+      </Textfield>
+      <Textfield
+        variant="outlined"
+        input$autocomplete="current-password"
+        label="Password"
+        bind:invalid="{invalidPassword}"
+        class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidPassword ? "mdc-text-field--invalid" : ""}"
+        type="password"
+        bind:value={user.password}
+        on:change={()=>invalidPassword=false}
+      >
+        <HelperText class="errorHelper {$session.mobile ? "fullWidth" : "halfWidth"}" validationMsg slot="helper">
+          {passwordError}
+        </HelperText>
       </Textfield>
       <br>
-      <Textfield variant="outlined" label="Password" invalid="{invalid["password"]}" class={$session.mobile ? "fullWidth" : "halfWidth"} type="password" bind:value={user.password}/>
-      <br>
-      <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
+      <Button touch color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel">Sign In</Label></Button>
     </form>
 
     <p class="links">

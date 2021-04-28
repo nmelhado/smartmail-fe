@@ -1,9 +1,9 @@
 <script>
   import { address as origAddress, validAddress, addressStepTwoComplete, addressStepThreeComplete, address_type, start_date, end_date } from '../../routes/utils/stores.js';
 	import ListErrors from '../ListErrors.svelte';
-  import Textfield from '@smui/textfield'
+  import Textfield from '@smui/textfield';
   import Select, {Option} from '@smui/select';
-  import Dialog, {Title, Content as DialogContent, Actions, InitialFocus} from '@smui/dialog';
+  // import Dialog, {Title, Content as DialogContent, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
   import { post } from '../../routes/utils/helper.js';
   import {Title as PaperTitle, Subtitle, Content} from '@smui/paper';
@@ -105,7 +105,7 @@
     const response = await post(`api/manage/verify_address`, testAddress);
     loading = false;
     if (response["0"]) {
-      addressValidationError.open();
+      addressValidationError = true;;
     } else {
       compareAddress = JSON.parse(JSON.stringify(testAddress));
       compareAddress.line_one = response.street1;
@@ -113,7 +113,7 @@
       compareAddress.zip_code = `${response.zip.split("-")[0]}-${response.Zip4}`;
       compareAddress.city = response.city;
 
-      startCompare.open();
+      startCompare = true;;
     }
   }
   
@@ -177,30 +177,30 @@
     <ListErrors {errors}/>
     <form on:submit|preventDefault={verify}>
       <div id="tight">
-        <Textfield input$name="address-1" class="fullWidth" variant="outlined" label="Address line 1" invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
-        <Textfield input$name="address-2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
-        <Textfield input$name="business-name" class="fullWidth" variant="outlined" label="Business name (optional)" invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
-        <Textfield input$name="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
+        <Textfield input$name="address-1" class="fullWidth" variant="outlined" label="Address line 1" bind:invalid="{invalid["line_one"]}" bind:value={$origAddress.line_one}/>
+        <Textfield input$name="address-2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" bind:invalid="{invalid["line_two"]}" bind:value={$origAddress.line_two}/>
+        <Textfield input$name="business-name" class="fullWidth" variant="outlined" label="Business name (optional)" bind:invalid="{invalid["business_name"]}" bind:value={$origAddress.business_name}/>
+        <Textfield input$name="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" bind:invalid="{invalid["attention_to"]}" bind:value={$origAddress.attention_to}/>
         <div class="centerBlock">
-          <Textfield input$name="city" class="thirdWidth" variant="outlined" label="City" invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
-          <Select variant="outlined" class="thirdWidth" invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
+          <Textfield input$name="city" class="thirdWidth" variant="outlined" label="City" bind:invalid="{invalid["city"]}" bind:value={$origAddress.city}/>
+          <Select variant="outlined" class="thirdWidth" bind:invalid="{invalid["state"]}" bind:value={$origAddress.state} label="State">
             {#each states as state}
               <Option value={state} selected={$origAddress.state === state}>{state}</Option>
             {/each}
           </Select>
-          <Textfield input$name="zip" class="thirdWidth" variant="outlined" label="Zip Code" invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
+          <Textfield input$name="zip" class="thirdWidth" variant="outlined" label="Zip Code" bind:invalid="{invalid["zip_code"]}" bind:value={$origAddress.zip_code}/>
         </div>
-        <Textfield input$name="country" class="fullWidth" variant="outlined" label="Country" invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
-        <Textfield class="fullWidth" variant="outlined" label="Address specific phone number (optional)" invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
-        <Textfield class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" invalid="{invalid["delivery_instructions"]}" bind:value={$origAddress.delivery_instructions}/>
-        <Textfield class="fullWidth" variant="outlined" label="Address nickname (optional)" invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
+        <Textfield input$name="country" class="fullWidth" variant="outlined" label="Country" bind:invalid="{invalid["country"]}" bind:value={$origAddress.country}/>
+        <Textfield class="fullWidth" variant="outlined" label="Address specific phone number (optional)" bind:invalid="{invalid["phone"]}" bind:value={$origAddress.phone}/>
+        <Textfield class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" bind:invalid="{invalid["delivery_instructions"]}" bind:value={$origAddress.delivery_instructions}/>
+        <Textfield class="fullWidth" variant="outlined" label="Address nickname (optional)" bind:invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
       </div>
       <div class="alignRight">
-        <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel">Submit</Label></Button>
+        <Button touch color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel">Submit</Label></Button>
       </div>
     </form>
     <div class="alignRight">
-      <Button color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
+      <Button touch color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
     </div>
   </Content>
 </div>

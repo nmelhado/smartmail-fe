@@ -1,0 +1,14 @@
+@use 'sass:color';
+
+// Svelte Colors!
+@use '@material/theme/index' as theme with (
+  $primary: #55D6A4,
+  $secondary: #1AC8ED,
+  $surface: #fff,
+  $background: #fff,
+  $error: darkred,
+  $on-primary: #fff,
+  $on-secondary: #fff,
+  $on-surface: #777,
+  $on-error: #fff,
+);

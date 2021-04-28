@@ -4,7 +4,7 @@
   import {Title, Subtitle, Content} from '@smui/paper';
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label} from '@smui/button';
-  import CalendarDatePicker from './CalendarDatePicker';
+  import CalendarDatePicker from './CalendarDatePicker.svelte';
 	import { standardizeDates } from '../../routes/utils/helper.js';
   
   const { session } = stores();
@@ -178,11 +178,11 @@
     {/if}
     <form on:submit|preventDefault={verify}>
       <div class="alignRight">
-        <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
+        <Button touch color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
       </div>
     </form>
     <div class="alignRight">
-      <Button color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
+      <Button touch color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
     </div>
   </Content>
 </div>

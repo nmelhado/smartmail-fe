@@ -1,12 +1,12 @@
 <script>
 	import { goto } from '@sapper/app';
 	import { trackPackage, getTrackingLink } from '../../routes/utils/helper.js';
-  import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
+  import DataTable, {Head, Body, Row, Cell, Pagination} from '@smui/data-table';
   import { Graphic } from '@smui/list';
+  import IconButton from '@smui/icon-button';
   import { createEventDispatcher } from 'svelte';
-  import Pagination from '../Pagination';
 
-  export let trackingPackages, userSmartId, page, limit, count;
+  export let trackingPackages, userSmartId, page, limit, count, lastPage;
 
 
   const dispatch = createEventDispatcher();
@@ -17,10 +17,6 @@
 
   $: for (const userPackage of trackingPackages) {
     displayMore[userPackage.tracking] = false;
-  }
-
-  function getPackages() {
-    dispatch('getPackages');
   }
 
   async function toggleRow(row, mailCarrier) {
@@ -69,6 +65,11 @@
 
 	function goToContact(smartmailID) {
     goto(`/my_contacts?smartID=${smartmailID}`);
+  }
+
+  const changePage = (newPage) => {
+    page = newPage;
+    dispatch('getPackages');
   }
 
 </script>
@@ -383,8 +384,40 @@
     </Row>
   {/if}
   </Body>
-</DataTable>
+  <Pagination slot="paginate">
+    <svelte:fragment slot="total">
+      {count == 0 ? "" : `${(page -1) * limit + 1}-${page == lastPage ? count : page * limit} of ${count}`}
+    </svelte:fragment>
 
-{#if count > limit}
-  <Pagination bind:page={page} bind:limit={limit} bind:count={count} on:changePage={getPackages} />
-{/if}
+    {#if count > 0 }
+      <IconButton
+        class="material-icons"
+        action="first-page"
+        title="First page"
+        on:click={()=>changePage(1)}
+        disabled={page === 1}>first_page</IconButton
+      >
+      <IconButton
+        class="material-icons"
+        action="prev-page"
+        title="Prev page"
+        on:click={()=>changePage(page-1)}
+        disabled={page === 1}>chevron_left</IconButton
+      >
+      <IconButton
+        class="material-icons"
+        action="next-page"
+        title="Next page"
+        on:click={()=>changePage(page+1)}
+        disabled={page === lastPage}>chevron_right</IconButton
+      >
+      <IconButton
+        class="material-icons"
+        action="last-page"
+        title="Last page"
+        on:click={()=>changePage(lastPage)}
+        disabled={page === lastPage}>last_page</IconButton
+      >
+  {/if}
+  </Pagination>
+</DataTable>

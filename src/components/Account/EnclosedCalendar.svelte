@@ -3,7 +3,7 @@
   import Paper, {Title, Content} from '@smui/paper';
   import IconButton, {Icon} from '@smui/icon-button';
   import Button, {Label} from '@smui/button';
-  import CalendarDatePicker from './CalendarDatePicker';
+  import CalendarDatePicker from './CalendarDatePicker.svelte';
 	import { standardizeDates } from '../../routes/utils/helper.js';
   
   const { session } = stores();
@@ -151,7 +151,7 @@
         <h3 class="date-informer">Selected {calendar_type}: {pickDate.toDateString()}</h3>
         <form on:submit|preventDefault={verify}>
           <div class="alignRight">
-            <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
+            <Button touch color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
           </div>
         </form>
       </Content>
