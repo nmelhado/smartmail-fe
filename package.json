@@ -16,6 +16,7 @@
     "@google-cloud/connect-datastore": "^4.0.0",
     "@google-cloud/datastore": "^5.1.0",
     "@material/dom": "^11.0.0",
+    "@material/theme": "^11.0.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cross-fetch": "^3.0.4",
