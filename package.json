@@ -1,7 +1,7 @@
 {
   "name": "smartmail",
   "description": "smartmail",
-  "version": "0.0.15",
+  "version": "0.1.5",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build",
