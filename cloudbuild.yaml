@@ -3,16 +3,16 @@ steps:
 
   - name: gcr.io/cloud-builders/npm
     args: [ install ]
+  
+  - name: gcr.io/cloud-builders/npm
+    entrypoint: sudo npm
+    args: [ run, prepare ]
 
   - name: gcr.io/cloud-builders/gsutil
     args: ['cp', 'gs://smartmail-ui/env/.env', '.env']
   
   - name: gcr.io/cloud-builders/npm
     args: [ run, build, --prod ]
-  
-  - name: gcr.io/cloud-builders/npm
-    entrypoint: sudo npm
-    args: [ run, prepare ]
   
   - name: gcr.io/cloud-builders/gcloud
     args: [ app, deploy ]
