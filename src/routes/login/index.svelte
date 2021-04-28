@@ -111,7 +111,7 @@
         input$autocomplete="username"
         type="email"
         bind:invalid="{invalidEmail}"
-        class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidEmail ? "mdc-text-field--invalid" : ""}"
+        class="{$session.mobile ? "fullWidth" : "halfWidth"}"
         bind:value={user.email}
         on:change={()=>invalidEmail=false}
       >
@@ -133,7 +133,7 @@
         input$autocomplete="current-password"
         label="Password"
         bind:invalid="{invalidPassword}"
-        class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidPassword ? "mdc-text-field--invalid" : ""}"
+        class="{$session.mobile ? "fullWidth" : "halfWidth"}"
         type="password"
         bind:value={user.password}
         on:change={()=>invalidPassword=false}

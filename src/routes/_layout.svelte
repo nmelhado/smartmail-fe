@@ -51,7 +51,19 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <GoogleAnalytics />
-<div data-src="world_map.svg" id="mainContent" class={segment == "login" || segment == "sign-up" || segment == "forgot-password" || segment == "reset-password" ? "backMap lazyBG lazyTransitionBG" : ""} style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"} use:lazyLoadBG>
+{#if segment == "login" || segment == "sign-up" || segment == "forgot-password" || segment == "reset-password"}
+  <div data-src="world_map.svg" id="mainContent" class="backMap lazyBG lazyTransitionBG" style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"} use:lazyLoadBG>
+    {#if $session.mobile || innerWidth < 825}
+      <MobileNav />
+    {:else}
+      <Nav />
+    {/if}
+    <main class={$session.mobile ? "mobile" : ""}>
+      <slot></slot>
+    </main>
+  </div>
+{:else}
+  <div id="mainContent"  style={$session.mobile ? `min-height: calc(${innerHeight}px - 121px)` : "mainContent"}>
   {#if $session.mobile || innerWidth < 825}
     <MobileNav />
   {:else}
@@ -66,6 +78,7 @@
       <slot></slot>
     </main>
   {/if}
-</div>
+  </div>
+{/if}
 
 <Footer />

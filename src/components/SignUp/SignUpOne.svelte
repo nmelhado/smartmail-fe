@@ -176,26 +176,26 @@
 <form on:submit|preventDefault={verify}>
   <div class="centerBlock">
     <div class="halfWidthContainer">
-      <Textfield input$autocomplete="given-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFName}" class="fullWidth {invalidFName ? "mdc-text-field--invalid" : ""}" bind:value={$user.first_name} on:change={()=>invalidFName=false}>
+      <Textfield input$autocomplete="given-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFName}" class="fullWidth" bind:value={$user.first_name} on:change={()=>invalidFName=false}>
         <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
           {fNameError}
         </HelperText>
       </Textfield>
     </div>
     <div class="halfWidthContainer">
-      <Textfield input$autocomplete="family-name" variant="outlined" label="Last name" bind:invalid="{invalidLName}" class="fullWidth {invalidLName ? "mdc-text-field--invalid" : ""}" bind:value={$user.last_name} on:change={()=>invalidLName=false}>
+      <Textfield input$autocomplete="family-name" variant="outlined" label="Last name" bind:invalid="{invalidLName}" class="fullWidth" bind:value={$user.last_name} on:change={()=>invalidLName=false}>
         <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
           {lNameError}
         </HelperText>
       </Textfield>
     </div>
   </div>
-  <Textfield input$autocomplete="phone" type="tel" variant="outlined" label="Phone" bind:invalid="{invalidPhone}" class="fullWidth {invalidPhone ? "mdc-text-field--invalid" : ""}" bind:value={$user.phone} on:change={()=>invalidPhone=false}>
+  <Textfield input$autocomplete="phone" type="tel" variant="outlined" label="Phone" bind:invalid="{invalidPhone}" class="fullWidth" bind:value={$user.phone} on:change={()=>invalidPhone=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {phoneError}
     </HelperText>
   </Textfield>
-  <Textfield variant="outlined" input$autocomplete="email" type="email" bind:invalid="{invalidEmail}" class="fullWidth {invalidEmail ? "mdc-text-field--invalid" : ""}" bind:value={$user.email} on:change={()=>invalidEmail=false}>
+  <Textfield variant="outlined" input$autocomplete="email" type="email" bind:invalid="{invalidEmail}" class="fullWidth" bind:value={$user.email} on:change={()=>invalidEmail=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {emailError}
     </HelperText>
@@ -207,12 +207,12 @@
       > Email
     </svelte:fragment>
   </Textfield>
-  <Textfield variant="outlined" label="Password" bind:invalid="{invalidPassword}" class="fullWidth {invalidPassword ? "mdc-text-field--invalid" : ""}" type="password" bind:value={$user.password} on:change={()=>invalidPassword=false}>
+  <Textfield variant="outlined" label="Password" bind:invalid="{invalidPassword}" class="fullWidth" type="password" bind:value={$user.password} on:change={()=>invalidPassword=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {passwordError}
     </HelperText>
   </Textfield>
-  <Textfield variant="outlined" label="Confirm password" bind:invalid="{invalidConfirmPassword}" class="fullWidth {invalidConfirmPassword ? "mdc-text-field--invalid" : ""}" type="password" bind:value={confirmPassword} on:change={()=>invalidConfirmPassword=false}>
+  <Textfield variant="outlined" label="Confirm password" bind:invalid="{invalidConfirmPassword}" class="fullWidth" type="password" bind:value={confirmPassword} on:change={()=>invalidConfirmPassword=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {confirmPasswordError}
     </HelperText>

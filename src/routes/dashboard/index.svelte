@@ -414,12 +414,12 @@
     <img id="avatar" alt="dashboard avatar" src="https://ui-avatars.com/api/?background=	D9EBE4&color=fff&size=512&length=1&rounded=true&bold=true&font-size=0.6&name={user.first_name}" />
       <h2 in:blur="{{ duration: 400 }}" id="name">
         {#if updatingInfo}
-          <Textfield class="formInputs halfWidth {invalidFName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="first name" bind:invalid="{invalidFName}" bind:value={updateInfo.first_name}>
+          <Textfield class="formInputs halfWidth" variant="outlined" label="first name" bind:invalid="{invalidFName}" bind:value={updateInfo.first_name}>
             <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
               {errorFName}
             </HelperText>
           </Textfield>
-          <Textfield class="formInputs halfWidth {invalidLName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="last name" bind:invalid="{invalidLName}" bind:value={updateInfo.last_name}>
+          <Textfield class="formInputs halfWidth" variant="outlined" label="last name" bind:invalid="{invalidLName}" bind:value={updateInfo.last_name}>
             <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
               {errorLName}
             </HelperText>
@@ -450,7 +450,7 @@
         <td>email:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs {invalidEmail ? "mdc-text-field--invalid" : ""}" variant="outlined" label="e-mail" bind:invalid="{invalidEmail}" bind:value={updateInfo.email}>
+            <Textfield class="formInputs" variant="outlined" label="e-mail" bind:invalid="{invalidEmail}" bind:value={updateInfo.email}>
               <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                 {errorEmail}
               </HelperText>
@@ -466,7 +466,7 @@
         <td>phone:&nbsp;&nbsp;&nbsp;</td>
         {#if updatingInfo}
           <td in:blur="{{ duration: 400 }}">
-            <Textfield class="formInputs {invalidPhone ? "mdc-text-field--invalid" : ""}" variant="outlined" label="phone" bind:invalid="{invalidPhone}" bind:value={updateInfo.phone}>
+            <Textfield class="formInputs" variant="outlined" label="phone" bind:invalid="{invalidPhone}" bind:value={updateInfo.phone}>
               <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                 {errorPhone}
               </HelperText>

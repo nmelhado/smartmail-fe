@@ -237,21 +237,21 @@
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
             <div class="halfWidthContainer">
-              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth {invalidFirstName ? "mdc-text-field--invalid" : ""}" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
+              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
                 <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                   {errorFirstName}
                 </HelperText>
               </Textfield>
             </div>
             <div class="halfWidthContainer">
-              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth {invalidLastName ? "mdc-text-field--invalid" : ""}" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
+              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
                 <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                   {errorLastName}
                 </HelperText>
               </Textfield>
             </div>
           </div>
-          <Textfield input$name="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth {invalidReplyTo ? "mdc-text-field--invalid" : ""}" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
+          <Textfield input$name="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
             <svelte:fragment slot="label">
               <CommonIcon
                 class="material-icons"
@@ -263,7 +263,7 @@
               {errorReplyTo}
             </HelperText>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth {invalidMessage ? "mdc-text-field--invalid" : ""}" bind:value={contact.message} on:change={()=>invalidMessage=false}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth" bind:value={contact.message} on:change={()=>invalidMessage=false}>
             <CharacterCounter>0 / 250</CharacterCounter>
             <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
               {errorMessage}
@@ -316,21 +316,21 @@
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
             <div class="halfWidthContainer">
-              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth {invalidFirstName ? "mdc-text-field--invalid" : ""}" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
+              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
                 <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                   {errorFirstName}
                 </HelperText>
               </Textfield>
             </div>
             <div class="halfWidthContainer">
-              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth {invalidLastName ? "mdc-text-field--invalid" : ""}" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
+              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
                 <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
                   {errorLastName}
                 </HelperText>
               </Textfield>
             </div>
           </div>
-          <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth {invalidReplyTo ? "mdc-text-field--invalid" : ""}" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
+          <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
             <svelte:fragment slot="label">
               <CommonIcon
                 class="material-icons"
@@ -342,7 +342,7 @@
               {errorReplyTo}
             </HelperText>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth {invalidMessage ? "mdc-text-field--invalid" : ""}" bind:value={contact.message} on:change={()=>invalidMessage=false}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth" bind:value={contact.message} on:change={()=>invalidMessage=false}>
             <CharacterCounter>0 / 250</CharacterCounter>
             <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
               {errorMessage}

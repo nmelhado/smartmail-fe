@@ -115,7 +115,7 @@
     </p>
 
     <form on:submit|preventDefault={verify}>
-      <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidEmail}" class="{$session.mobile ? "fullWidth" : "halfWidth"} {invalidEmail ? "mdc-text-field--invalid" : ""}" bind:value={user.email} on:change={()=>invalidEmail=false}>
+      <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidEmail}" class="{$session.mobile ? "fullWidth" : "halfWidth"}" bind:value={user.email} on:change={()=>invalidEmail=false}>
         <HelperText class="{$session.mobile ? "fullWidth" : "halfWidth"} errorHelper" validationMsg slot="helper">
           {emailError}
         </HelperText>

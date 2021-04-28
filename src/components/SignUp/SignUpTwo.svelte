@@ -333,29 +333,29 @@
 </Dialog>
 
 <form on:submit|preventDefault={verify}>
-  <Textfield input$autocomplete="address-line1" class="fullWidth {invalidLineOne ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address line 1" bind:invalid="{invalidLineOne}" bind:value={$origAddress.line_one} on:change={()=>invalidLineOne=false}>
+  <Textfield input$autocomplete="address-line1" class="fullWidth" variant="outlined" label="Address line 1" bind:invalid="{invalidLineOne}" bind:value={$origAddress.line_one} on:change={()=>invalidLineOne=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorLineOne}
     </HelperText>
   </Textfield>
-  <Textfield input$autocomplete="address-line2" class="fullWidth {invalidLineTwo ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address line 2 (optional)" bind:invalid="{invalidLineTwo}" bind:value={$origAddress.line_two} on:change={()=>invalidLineTwo=false}>
+  <Textfield input$autocomplete="address-line2" class="fullWidth" variant="outlined" label="Address line 2 (optional)" bind:invalid="{invalidLineTwo}" bind:value={$origAddress.line_two} on:change={()=>invalidLineTwo=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorLineTwo}
     </HelperText>
   </Textfield>
-  <Textfield input$autocomplete="organization" class="fullWidth {invalidBusinessName ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Business name (optional)" bind:invalid="{invalidBusinessName}" bind:value={$origAddress.business_name} on:change={()=>invalidBusinessName=false}>
+  <Textfield input$autocomplete="organization" class="fullWidth" variant="outlined" label="Business name (optional)" bind:invalid="{invalidBusinessName}" bind:value={$origAddress.business_name} on:change={()=>invalidBusinessName=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorBusinessName}
     </HelperText>
   </Textfield>
-  <Textfield input$autocomplete="attention-to" class="fullWidth {invalidAttentionTo ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Attention to (optional)" bind:invalid="{invalidAttentionTo}" bind:value={$origAddress.attention_to} on:change={()=>invalidAttentionTo=false}>
+  <Textfield input$autocomplete="attention-to" class="fullWidth" variant="outlined" label="Attention to (optional)" bind:invalid="{invalidAttentionTo}" bind:value={$origAddress.attention_to} on:change={()=>invalidAttentionTo=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorAttentionTo}
     </HelperText>
   </Textfield>
   <div class="centerBlock">
     <div class="thirdWidthContainer">
-      <Textfield input$autocomplete="address-level2" class="fullWidth {invalidCity ? "mdc-text-field--invalid" : ""}" variant="outlined" label="City" bind:invalid="{invalidCity}" bind:value={$origAddress.city} on:change={()=>invalidCity=false}>
+      <Textfield input$autocomplete="address-level2" class="fullWidth" variant="outlined" label="City" bind:invalid="{invalidCity}" bind:value={$origAddress.city} on:change={()=>invalidCity=false}>
         <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
           {errorCity}
         </HelperText>
@@ -369,29 +369,29 @@
       </Select>
     </div>
     <div class="thirdWidthContainer">
-      <Textfield input$autocomplete="postal-code" class="fullWidth {invalidZipCode ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Zip Code" bind:invalid="{invalidZipCode}" bind:value={$origAddress.zip_code} on:change={()=>invalidZipCode=false}>
+      <Textfield input$autocomplete="postal-code" class="fullWidth" variant="outlined" label="Zip Code" bind:invalid="{invalidZipCode}" bind:value={$origAddress.zip_code} on:change={()=>invalidZipCode=false}>
         <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
           {errorZipCode}
         </HelperText>
       </Textfield>
     </div>
   </div>
-  <Textfield input$autocomplete="country-name" class="fullWidth {invalidCountry ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Country" bind:invalid="{invalidCountry}" bind:value={$origAddress.country} on:change={()=>invalidCountry=false}>
+  <Textfield input$autocomplete="country-name" class="fullWidth" variant="outlined" label="Country" bind:invalid="{invalidCountry}" bind:value={$origAddress.country} on:change={()=>invalidCountry=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorCountry}
     </HelperText>
   </Textfield>
-  <Textfield class="fullWidth {invalidPhone ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address specific phone number (optional)" bind:invalid="{invalidPhone}" bind:value={$origAddress.phone} on:change={()=>invalidPhone=false}>
+  <Textfield class="fullWidth" variant="outlined" label="Address specific phone number (optional)" bind:invalid="{invalidPhone}" bind:value={$origAddress.phone} on:change={()=>invalidPhone=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorPhone}
     </HelperText>
   </Textfield>
-  <Textfield class="fullWidth {invalidDeliveryInstructions ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Package delivery instructions (optional)" bind:invalid="{invalidDeliveryInstructions}" bind:value={$origAddress.delivery_instructions} on:change={()=>invalidDeliveryInstructions=false}>
+  <Textfield class="fullWidth" variant="outlined" label="Package delivery instructions (optional)" bind:invalid="{invalidDeliveryInstructions}" bind:value={$origAddress.delivery_instructions} on:change={()=>invalidDeliveryInstructions=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorDeliveryInstructions}
     </HelperText>
   </Textfield>
-  <Textfield class="fullWidth {invalidNickname ? "mdc-text-field--invalid" : ""}" variant="outlined" label="Address nickname (optional)" bind:invalid="{invalidNickname}" bind:value={$origAddress.nickname} on:change={()=>invalidNickname=false}>
+  <Textfield class="fullWidth" variant="outlined" label="Address nickname (optional)" bind:invalid="{invalidNickname}" bind:value={$origAddress.nickname} on:change={()=>invalidNickname=false}>
     <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
       {errorNickname}
     </HelperText>
