@@ -13,6 +13,7 @@
     "prepare": "smui-theme compile static/smui.css -i src/theme"
   },
   "dependencies": {
+    "@babel/core": "^7.13.16",
     "@google-cloud/connect-datastore": "^4.0.0",
     "@google-cloud/datastore": "^5.1.0",
     "body-parser": "^1.19.0",
