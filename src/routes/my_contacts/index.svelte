@@ -4,7 +4,6 @@
 	import AddressBook from '../../components/AddressBook/AddressBook.svelte'; 
 	import AddContact from '../../components/AddressBook/AddContact.svelte'; 
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
-  // import IconButton, {Icon} from '@smui/icon-button';
   import { onMount } from 'svelte';
   import queryString from "query-string"
 
@@ -13,7 +12,8 @@
 
   let contacts = []
   let contactCount = 0;
-  let limit = 10;
+  const limit = 10;
+  let lastPage = 0;
   let page = 1;
   let search = "";
   let searchParam = "";
@@ -37,6 +37,7 @@
       if (response.contacts) {
         contacts = response.contacts;
         contactCount = response.count;
+        lastPage = Math.ceil(contactCount/limit)
       }
     } catch(err) {
       console.log(err);
@@ -91,7 +92,7 @@
 
 <h1 class={$session.mobile ? "mobileH1" : ""}>Your Contact List</h1>
 {#if contacts && contacts.length > 0}
-  <AddressBook mobile={$session.mobile} bind:search={search} bind:contacts={contacts} bind:contactCount={contactCount} bind:page={page} {limit} />
+  <AddressBook mobile={$session.mobile} bind:search={search} bind:contacts={contacts} bind:contactCount={contactCount} bind:page={page} {limit} bind:lastPage={lastPage} />
 {:else}
   <p>Sorry! It looks like you don't have any addresses saved yet.</p>
 {/if}

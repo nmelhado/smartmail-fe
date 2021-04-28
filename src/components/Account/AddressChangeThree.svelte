@@ -1,7 +1,7 @@
 <script>
   import { address as origAddress, validAddress, addressStepTwoComplete, addressStepThreeComplete, address_type, start_date, end_date } from '../../routes/utils/stores.js';
 	import ListErrors from '../ListErrors.svelte';
-  import Textfield from '@smui/textfield/styled'
+  import Textfield from '@smui/textfield';
   import Select, {Option} from '@smui/select';
   // import Dialog, {Title, Content as DialogContent, Actions, InitialFocus} from '@smui/dialog';
   import Button, {Label} from '@smui/button';
@@ -105,7 +105,7 @@
     const response = await post(`api/manage/verify_address`, testAddress);
     loading = false;
     if (response["0"]) {
-      addressValidationError.open();
+      addressValidationError = true;;
     } else {
       compareAddress = JSON.parse(JSON.stringify(testAddress));
       compareAddress.line_one = response.street1;
@@ -113,7 +113,7 @@
       compareAddress.zip_code = `${response.zip.split("-")[0]}-${response.Zip4}`;
       compareAddress.city = response.city;
 
-      startCompare.open();
+      startCompare = true;;
     }
   }
   
@@ -196,11 +196,11 @@
         <Textfield class="fullWidth" variant="outlined" label="Address nickname (optional)" bind:invalid="{invalid["nickname"]}" bind:value={$origAddress.nickname}/>
       </div>
       <div class="alignRight">
-        <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel">Submit</Label></Button>
+        <Button touch color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel">Submit</Label></Button>
       </div>
     </form>
     <div class="alignRight">
-      <Button color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
+      <Button touch color="gray" class="tightButton" variant="unelevated"  on:click={previousStep} ><Label class="tightButtonLabel">Previous Step</Label></Button>
     </div>
   </Content>
 </div>

@@ -2,15 +2,34 @@
 
 <svelte:head>
   <script>
-    function checkMap() {};
+  let mapReady = false;
+  function checkMap() {mapReady = true};
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCUjuA4aQIrKq8UQDaKnJPyc5cqxkzlPU&callback=checkMap" on:load={initMap}></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCUjuA4aQIrKq8UQDaKnJPyc5cqxkzlPU&callback=checkMap" on:load={mapLoaded}></script>
 </svelte:head>
 
 
 <script>
-	import { afterUpdate } from 'svelte';
-  
+  import { onMount } from 'svelte';
+  let mounted = false;
+     
+  onMount(() => {
+      // The page is ready.
+      mounted = true;
+      if (mapReady) {
+          initMap();
+      }
+  });
+ 
+  function mapLoaded() {
+      console.log(`map ready!`)
+      // The external Stripe javascript is ready.
+      mapReady = true;
+      if (mounted) {
+          initMap();
+      }
+  }
+
   export let todaysAddress, pinTitle, mobile;
   const latitude = todaysAddress.latitude;
   const longitude = todaysAddress.longitude;
@@ -315,6 +334,7 @@
     height: 450px;
     min-width: 300px;
     border: 1px solid var(--lightGray);
+    background-color: white;
   }
 
   .mapM {

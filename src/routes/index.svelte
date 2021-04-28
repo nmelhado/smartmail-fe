@@ -1,6 +1,7 @@
 <script>
 	import { goto, stores } from '@sapper/app';
   import Button, {Label} from '@smui/button';
+	import { lazyLoad } from './utils/helper.js';
 
 	const { session } = stores();
 
@@ -42,7 +43,7 @@
     margin-top: -10px;
   }
 
-  #bgImgBottom {
+  .bgImgBottom {
     transform: scaleY(-1);
     width: 100%;
     height: auto;
@@ -106,10 +107,10 @@
 </svelte:head>
 
 <div id="bg">
-  <img src="mailBackground.jpg" class="bgImg" alt="">
-  <img src="mailBackground.jpg" id="bgImgBottom" alt="">
-  <img src="mailBackground.jpg" class="bgImg" alt="">
-  <img src="mailBackground.jpg" id="bgImgBottom" alt="">
+  <img data-src="mailBackground.jpg" src="mailBackground-lazy.jpg" class="bgImg lazy lazyTransition" alt="" use:lazyLoad>
+  <img data-src="mailBackground.jpg" src="mailBackground-lazy.jpg" class="bgImgBottom lazy lazyTransition" alt="" use:lazyLoad>
+  <img data-src="mailBackground.jpg" src="mailBackground-lazy.jpg" class="bgImg lazy lazyTransition" alt="" use:lazyLoad>
+  <img data-src="mailBackground.jpg" src="mailBackground-lazy.jpg" class="bgImgBottom lazy lazyTransition" alt="" use:lazyLoad>
 </div>
 
 <div id={$session.mobile ? "ctaM" : "cta"}>
@@ -118,14 +119,14 @@
   </div>
   <h2>Send to people, not places​</h2>
   <div id={$session.mobile ? "buttonsM" : "buttons"}>
-    <Button color="secondary" class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
+    <Button touch color="secondary" class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={about}><Label class="submitButtonLabel">About Us</Label></Button>
     {#if !$session.mobile}
       <div id="spacer"/>
     {/if}
     {#if $session.user}
-      <Button class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={myAccount}><Label class="submitButtonLabel">My Account</Label></Button>
+      <Button touch class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={myAccount}><Label class="submitButtonLabel">My Account</Label></Button>
     {:else}
-      <Button class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={signUp}><Label class="submitButtonLabel">Sign Up</Label></Button>
+      <Button touch class={$session.mobile ? "homeButtonM" : "homeButton"} variant="unelevated"  on:click={signUp}><Label class="submitButtonLabel">Sign Up</Label></Button>
     {/if}
   </div>
 </div>

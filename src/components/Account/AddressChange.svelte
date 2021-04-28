@@ -30,7 +30,8 @@
       dispatch('resetCalendar');
   }
   
-  let errorsPresent, finalAddress, submitErrors;
+  let finalAddress, submitErrors;
+  let errorsPresent = false;
 
   $address = {
     nickname: '', // optional
@@ -93,7 +94,7 @@
 		}
     if (submitErrors != null) {
       console.log(submitErrors);
-      errorsPresent.open();
+      errorsPresent = true;
     }
   }
 
@@ -113,7 +114,8 @@
     submit();
   }
 
-  let addressValidationError, startCompare, compareAddress;
+  let compareAddress;
+  let addressValidationError, startCompare = false;
 </script>
 
 <style>
@@ -156,10 +158,10 @@
 <div id="paper-back"  on:click|stopPropagation={cancel}>
   <div on:click|stopPropagation={()=>{}}>
     <!-- Error creating account -->
-    <Dialog style="z-index: 97;" bind:this={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={goBack}>
+    <Dialog style="z-index: 97;" bind:open={errorsPresent} aria-labelledby="event-title" aria-describedby="event-content" on:MDCDialog:closed={goBack}>
       <Title id="event-title">{submitErrors}</Title>
       <Actions>
-        <Button action="all" default use={[InitialFocus]}>
+        <Button touch action="all" default use={[InitialFocus]}>
           <Label>Ok</Label>
         </Button>
       </Actions>
@@ -172,10 +174,10 @@
         <BypassAddressValidation enteredAddress={$address} />
       </Content>
       <Actions>
-        <Button variant="outlined">
+        <Button touch variant="outlined">
           <Label>Back</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseOriginal}>
           <Label>Proceed With Unverified Address (Not Reccomended)</Label>
         </Button>
       </Actions>
@@ -190,13 +192,13 @@
         {/if}
       </Content>
       <Actions>
-        <Button variant="outlined">
+        <Button touch variant="outlined">
           <Label>Back</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseOriginal}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseOriginal}>
           <Label>Use The Adrress I Entered</Label>
         </Button>
-        <Button color="secondary" variant="outlined" on:click={chooseReccomended} default use={[InitialFocus]}>
+        <Button touch color="secondary" variant="outlined" on:click={chooseReccomended} default use={[InitialFocus]}>
           <Label>Use The Recommended Adrress</Label>
         </Button>
       </Actions>

@@ -61,7 +61,7 @@
         </FormField>
       </div>
       <div class="alignRight">
-        <Button color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel" on:click={verify} diabled={$address_type == null || $address_type == "" ? true : false}>Next Step</Label></Button>
+        <Button touch color="secondary" class="submitButton" variant="unelevated"><Label class="submitButtonLabel" on:click={verify} diabled={$address_type == null || $address_type == "" ? true : false}>Next Step</Label></Button>
       </div>
     </form>
   </Content>

@@ -1,6 +1,6 @@
 <script>
 	import { goto, stores } from '@sapper/app';
-	import { post, put, get, standardizeDates, formatPhoneNumber, findTodaysAddress, trackPackage } from '../utils/helper.js';
+	import { put, get, trackPackage } from '../utils/helper.js';
 	import TrackingTable from '../../components/Tracking/TrackingTable.svelte'; 
 	import UtilityBar from '../../components/UtilityBar.svelte'; 
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
@@ -8,6 +8,23 @@
   import Button, {Icon as ButtonIcon} from '@smui/button';
   import Fab, {Icon} from '@smui/fab';
   import { onMount } from 'svelte';
+
+  let checking = true;
+  async function checkConnection() {
+    try {
+      const response = await get(`api/auth/check-credentials`);
+      if (response && !response.ok) {
+        delete($session.user);
+        delete($session.addresses);
+        goto('login');
+      } else {
+        checking = false;
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  }
+  checkConnection();
 
   const { session } = stores();
   const user = $session.user;
@@ -19,23 +36,11 @@
   let openPage = 1;
   let deliveredPage = 1;
   let openCount = 0;
+  let lastOpenPage = 0;
   let deliveredCount = 0;
+  let lastDeliveredPage = 0;
   let search = "";
   const limit = 10;
-
-  async function checkConnection() {
-    try {
-      const response = await get(`api/auth/check-credentials`);
-      if (response && !response.ok) {
-        delete($session.user);
-        delete($session.addresses);
-        goto('login');
-      }
-    } catch(err) {
-      console.error(err);
-    }
-  }
-  checkConnection();
 
 	onMount(async () => {
     try {
@@ -47,7 +52,6 @@
 
       if (response.success) {
         if (response.open_packages) {
-          const openPackages = [];
           for (const openPackage of response.open_packages) {
             const moreInfo = await trackPackage(openPackage.mail_carrier, openPackage.tracking);
             if (moreInfo.status == "Delivered" || (!openPackage.estimated_delivery && moreInfo.estimatedDelivery)) {
@@ -92,6 +96,7 @@
       if (response.success) {
         openPackages  = response.packages ? response.packages : [];
         openCount = response.count;
+        lastOpenPage = Math.ceil(openCount/limit)
       }
     } catch(err) {
       console.error(err);
@@ -113,6 +118,7 @@
       if (response.success) {
         deliveredPackages = response.packages ? response.packages : [];
         deliveredCount = response.count;
+        lastDeliveredPage = Math.ceil(deliveredCount/limit)
       }
     } catch(err) {
       console.error(err);
@@ -123,18 +129,10 @@
     getOpenPackages(true);
     getDeliveredPackages(true);
   }
-
-	function myAccount() {
-    goto('/account');
-  }
-
-	function addressBook() {
-    goto('/my_contacts');
-  }
 </script>
 
 <svelte:head>
-  <title>smartmail - {user.first_name ? user.first_name : ""}'s Package Tracking</title>
+  <title>smartmail - { !checking && user.first_name ? user.first_name : ""}'s Package Tracking</title>
 </svelte:head>
 
 <style>
@@ -162,7 +160,7 @@
 <div id="searchBar">
   <form on:submit|preventDefault={searchPackages}>
     <Textfield variant="outlined" bind:value={search} label="Search for a package. . ." />
-    <Button variant="outlined" color="secondary" style="text-align: center; margin: 10px 0 0 10px;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
+    <Button touch variant="outlined" color="secondary" style="text-align: center; margin: 10px 0 0 10px;"><ButtonIcon class="material-icons" style="color: var(--darkGray); margin: 0;">search</ButtonIcon></Button>
     {#if search != "" }
       <Fab color="secondary" on:click={() => {search = ""; searchPackages();}} mini style="background-color: #aaa; position: absolute; top: 1.2em; right: 85px; width: 20px; height: 20px;"><Icon class="material-icons" style="color: var(--white); font-size: 1.3em; margin: -2px;">close</Icon></Fab>
     {/if}
@@ -184,7 +182,7 @@
     </DataTable>
     <p class="loading>">Loading. . .</p>
   {:else}
-    <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} on:getPackages={() => getOpenPackages(false)} />
+    <TrackingTable trackingPackages={openPackages} userSmartId={user.smart_id} bind:page={openPage} bind:count={openCount} {limit} bind:lastPage={lastOpenPage} on:getPackages={() => getOpenPackages(false)} />
   {/if}
 
 <!-- Delivered Packages -->
@@ -201,5 +199,5 @@
     </DataTable>
     <p class="loading>">Loading. . .</p>
   {:else}
-    <TrackingTable trackingPackages={deliveredPackages} userSmartId={user.smart_id} bind:page={deliveredPage} bind:count={deliveredCount} {limit} on:getPackages={() => getDeliveredPackages(false)} />
+    <TrackingTable trackingPackages={deliveredPackages} userSmartId={user.smart_id} bind:page={deliveredPage} bind:count={deliveredCount} {limit} bind:lastPage={lastDeliveredPage} on:getPackages={() => getDeliveredPackages(false)} />
   {/if}

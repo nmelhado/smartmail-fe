@@ -5,9 +5,9 @@
 	import Calendar from './Calendar.svelte'; 
 	import AddressChange from './AddressChange.svelte'; 
 	import Map from './Map.svelte'; 
-  import IconButton, {Icon} from '@smui/icon-button';
+  import IconButton from '@smui/icon-button';
   import Button, {Label, Group} from '@smui/button';
-  import { addressChangeActive, addressStepOneComplete } from '../../routes/utils/stores.js';
+  import { addressChangeActive } from '../../routes/utils/stores.js';
 	import CopyToClipboard from '../../components/CopyToClipboard.svelte'; 
 	import { slide } from 'svelte/transition';
 
@@ -16,7 +16,7 @@
   export let checkConnection;
   let update = false;
 
-	async function logout(event) {
+	async function logout() {
 		await post(`api/auth/logout`);
     $session.user = null;
     $session.addresses = null;
@@ -282,11 +282,11 @@
 
 <div id="accountButtons">
   <Group variant="outlined">
-    <Button color="secondary" on:click={dashboard} variant="outlined"><Label>Dashboard</Label></Button>
-    <Button color="secondary" on:click={addresses} variant="outlined"><Label>My Contacts</Label></Button>
-    <Button color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
-    <Button color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
-    <Button color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
+    <Button touch color="secondary" on:click={dashboard} variant="outlined"><Label>Dashboard</Label></Button>
+    <Button touch color="secondary" on:click={addresses} variant="outlined"><Label>My Contacts</Label></Button>
+    <Button touch color="secondary" on:click={tracking} variant="outlined"><Label>Tracking</Label></Button>
+    <Button touch color="secondary" on:click={launchAddressChange} variant="outlined"><Label>Change Address</Label></Button>
+    <Button touch color="secondary" on:click={logout} variant="outlined"><Label>Log Out</Label></Button>
   </Group>
 </div>
 {#if $addressChangeActive}
@@ -347,5 +347,5 @@
   <Map  mobile={$session.mobile} todaysAddress={todaysAddress} pinTitle={pinTitle} />
 </div>
 <div id="button-holder">
-  <Button class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>
+  <Button touch class="submitButton" variant="unelevated"  on:click={launchAddressChange} ><Label class="submitButtonLabel">Change Address</Label></Button>
 </div>

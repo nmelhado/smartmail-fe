@@ -151,7 +151,7 @@
         <h3 class="date-informer">Selected {calendar_type}: {pickDate.toDateString()}</h3>
         <form on:submit|preventDefault={verify}>
           <div class="alignRight">
-            <Button color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
+            <Button touch color="secondary" class="tightButton" variant="unelevated"><Label class="tightButtonLabel" on:click={verify}>Next Step</Label></Button>
           </div>
         </form>
       </Content>

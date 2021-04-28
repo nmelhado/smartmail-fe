@@ -25,6 +25,32 @@ body {
 	color: #333;
 }
 
+.lazyTransition {
+  -webkit-transition: 1s -webkit-filter linear;
+  -moz-transition: 1s -moz-filter linear;
+  -moz-transition: 1s filter linear;
+  -ms-transition: 1s -ms-filter linear;
+  -o-transition: 1s -o-filter linear;
+  transition: 1s filter linear, 1s -webkit-filter linear;
+}
+
+.lazy {
+  filter: blur(20px);
+}
+
+.lazyBG::before {
+  filter: blur(20px);
+}
+
+.lazyTransitionBG {
+  -webkit-transition: 1s -webkit-filter linear;
+  -moz-transition: 1s -moz-filter linear;
+  -moz-transition: 1s filter linear;
+  -ms-transition: 1s -ms-filter linear;
+  -o-transition: 1s -o-filter linear;
+  transition: 1s filter linear, 1s -webkit-filter linear;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	margin: 0.5em 0 0.5em 0;
 	font-weight: 400;
@@ -63,6 +89,11 @@ code {
 	}
 }
 
+.errorHelper {
+  text-align: left;
+  margin: -10px auto -5px !important;
+}
+
 .fullWidth {
   width: 100%;
   margin: 10px 0;
@@ -73,9 +104,19 @@ code {
   margin: 10px 0;
 }
 
+.halfWidthContainer {
+  width: 49%;
+  margin: 0;
+}
+
 .thirdWidth {
   width: 32%;
   margin: 10px 0;
+}
+
+.thirdWidthContainer {
+  width: 32%;
+  margin: 0;
 }
 
 .submitButton {

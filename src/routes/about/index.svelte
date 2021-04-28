@@ -1,5 +1,6 @@
 <script>
 	import { stores } from '@sapper/app';
+	import { lazyLoad, lazyLoadBG } from '../utils/helper.js';
 
   const { session } = stores();
   const mobile = $session.mobile;
@@ -122,12 +123,12 @@
 
   #moving {
     right: 0;
-    background-image: url(moving.jpg);
+    background-image: url(moving-lazy.jpg);
   }
 
   #environment {
     left: 0;
-    background-image: url(environment.jpg);
+    background-image: url(environment-lazy.jpg);
     background-position-x: 50%;
   }
 
@@ -158,7 +159,7 @@
 <svelte:window bind:innerWidth />
 
 <div id="header">
-  <img id="headerImage" src="about-header.jpg" alt="about banner" />
+  <img id="headerImage" data-src="about-header.jpg" class="lazy lazyTransition" use:lazyLoad src="about-header-lazy.jpg" alt="about banner" />
 </div>
 
 <img id="longLogo" src="smartmail v2 long - 500-min.png" alt="long smartmail logo" />
@@ -181,19 +182,19 @@
         When you move, whether temporarily or permanently, all you have to do is update your Smartmail account with your new address and we'll make sure everything gets where it needs to go.
       </p>
       {#if mobile || innerWidth < 900}
-        <div id="moving" class="infoImg" />
+        <div id="moving" data-src="moving.jpg" class="infoImg lazyBG lazyTransitionBG" use:lazyLoadBG />
       {/if}
       <p>
         This means that you no longer have to worry about updating everyone about your new mailing address!
       </p>
     </div>
     {#if !mobile && innerWidth >= 900}
-      <div id="moving" class="infoImg" />
+      <div id="moving" data-src="moving.jpg" class="infoImg lazyBG lazyTransitionBG" use:lazyLoadBG />
     {/if}
   </div>
   <div class={mobile || innerWidth < 900 ? "infoBlockM" : "infoBlock right"}>
     {#if !mobile && innerWidth >= 900}
-      <div id="environment" class="infoImg" />
+      <div id="environment" data-src="environment.jpg" class="infoImg lazyBG lazyTransitionBG" use:lazyLoadBG />
     {/if}
     <div>
       <h1>What problem does Smartmail solve?</h1>
@@ -204,7 +205,7 @@
         When mail and packages fail to reach the correct recipient, they cost the shipping industry billions of dollars and cause harm to our planet. Each year undeliverable mail sends an estimated <strong>300 million pounds of paper waste</strong> to landfills globally and nationally produces <strong>2,629 metric tons of CO2 emissions</strong>.
       </p>
       {#if mobile || innerWidth < 900}
-        <div id="environment" class="infoImg" />
+        <div id="environment" data-src="environment.jpg" class="infoImg lazyBG lazyTransitionBG" use:lazyLoadBG />
       {/if}
       <p>
         In the best case scenario, when a letter or package fails to reach you it is returned to the sender and they can attempt to track down your up-to-date address information and resend the item. However, in the worst case scenario, mail and packages can end up in the hands of an unintended recipient. These packages and letters could contain sensitive information or even valuable items. 
@@ -217,7 +218,7 @@
     <p>
       Using your smartID&trade; is simple. Just use your smartID&trade; instead of your physical address! Look at the image below of two letters that will both arrive at the same place.
     </p>
-    <img src="comp.jpg" id="comp" alt="comparrison of a traditional address and a Smartmail address" />
+    <img src="comp-lazy.jpg" data-src="comp.jpg" class="lazy lazyTransition" use:lazyLoad id="comp" alt="comparrison of a traditional address and a Smartmail address" />
     <p>
       Not only is a smartID&trade; much shorter and easier to write out, but if Cosmo had changed his address only the smartID&trade; envelope would successfully arrive!
     </p>

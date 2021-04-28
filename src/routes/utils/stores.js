@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import * as yup from 'yup';
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+const nameRegExp = /^[a-zA-Z]+$/
 
 // store values for Step One (user step)
 export const stepOneComplete = writable(false);
@@ -16,8 +17,8 @@ export const end_date = writable(null);
 export const validUser = writable(yup.object().shape({
   smart_id: yup.string().required("Please select your smartID"),
   email: yup.string().required("Email is required").email("Email is not valid"),
-  first_name: yup.string().required("First name is required"),
-  last_name: yup.string().required("Last name is required"),
+  first_name: yup.string().required("First name is required").matches(nameRegExp, "A name must contain only letters"),
+  last_name: yup.string().required("Last name is required").matches(nameRegExp, "A name must contain only letters"),
   phone: yup.string()
     .required("Phone number is required")
     .matches(phoneRegExp, "Phone number is not valid"),
@@ -43,9 +44,9 @@ let smartID2='';  // declare empty string
 let smartID3='';  // declare empty string
 
 for(var i = 0; i < 8; i++) {  // loop 8 times
-    smartID1 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
-    smartID2 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
-    smartID3 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatanate Combo
+    smartID1 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatenate Combo
+    smartID2 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatenate Combo
+    smartID3 += letters.charAt(Math.floor(Math.random() * letters.length));  // Concatenate Combo
 }
 
 export const smartIDOptions = writable([

@@ -1,13 +1,12 @@
 <script>
 	import { stores } from '@sapper/app';
-	import ListErrors from '../../components/ListErrors.svelte';
 	import { post } from '../utils/helper.js';
   import * as yup from 'yup';
   import Textfield from '@smui/textfield';
   import CharacterCounter from '@smui/textfield/character-counter/index';
-  import Icon from '@smui/textfield/icon/index';  
+  import HelperText from '@smui/textfield/helper-text/index';
   import Button, {Label} from '@smui/button';
-  // import Dialog, {Title, Actions, InitialFocus} from '@smui/dialog';
+  import { Icon as CommonIcon } from '@smui/common';
   import { onMount, onDestroy } from 'svelte';
 
 	const { session } = stores();
@@ -16,24 +15,30 @@
   async function  verifyCaptcha(resp) {
     const response = await post(`api/manage/confirm_captcha`, { key: resp });
     if (response.success) {
+      invalidCaptcha = false;
       verifiedUser = true;
       return true;
     }
+    verifiedUser = false;
     return false;
   }
 
-  function  expireCaptcha() {
+  function expireCaptcha() {
     verifiedUser = false;
   }
 
   onMount(() => {
-    window.verifyCaptcha = verifyCaptcha;
-    window.expireCaptcha = expireCaptcha;
+    if (typeof window !== 'undefined') {
+      window.verifyCaptcha = verifyCaptcha;
+      window.expireCaptcha = expireCaptcha;
+    }
   })
 
   onDestroy(() => {
-    window.verifyCaptcha = null;
-    window.expireCaptcha = null;
+    if (typeof window !== 'undefined') {
+      window.verifyCaptcha = null;
+      window.expireCaptcha = null;
+    }
   })
 
   let contact = {
@@ -50,50 +55,43 @@
     replyTo: yup.string().required("Email is required").email("Email is not valid"),
   });
 
-  let errors = [];
-  let invalid = {
-    firstName: false,
-    lastName: false,
-    message: false,
-    replyTo: false,
-    captcha: false,
-  }
+  let invalidFirstName, invalidLastName, invalidMessage, invalidReplyTo, invalidCaptcha = false;
+  let errorFirstName, errorLastName, errorMessage, errorReplyTo = "";
   
-  function verify(event) {
+  function verify() {
+    invalidFirstName, invalidLastName, invalidMessage, invalidReplyTo, invalidCaptcha = false;
     validContact.validate(contact, {abortEarly: false})
     .then(function() {
-      invalid = {
-        firstName: false,
-        lastName: false,
-        message: false,
-        replyTo: false,
-        captcha: false,
-      };
-      errors = [];
       if (verifiedUser) {
         submit();
       } else {
-        invalid.captcha = true;
-        errors.push("Please prove you're not a robot!")
+        invalidCaptcha = true;
       }
     })
     .catch(function(err) {
-      const tempInvalid = {
-        firstName: false,
-        lastName: false,
-        message: false,
-        replyTo: false,
-        captcha: false,
-      };
-      const tempErrors = [];
+
       for (const error of err.inner) {
-        if (!tempInvalid[error.path]) {
-          tempInvalid[error.path] = true;
-          tempErrors.push(error.message);
+        switch (error.path) {
+          case "firstName":
+            invalidFirstName = true;
+            errorFirstName = error.message;
+            break;
+          case "lastName":
+            invalidLastName = true;
+            errorLastName = error.message;
+            break;
+          case "message":
+            invalidMessage = true;
+            errorMessage = error.message;
+            break;
+          case "replyTo":
+            invalidReplyTo = true;
+            errorReplyTo = error.message;
+            break;
+          default:
+            break;
         }
       }
-      invalid = tempInvalid;
-      errors = tempErrors;
     });
   }
 
@@ -218,6 +216,10 @@
     margin: 0 auto 1.5em;
     font-size: 1.8em;
   }
+
+  .invalidCaptcha {
+    box-shadow: 0 0 10px darkred;
+  }
 </style>
 
 <svelte:window bind:innerWidth />
@@ -232,22 +234,44 @@
       {:else}
         <h2 class={$session.mobile || innerWidth < 825 ? "h2M" : "" }>Send Us a Message</h2>
 
-        <ListErrors {errors}/>
-
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
-            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
-            <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+            <div class="halfWidthContainer">
+              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth {invalidFirstName ? "mdc-text-field--invalid" : ""}" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
+                <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                  {errorFirstName}
+                </HelperText>
+              </Textfield>
+            </div>
+            <div class="halfWidthContainer">
+              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth {invalidLastName ? "mdc-text-field--invalid" : ""}" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
+                <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                  {errorLastName}
+                </HelperText>
+              </Textfield>
+            </div>
           </div>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" bind:invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
-            <Icon class="material-icons">email</Icon>
+          <Textfield input$name="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth {invalidReplyTo ? "mdc-text-field--invalid" : ""}" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
+            <svelte:fragment slot="label">
+              <CommonIcon
+                class="material-icons"
+                style="font-size: 1em; line-height: normal; vertical-align: top;"
+                >email</CommonIcon
+              > Email
+            </svelte:fragment>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorReplyTo}
+            </HelperText>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth {invalidMessage ? "mdc-text-field--invalid" : ""}" bind:value={contact.message} on:change={()=>invalidMessage=false}>
             <CharacterCounter>0 / 250</CharacterCounter>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorMessage}
+            </HelperText>
           </Textfield>
           <div id="buttonsTop">
             <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
-            <Button color="secondary" class={$session.mobile || innerWidth < 825 ? "submitButton" : "submitButton contactSubmit" } variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+            <Button touch color="secondary" class={$session.mobile || innerWidth < 825 ? "submitButton" : "submitButton contactSubmit" } variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
           </div>
         </form>
         <script src='https://www.google.com/recaptcha/api.js'></script>
@@ -288,23 +312,45 @@
         <h2>Your message has been sent</h2>
       {:else}
         <h2>Send Us a Message</h2>
-
-        <ListErrors {errors}/>
-
+       
         <form on:submit|preventDefault={verify}>
           <div class="centerBlock">
-            <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalid["firstName"]}" class="halfWidth" bind:value={contact.firstName}/>
-            <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalid["lastName"]}" class="halfWidth" bind:value={contact.lastName}/>
+            <div class="halfWidthContainer">
+              <Textfield input$name="first-name" name="first-name" variant="outlined" label="First name" bind:invalid="{invalidFirstName}" class="fullWidth {invalidFirstName ? "mdc-text-field--invalid" : ""}" bind:value={contact.firstName} on:change={()=>invalidFirstName=false}>
+                <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                  {errorFirstName}
+                </HelperText>
+              </Textfield>
+            </div>
+            <div class="halfWidthContainer">
+              <Textfield input$name="last-name" variant="outlined" label="Last name" bind:invalid="{invalidLastName}" class="fullWidth {invalidLastName ? "mdc-text-field--invalid" : ""}" bind:value={contact.lastName} on:change={()=>invalidLastName=false}>
+                <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+                  {errorLastName}
+                </HelperText>
+              </Textfield>
+            </div>
           </div>
-          <Textfield input$name="email" variant="outlined" withLeadingIcon label="Your email" type="email" bind:invalid="{invalid["email"]}" class="fullWidth" bind:value={contact.replyTo}>
-            <Icon class="material-icons">email</Icon>
+          <Textfield input$autocomplete="email" variant="outlined" type="email" bind:invalid="{invalidReplyTo}" class="fullWidth {invalidReplyTo ? "mdc-text-field--invalid" : ""}" bind:value={contact.replyTo} on:change={()=>invalidReplyTo=false}>
+            <svelte:fragment slot="label">
+              <CommonIcon
+                class="material-icons"
+                style="font-size: 1em; line-height: normal; vertical-align: top;"
+                >email</CommonIcon
+              > Email
+            </svelte:fragment>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorReplyTo}
+            </HelperText>
           </Textfield>
-          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalid["message"]}" class="fullWidth" bind:value={contact.message}>
+          <Textfield textarea fullwidth input$maxlength="250" input$name="message" variant="outlined" label="Message" bind:invalid="{invalidMessage}" class="fullWidth {invalidMessage ? "mdc-text-field--invalid" : ""}" bind:value={contact.message} on:change={()=>invalidMessage=false}>
             <CharacterCounter>0 / 250</CharacterCounter>
+            <HelperText class="fullWidth errorHelper" validationMsg slot="helper">
+              {errorMessage}
+            </HelperText>
           </Textfield>
           <div id="buttonsRight">
-            <div class="g-recaptcha inline" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha"></div><br>
-            <Button color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
+            <div class="g-recaptcha inline {invalidCaptcha ? "invalidCaptcha" : ""}" data-sitekey="6LepjegUAAAAAMyOZHnM6bEQpwi5qtHL_Fh9gz2D" data-callback="verifyCaptcha" data-expired-callback="expireCaptcha" on:change={()=>invalidCaptcha=false}></div><br>
+            <Button touch color="secondary" class="submitButton contactSubmit" variant="unelevated"><Label class="submitButtonLabel">Send Message</Label></Button>
           </div>
         </form>
         <script src='https://www.google.com/recaptcha/api.js'></script>

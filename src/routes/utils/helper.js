@@ -118,3 +118,15 @@ export function getTrackingLink(carrier, trackingNumber) {
   }
   return trackingLink;
 }
+
+export function lazyLoad (node) {
+  node.src = node.dataset.src;
+  node.classList.remove("lazy");
+}
+
+export function lazyLoadBG (node) {
+  if(node.classList.contains("lazyBG")) {
+    node.style.backgroundImage = 'url("'+node.dataset.src+'")';
+    node.classList.remove("lazyBG");
+  }
+}
