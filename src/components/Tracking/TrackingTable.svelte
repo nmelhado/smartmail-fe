@@ -137,6 +137,10 @@
     text-align: left;
   }
 
+  :global(.smallWindow) {
+    display: none;
+  }
+
   :global(.descHeadingSmall) {
     display: none;
   }
@@ -287,6 +291,12 @@
     :global(.descHeadingLarge) {
       display: none;
     }
+    :global(.smallWindow) {
+      display: table-cell;
+    }
+    :global(.largeWindow) {
+      display: none;
+    }
   }
 </style>
 
@@ -360,7 +370,15 @@
     <!-- More Tracking Info -->
     {#if displayMore[trackingPackage.tracking]}
       <tr class="nameRow">
-        <Cell colspan="4" class="nameCell">
+        <Cell colspan="4" class="nameCell largeWindow"> <!-- shown for larger screens -->
+          <table class="nameTable">
+            <tr>
+              <td class="trackingCell">Mail Carrier: <img class="mailCarrierIcon" src="mailCarriers/{trackingPackage.mail_carrier.toLowerCase()}.png" alt="{trackingPackage.mail_carrier.toLowerCase()}"/><img class="mailCarrierIconSmall" src="mailCarriers/{trackingPackage.mail_carrier.toLowerCase()}_small.png" alt="{trackingPackage.mail_carrier.toLowerCase()}"/></td>
+              <td>Tracking #:&nbsp;&nbsp;&nbsp;<a target="_blak" href="{getTrackingLink(trackingPackage.mail_carrier, trackingPackage.tracking)}" class="trackingLink">{trackingPackage.tracking}</a></td>
+            </tr>
+          </table>
+        </Cell>
+        <Cell colspan="3" class="nameCell smallWindow"> <!-- shown for smaller screens -->
           <table class="nameTable">
             <tr>
               <td class="trackingCell">Mail Carrier: <img class="mailCarrierIcon" src="mailCarriers/{trackingPackage.mail_carrier.toLowerCase()}.png" alt="{trackingPackage.mail_carrier.toLowerCase()}"/><img class="mailCarrierIconSmall" src="mailCarriers/{trackingPackage.mail_carrier.toLowerCase()}_small.png" alt="{trackingPackage.mail_carrier.toLowerCase()}"/></td>
@@ -370,7 +388,12 @@
         </Cell>
       </tr>
       <Row>
-        <Cell colspan="4" class="extraInfoRow">
+        <Cell colspan="4" class="extraInfoRow largeWindow"> <!-- shown for larger screens -->
+          <table class="extraInfoTable" style="width:100%;">
+            {@html extraInfo}
+          </table>
+        </Cell>
+        <Cell colspan="3" class="extraInfoRow smallWindow"> <!-- shown for smaller screens -->
           <table class="extraInfoTable" style="width:100%;">
             {@html extraInfo}
           </table>
