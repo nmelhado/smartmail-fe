@@ -125,8 +125,6 @@ export function lazyLoad (node) {
 }
 
 export function lazyLoadBG (node) {
-  if(node.classList.contains("lazyBG")) {
-    node.style.backgroundImage = 'url("'+node.dataset.src+'")';
-    node.classList.remove("lazyBG");
-  }
+  node.style.backgroundImage = 'url("'+node.dataset.src+'")';
+  node.classList.remove("lazyBG");
 }
