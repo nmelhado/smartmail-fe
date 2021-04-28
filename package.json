@@ -10,7 +10,7 @@
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "test": "run-p --race dev cy:run",
-    "prepare": "smui-theme compile ./static/smui.css -i ./src/theme"
+    "smui": "smui-theme compile ./static/smui.css -i ./src/theme"
   },
   "dependencies": {
     "@google-cloud/connect-datastore": "^4.0.0",
