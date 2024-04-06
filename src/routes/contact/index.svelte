@@ -281,21 +281,6 @@
   {/if}
   <div id={$session.mobile || innerWidth < 825 ? "bottom" : "left"}>
     <div id={$session.mobile || innerWidth < 825 ? "bottomInner" : "leftInner"}>
-      <h3 class="contactHeader">Address</h3>
-      <p class="contactBody">
-        <strong>Mailing Address:</strong><br>
-        smrt mail<br>
-        <br>
-        <strong>Physical Address:</strong><br>
-        Smartmail<br>
-        251 1st Street, Unit 4E<br>
-        Brooklyn, NY, 11215
-      </p>
-
-      <h3 class="contactHeader">Let's Talk</h3>
-      <p class="contactBody">
-        <a href="tel:+1347-638-4191">(347)638-4191</a>
-      </p>
 
       <h3 class="contactHeader">Email Us</h3>
       <p class="contactBody">
